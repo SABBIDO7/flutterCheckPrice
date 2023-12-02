@@ -36,7 +36,9 @@ class MyDropdownButtonFormField extends StatelessWidget {
             ],
           ),
           child: Padding(
-            padding: const EdgeInsets.only(left: 15, right: 15),
+            padding: MediaQuery.of(context).textScaleFactor > 2.5
+                ? const EdgeInsets.only(left: 1, right: 1)
+                : const EdgeInsets.only(left: 15, right: 15),
             child: DropdownButtonFormField<int>(
               value: value,
               hint: Text(hintText),
@@ -45,7 +47,14 @@ class MyDropdownButtonFormField extends StatelessWidget {
                   value: branch,
                   child: Column(
                     children: [
-                      Text('$branch'),
+                      Text(
+                        '$branch',
+                        style: TextStyle(
+                            fontSize:
+                                MediaQuery.of(context).textScaleFactor > 1.25
+                                    ? 13
+                                    : 16),
+                      ),
                     ],
                   ),
                 );
