@@ -1,4 +1,5 @@
 import 'dart:convert';
+//import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 
@@ -128,10 +129,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     items: branches,
                     value: null,
                     hintText: 'Select Branch',
-                    onChanged: (int? selectedBranch) {
+                    onChanged: (dynamic selectedBranch) {
                       branchController.text = selectedBranch?.toString() ?? '';
                     },
-                    validator: (int? value) {
+                    validator: (dynamic value) {
                       if (value == null) {
                         return 'Please select a branch';
                       }

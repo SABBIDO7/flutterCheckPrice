@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'components/my_button.dart';
 import 'components/my_textfield.dart';
 import 'package:http/http.dart' as http;
@@ -14,7 +17,7 @@ class DisplayScreen extends StatefulWidget {
 }
 
 class _DisplayScreenState extends State<DisplayScreen> {
-  TextEditingController _inputController = TextEditingController();
+  TextEditingController _inputController = TextEditingController(text: '1');
   Future<void> update_hande_quantity(
       String itemNumber, String handQuantity, String branch) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -37,7 +40,78 @@ class _DisplayScreenState extends State<DisplayScreen> {
 
       if (response.statusCode == 200) {
         // Successful login, handle the response as needed
-        Navigator.pop(context);
+        ////////////////////////////////////////////////////
+        // Function to handle scanning and data retrieval
+
+        String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', // Scanner overlay color
+          'Cancel', // Cancel button text
+          true, // Show flash icon
+          ScanMode.BARCODE, // Scan mode
+        );
+
+        // Check if a barcode was successfully scanned
+        if (barcodeScanRes != '-1') {
+          print(barcodeScanRes);
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          String? dbName = prefs.getString('dbName');
+          String? ip = prefs.getString('ip');
+
+          int? branch = prefs.getInt('branch');
+          // Make an API call with the scanned barcode
+          final apiUrl =
+              'http://$ip/getItem/'; // Replace with your API endpoint
+          final response = await http.get(Uri.parse(
+              '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName'));
+
+          if (response.statusCode == 200) {
+            // Data was found in the database
+            //final data = jsonDecode(response.body);
+            // final encoding = Encoding.getByName('utf-8'); // Use UTF-8 encoding
+            final data = jsonDecode(
+                utf8.decode(response.bodyBytes, allowMalformed: true));
+            if (data['item'] != "empty") {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => DisplayScreen(data: data),
+              ));
+            } else {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Data Not Found'),
+                  content: Text(
+                      'The scanned item barcode was not found in this branch.'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('OK'),
+                    ),
+                  ],
+                ),
+              );
+            }
+            // Navigate to a new screen to display the data
+          } else {
+            // Data not found in the database
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('Data Not Found'),
+                content: Text('Request error.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }
+        }
       } else {
         // Handle login failure (e.g., incorrect credentials)
         print("Failure");
@@ -62,6 +136,8 @@ class _DisplayScreenState extends State<DisplayScreen> {
   Widget build(BuildContext context) {
     final mediaQueryData = MediaQuery.of(context);
     final screenHeight = mediaQueryData.size.height;
+    final screenWidth = mediaQueryData.size.width;
+
     print(screenHeight);
 
     return Scaffold(
@@ -75,47 +151,236 @@ class _DisplayScreenState extends State<DisplayScreen> {
           child: Form(
             key: _formKey, // Set the form key
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              //mainAxisAlignment: MainAxisAlignment.center,
+              //crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Display the data in a DataTable
-                DataTable(
-                  columns: [
-                    DataColumn(label: Text('Field')),
-                    DataColumn(label: Text('Value')),
-                  ],
-                  rows: [
-                    DataRow(
-                      cells: [
-                        DataCell(Text("Item Name")),
-                        DataCell(
-                            Text(widget.data['item']['itemName'].toString())),
-                      ],
-                    ),
-                    DataRow(
-                      cells: [
-                        DataCell(Text("Branch")),
-                        DataCell(
-                            Text(widget.data['item']['Branch'].toString())),
-                      ],
-                    ),
-                    DataRow(
-                      cells: [
-                        DataCell(Text("Price")),
-                        DataCell(Text(widget.data['item']['S1'].toString())),
-                      ],
-                    ),
-                    DataRow(
-                      cells: [
-                        DataCell(Text("Quantity")),
-                        DataCell(
-                            Text(widget.data['item']['quantity'].toString())),
-                      ],
-                    ),
-                  ],
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    dataRowMaxHeight: screenHeight * 0.15,
+                    columns: [
+                      DataColumn(label: Text('')),
+                      DataColumn(label: Text('')),
+                    ],
+                    rows: [
+                      DataRow(
+                        cells: [
+                          DataCell(Text(
+                            "Item Name",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          )),
+                          DataCell(
+                            SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: Container(
+                                width: screenWidth *
+                                    0.5, // Set the width to fill the available space
+
+                                child: Text(
+                                  widget.data['item']['itemName'].toString(),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                  //
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      DataRow(
+                        cells: [
+                          DataCell(
+                            Row(children: [
+                              Text(
+                                "Branch",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                              SizedBox(
+                                width: screenWidth * 0.05,
+                              ),
+                              Text(
+                                widget.data['item']['Branch'].toString(),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              ),
+                            ]),
+                          ),
+                          DataCell(
+                            Row(children: [
+                              Text(
+                                "Cost Price",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                              SizedBox(
+                                width: screenWidth * 0.05,
+                              ),
+                              Text(
+                                widget.data['item']['costPrice'] == null
+                                    ? '-'
+                                    : widget.data['item']['costPrice']
+                                        .toString(),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              ),
+                            ]),
+                          ),
+                        ],
+                      ),
+                      DataRow(
+                        cells: [
+                          widget.data['item']['sp'] == null
+                              ? widget.data['item']['vat'] == 0
+                                  ? DataCell(Text(
+                                      "SPrice",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    ))
+                                  : DataCell(Text(
+                                      "SPrice *",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    ))
+                              : widget.data['item']['vat'] == 0
+                                  ? DataCell(Text(
+                                      "SPrice" +
+                                          '\n' +
+                                          widget.data['item']['sp'].toString(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    ))
+                                  : DataCell(Text(
+                                      "SPrice *" +
+                                          '\n' +
+                                          widget.data['item']['sp'].toString(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    )),
+                          DataCell(
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Container(
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        widget.data['item']['S1'].toString(),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: screenWidth * 0.01,
+                                    ),
+                                    Text("|"),
+                                    // Add some spacing between the prices
+                                    SizedBox(
+                                      width: screenWidth * 0.01,
+                                    ),
+
+                                    Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        widget.data['item']['S2'].toString(),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: screenWidth * 0.01,
+                                    ),
+
+                                    Text("|"),
+                                    SizedBox(
+                                      width: screenWidth * 0.01,
+                                    ),
+
+                                    // Add some spacing between the prices
+                                    Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        widget.data['item']['S3'].toString(),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      DataRow(
+                        cells: [
+                          DataCell(
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text(
+                                  "Quantity :",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                ),
+                                SizedBox(
+                                  width: screenWidth * 0.01,
+                                ),
+                                Text(
+                                  widget.data['item']['quantity'].toString(),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                              ],
+                            ),
+                          ),
+                          DataCell(
+                            Row(
+                              //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text(
+                                  "Hand Quantity :",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                ),
+                                SizedBox(
+                                  width: screenWidth * 0.01,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    widget.data['item']['handQuantity'] == null
+                                        ? "-"
+                                        : widget.data['item']['handQuantity']
+                                            .toString(),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
                 // Input field for user input
-                SizedBox(height: screenHeight * 0.05),
+                SizedBox(height: screenHeight * 0.01),
                 MyTextField(
                   controller: _inputController,
                   hintText: 'Hand Quantity Collected',
@@ -144,6 +409,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                   },
                   buttonName: "Update",
                 ),
+                SizedBox(height: screenHeight * 0.01),
 
                 // Add any additional widgets or styling as needed
               ],

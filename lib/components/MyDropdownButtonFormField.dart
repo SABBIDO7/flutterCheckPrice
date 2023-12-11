@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class MyDropdownButtonFormField extends StatelessWidget {
-  final List<int> items;
-  final int? value;
-  final void Function(int?)? onChanged;
+  final List<dynamic> items;
+  final dynamic value;
+  final void Function(dynamic)? onChanged;
   final String hintText;
-  final String? Function(int?)? validator;
+  final String? Function(dynamic)? validator;
 
   const MyDropdownButtonFormField({
     Key? key,
@@ -19,7 +19,7 @@ class MyDropdownButtonFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+      padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10.0),
       child: Align(
         alignment: Alignment.bottomCenter,
         child: Container(
@@ -39,11 +39,11 @@ class MyDropdownButtonFormField extends StatelessWidget {
             padding: MediaQuery.of(context).textScaleFactor > 2.5
                 ? const EdgeInsets.only(left: 1, right: 1)
                 : const EdgeInsets.only(left: 15, right: 15),
-            child: DropdownButtonFormField<int>(
+            child: DropdownButtonFormField<dynamic>(
               value: value,
               hint: Text(hintText),
-              items: items.map((int branch) {
-                return DropdownMenuItem<int>(
+              items: items.map((dynamic branch) {
+                return DropdownMenuItem<dynamic>(
                   value: branch,
                   child: Column(
                     children: [
@@ -54,6 +54,7 @@ class MyDropdownButtonFormField extends StatelessWidget {
                                 MediaQuery.of(context).textScaleFactor > 1.25
                                     ? 13
                                     : 16),
+                        softWrap: true,
                       ),
                     ],
                   ),

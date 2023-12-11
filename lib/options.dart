@@ -8,13 +8,121 @@ import 'package:checkprice/CheckpriceScreen.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'components/MyDropdownButtonFormField.dart';
 import 'components/my_button.dart';
 
 class Option extends StatelessWidget {
   const Option({super.key});
 
+  void showCartDialog(BuildContext context) async {
+    final inventoryController = TextEditingController();
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    String errorMessage = '';
+    List<dynamic> inventories = [];
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? dbName = prefs.getString('dbName');
+    String? ip = prefs.getString('ip');
+    String? username = prefs.getString('username');
+
+    // Make an API call with the scanned barcode
+    final apiUrl =
+        'http://$ip/getInventories/'; // Replace with your API endpoint
+    final response =
+        await http.get(Uri.parse('$apiUrl?username=$username&dbName=$dbName'));
+
+    if (response.statusCode == 200) {
+      // Data was found in the database
+      final data =
+          jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
+      if (data['status'] != false) {
+        print(data['result']);
+        print(data['status']);
+        print(inventories);
+        inventories = data['result'];
+      }
+    } else {}
+    //final mediaQueryData = MediaQuery.of(context);
+
+    //final screenHeight = mediaQueryData.size.height;
+    //final screenWidth = mediaQueryData.size.width;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Add your ComboBox and other widgets here
+                    // ...
+                    MyDropdownButtonFormField(
+                      items: inventories,
+                      value: null,
+                      hintText: 'Select Inventory',
+                      onChanged: (dynamic selectedInventory) {
+                        inventoryController.text =
+                            selectedInventory?.toString() ?? '';
+                      },
+                      validator: (dynamic value) {
+                        if (value == null) {
+                          return 'Please select an inventory';
+                        }
+                        return null;
+                      },
+                    ),
+                    Text(
+                      errorMessage,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 14,
+                      ),
+                    ),
+                    // Example buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            child: MyButton(
+                              onTap: () {},
+                              buttonName: "create",
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            child: MyButton(
+                              onTap: () {
+                                if (_formKey.currentState!.validate()) {
+                                  scanAndRetrieveData(
+                                      context, inventoryController.text);
+                                }
+                              },
+                              buttonName: "Scan",
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   // Function to handle scanning and data retrieval
-  Future<void> scanAndRetrieveData(BuildContext context) async {
+  Future<void> scanAndRetrieveData(
+      BuildContext context, String inventory) async {
     String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
       '#ff6666', // Scanner overlay color
       'Cancel', // Cancel button text
@@ -31,13 +139,15 @@ class Option extends StatelessWidget {
 
       int? branch = prefs.getInt('branch');
       // Make an API call with the scanned barcode
-      final apiUrl = 'http://$ip/getItem/'; // Replace with your API endpoint
+      final apiUrl =
+          'http://$ip/getInventoryItem/'; // Replace with your API endpoint
       final response = await http.get(Uri.parse(
           '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName'));
 
       if (response.statusCode == 200) {
         // Data was found in the database
-        final data = jsonDecode(response.body);
+        final data =
+            jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
         if (data['item'] != "empty") {
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => DisplayScreen(data: data),
@@ -106,7 +216,8 @@ class Option extends StatelessWidget {
 
       if (response.statusCode == 200) {
         // Data was found in the database
-        final data = jsonDecode(response.body);
+        final data =
+            jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
         if (data['item'] != "empty") {
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => CheckpriceScreen(data: data),
@@ -165,6 +276,8 @@ class Option extends StatelessWidget {
     final mediaQueryData = MediaQuery.of(context);
 
     final screenHeight = mediaQueryData.size.height;
+    //final screenWidth = mediaQueryData.size.width;
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
@@ -189,7 +302,8 @@ class Option extends StatelessWidget {
           children: [
             MyButton(
               onTap: () {
-                scanAndRetrieveData(context);
+                //here i want to add a cart that opens contains a comboBox getting data from api and two buttons
+                showCartDialog(context);
               },
               buttonName: "hand Collected",
             ),
