@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'components/MyDropdownButtonFormField.dart';
 import 'components/my_button.dart';
+import 'components/my_textfield.dart';
 
 class Option extends StatelessWidget {
   const Option({super.key});
@@ -50,6 +51,7 @@ class Option extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
+          backgroundColor: Colors.grey[200],
           child: Container(
             padding: EdgeInsets.all(16.0),
             child: SingleChildScrollView(
@@ -61,6 +63,11 @@ class Option extends StatelessWidget {
                   children: [
                     // Add your ComboBox and other widgets here
                     // ...
+                    Text(
+                      "Select Inventory",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
                     MyDropdownButtonFormField(
                       items: inventories,
                       value: null,
@@ -90,7 +97,11 @@ class Option extends StatelessWidget {
                         Expanded(
                           child: Container(
                             child: MyButton(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                showcartCreate(
+                                    context, username!, dbName!, ip!);
+                              },
                               buttonName: "create",
                             ),
                           ),
@@ -105,6 +116,137 @@ class Option extends StatelessWidget {
                                 }
                               },
                               buttonName: "Scan",
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<String> saveDb(
+      String username, String dbName, String inventoryName, String ip) async {
+    print(username);
+
+    final apiUrl =
+        'http://$ip/createInventory/'; // Replace with your API endpoint
+
+    final response = await http.post(
+      Uri.parse(
+          '$apiUrl?dbName=$dbName&username=$username&inventory=$inventoryName'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Data was found in the database
+      final data =
+          jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
+      if (data['status'] == true) {
+        return "True";
+      } else {
+        return "False";
+      }
+    } else {
+      return "No connection or Server Down";
+    }
+  }
+
+  void showcartCreate(
+      BuildContext context, String username, String db, String ip) async {
+    final nameController = TextEditingController();
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    String errorMessage = '';
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.grey[200],
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Create New Inventory",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                    // Add your ComboBox and other widgets here
+                    // ...
+                    MyTextField(
+                      controller: nameController,
+                      hintText: 'Inventory Name',
+                      obscureText: false,
+                      validator: (value) {
+                        if (value == null ||
+                            value.isEmpty ||
+                            !RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
+                          return 'Please enter a valid name.\nNo Special characters.';
+                        }
+                        return null;
+                      },
+                    ),
+                    Text(
+                      errorMessage,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 14,
+                      ),
+                    ),
+                    // Example buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            child: MyButton(
+                              onTap: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  if (await saveDb(username, db,
+                                          nameController.text, ip) ==
+                                      "True") {
+                                    print("heyy");
+                                    Navigator.of(context).pop();
+                                    scanAndRetrieveData(
+                                        context, nameController.text);
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text('Inventory Already Exsist'),
+                                        content: Text(
+                                            'The name of the Inventory already exists.\n' +
+                                                'Please Choose another Name'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .pop(); // Close the AlertDialog
+                                            },
+                                            child: Text('OK'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                              buttonName: "create",
                             ),
                           ),
                         ),
@@ -136,13 +278,14 @@ class Option extends StatelessWidget {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? dbName = prefs.getString('dbName');
       String? ip = prefs.getString('ip');
+      String? username = prefs.getString('username');
 
       int? branch = prefs.getInt('branch');
       // Make an API call with the scanned barcode
       final apiUrl =
           'http://$ip/getInventoryItem/'; // Replace with your API endpoint
       final response = await http.get(Uri.parse(
-          '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName'));
+          '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName&username=$username&inventory=$inventory'));
 
       if (response.statusCode == 200) {
         // Data was found in the database
