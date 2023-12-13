@@ -40,12 +40,15 @@ class MyDropdownButtonFormField extends StatelessWidget {
                 ? const EdgeInsets.only(left: 1, right: 1)
                 : const EdgeInsets.only(left: 15, right: 15),
             child: DropdownButtonFormField<dynamic>(
+              isDense: true,
+              itemHeight: null,
               value: value,
               hint: Text(hintText),
               items: items.map((dynamic branch) {
                 return DropdownMenuItem<dynamic>(
                   value: branch,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         '$branch',

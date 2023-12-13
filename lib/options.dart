@@ -112,7 +112,7 @@ class Option extends StatelessWidget {
                               onTap: () {
                                 if (_formKey.currentState!.validate()) {
                                   scanAndRetrieveData(
-                                      context, inventoryController.text);
+                                      context, inventoryController.text, 0);
                                 }
                               },
                               buttonName: "Scan",
@@ -220,10 +220,10 @@ class Option extends StatelessWidget {
                                   if (await saveDb(username, db,
                                           nameController.text, ip) ==
                                       "True") {
-                                    print("heyy");
-                                    Navigator.of(context).pop();
+                                    print("ata3");
+
                                     scanAndRetrieveData(
-                                        context, nameController.text);
+                                        context, nameController.text, 1);
                                   } else {
                                     showDialog(
                                       context: context,
@@ -264,7 +264,7 @@ class Option extends StatelessWidget {
 
   // Function to handle scanning and data retrieval
   Future<void> scanAndRetrieveData(
-      BuildContext context, String inventory) async {
+      BuildContext context, String inventory, int flag) async {
     String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
       '#ff6666', // Scanner overlay color
       'Cancel', // Cancel button text
@@ -279,7 +279,10 @@ class Option extends StatelessWidget {
       String? dbName = prefs.getString('dbName');
       String? ip = prefs.getString('ip');
       String? username = prefs.getString('username');
-
+      if (flag == 1) {
+        inventory = '$username' + '_$inventory';
+        inventory = inventory.replaceAll(RegExp(r"\s+"), "");
+      }
       int? branch = prefs.getInt('branch');
       // Make an API call with the scanned barcode
       final apiUrl =
@@ -288,14 +291,23 @@ class Option extends StatelessWidget {
           '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName&username=$username&inventory=$inventory'));
 
       if (response.statusCode == 200) {
+        print("heyyyyyy");
         // Data was found in the database
         final data =
             jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
+        print("broooooooooooooooooooo");
+        print(data['item']);
+        print("rawaaa");
+
         if (data['item'] != "empty") {
+          print("jjjjjjjjjjjjjj");
+          //Navigator.of(context).pop();
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => DisplayScreen(data: data),
+            builder: (context) =>
+                DisplayScreen(data: data, inventory: inventory),
           ));
         } else {
+          print("msh mawjouddd");
           showDialog(
             context: context,
             builder: (context) => AlertDialog(

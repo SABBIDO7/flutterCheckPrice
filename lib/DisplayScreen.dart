@@ -9,8 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class DisplayScreen extends StatefulWidget {
   final Map<String, dynamic> data;
-
-  DisplayScreen({required this.data});
+  final String inventory;
+  DisplayScreen({required this.data, required this.inventory});
 
   @override
   _DisplayScreenState createState() => _DisplayScreenState();
@@ -18,8 +18,8 @@ class DisplayScreen extends StatefulWidget {
 
 class _DisplayScreenState extends State<DisplayScreen> {
   TextEditingController _inputController = TextEditingController(text: '1');
-  Future<void> update_hande_quantity(
-      String itemNumber, String handQuantity, String branch) async {
+  Future<void> update_hande_quantity(String itemNumber, String handQuantity,
+      String branch, String inventory) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String? dbName = prefs.getString('dbName');
@@ -27,7 +27,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
 
     int? branchAsInt = int.tryParse(branch);
     final url = Uri.parse(
-        'http://$ip/handeQuantity_update/?itemNumber=$itemNumber&handQuantity=$handQuantity&branch=$branchAsInt&dbName=$dbName'); // Replace with your FastAPI login endpoint
+        'http://$ip/handeQuantity_update/?itemNumber=$itemNumber&handQuantity=$handQuantity&branch=$branchAsInt&dbName=$dbName&inventory=$inventory'); // Replace with your FastAPI login endpoint
 
     try {
       final response = await http.post(
@@ -56,13 +56,13 @@ class _DisplayScreenState extends State<DisplayScreen> {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           String? dbName = prefs.getString('dbName');
           String? ip = prefs.getString('ip');
-
+          String? username = prefs.getString('username');
           int? branch = prefs.getInt('branch');
           // Make an API call with the scanned barcode
           final apiUrl =
-              'http://$ip/getItem/'; // Replace with your API endpoint
+              'http://$ip/getInventoryItem/'; // Replace with your API endpoint
           final response = await http.get(Uri.parse(
-              '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName'));
+              '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName&username=$username&inventory=$inventory'));
 
           if (response.statusCode == 200) {
             // Data was found in the database
@@ -72,7 +72,8 @@ class _DisplayScreenState extends State<DisplayScreen> {
                 utf8.decode(response.bodyBytes, allowMalformed: true));
             if (data['item'] != "empty") {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => DisplayScreen(data: data),
+                builder: (context) =>
+                    DisplayScreen(data: data, inventory: inventory),
               ));
             } else {
               showDialog(
@@ -85,6 +86,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                     TextButton(
                       onPressed: () {
                         Navigator.of(context).pop();
+                        //blaaaaaaaaaaaaaaaaaaaa
                       },
                       child: Text('OK'),
                     ),
@@ -404,7 +406,8 @@ class _DisplayScreenState extends State<DisplayScreen> {
                       update_hande_quantity(
                           widget.data['item']['itemNumber'].toString(),
                           _inputController.text,
-                          widget.data['item']['Branch'].toString());
+                          widget.data['item']['Branch'].toString(),
+                          widget.inventory);
                     }
                   },
                   buttonName: "Update",
