@@ -119,7 +119,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
           child: SingleChildScrollView(
             child: Form(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // Display the data in a DataTable
@@ -134,18 +134,22 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                       rows: [
                         DataRow(
                           cells: [
-                            DataCell(Text(
-                              "Item Name",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
-                            )),
+                            DataCell(
+                              Container(
+                                width: screenWidth * 0.35,
+                                child: Text(
+                                  "Item Name",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                ),
+                              ),
+                            ),
                             DataCell(
                               SingleChildScrollView(
                                 scrollDirection: Axis.vertical,
                                 child: Container(
-                                  width: screenWidth *
-                                      0.5, // Set the width to fill the available space
-
+                                  width: screenWidth * 0.35,
                                   child: Text(
                                     widget.data['item']['itemName'].toString(),
                                     style: TextStyle(
@@ -257,16 +261,14 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                             cells: [
                               DataCell(
                                 Row(
-                                  //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       "Branch :",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16),
-                                    ),
-                                    SizedBox(
-                                      width: screenWidth * 0.1,
                                     ),
                                     Text(
                                       item['branch'].toString(),
@@ -280,16 +282,13 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                               DataCell(
                                 Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       "Quantity :",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16),
-                                    ),
-                                    SizedBox(
-                                      width: screenWidth * 0.1,
                                     ),
                                     Text(
                                       item['quantity'].toString(),
@@ -303,10 +302,31 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                             ],
                           );
                         }).toList(),
+                        DataRow(cells: [
+                          DataCell(
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Total Quantity :",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                ),
+                                Text(
+                                  widget.data['totalQuantity'].toString(),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                              ],
+                            ),
+                          ),
+                          DataCell(Container()),
+                        ])
                       ],
                     ),
                   ),
-                  SizedBox(height: screenHeight * 0.05),
 
                   // Sign in button
                   MyButton(
