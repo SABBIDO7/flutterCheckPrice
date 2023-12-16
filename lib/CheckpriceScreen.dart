@@ -5,6 +5,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import 'components/image_dialog.dart';
 import 'components/my_button.dart';
 
 class CheckpriceScreen extends StatefulWidget {
@@ -99,6 +100,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
     final screenHeight = mediaQueryData.size.height;
     final screenWidth = mediaQueryData.size.width;
     print(screenWidth);
+
     return WillPopScope(
       onWillPop: () async {
         Navigator.pushNamedAndRemoveUntil(
@@ -122,11 +124,34 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  widget.data['item']['image'] == ''
+                      ? Container()
+                      : // Wrap the image with InkWell to make it tappable
+                      InkWell(
+                          onTap: () {
+                            // Open a dialog with a larger version of the image
+                            showDialog(
+                              context: context,
+                              builder: (context) => ImageDialog(
+                                imageUrl: widget.data['item']['image'],
+                              ),
+                            );
+                          },
+                          child: ClipOval(
+                            child: Image.network(
+                              widget.data['item'][
+                                  'image'], // Replace with the actual URL from your database
+                              width: 60, // Adjust the width as needed
+                              height: 60, // Adjust the height as needed
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
                   // Display the data in a DataTable
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
-                      dataRowMaxHeight: screenHeight * 0.15,
+                      dataRowMaxHeight: screenHeight * 0.11,
                       columns: [
                         DataColumn(label: Text('')),
                         DataColumn(label: Text('')),

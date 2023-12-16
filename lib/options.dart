@@ -98,7 +98,6 @@ class Option extends StatelessWidget {
                           child: Container(
                             child: MyButton(
                               onTap: () {
-                                Navigator.of(context).pop();
                                 showcartCreate(
                                     context, username!, dbName!, ip!);
                               },
@@ -179,7 +178,7 @@ class Option extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "Create New Inventory",
@@ -220,8 +219,6 @@ class Option extends StatelessWidget {
                                   if (await saveDb(username, db,
                                           nameController.text, ip) ==
                                       "True") {
-                                    print("ata3");
-
                                     scanAndRetrieveData(
                                         context, nameController.text, 1);
                                   } else {
@@ -301,25 +298,39 @@ class Option extends StatelessWidget {
 
         if (data['item'] != "empty") {
           print("jjjjjjjjjjjjjj");
-          //Navigator.of(context).pop();
+          Navigator.of(context).pop();
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) =>
                 DisplayScreen(data: data, inventory: inventory),
           ));
         } else {
-          print("msh mawjouddd");
           showDialog(
             context: context,
+            barrierDismissible: false,
             builder: (context) => AlertDialog(
               title: Text('Data Not Found'),
               content: Text(
                   'The scanned item barcode was not found in this branch.'),
               actions: [
+                // TextButton(
+                //   onPressed: () {
+                //     print("vvvvvvvvvvvvvvvvvvvvvvvvv");
+                //     scanAndRetrieveData(context, inventory, 1);
+                //     //blaaaaaaaaaaaaaaaaaaaa
+                //   },
+                //   child: Text('Scan Again'),
+                // ),
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      '/options', // Replace with the route name of OptionsScreen
+                      (route) =>
+                          false, // This predicate will remove all routes from the stack
+                    );
+                    //blaaaaaaaaaaaaaaaaaaaa
                   },
-                  child: Text('OK'),
+                  child: Text('Exit'),
                 ),
               ],
             ),

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'components/image_dialog.dart';
 import 'components/my_button.dart';
 import 'components/my_textfield.dart';
 import 'package:http/http.dart' as http;
@@ -48,6 +49,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
         final data =
             jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
         if (data['item'] != "empty") {
+          Navigator.of(context).pop();
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) =>
                 DisplayScreen(data: data, inventory: inventory),
@@ -55,6 +57,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
         } else {
           showDialog(
             context: context,
+            barrierDismissible: false,
             builder: (context) => AlertDialog(
               title: Text('Data Not Found'),
               content: Text(
@@ -63,9 +66,22 @@ class _DisplayScreenState extends State<DisplayScreen> {
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
+                    scanAnotherTimeFail(inventory);
                     //blaaaaaaaaaaaaaaaaaaaa
                   },
-                  child: Text('OK'),
+                  child: Text('Scan Again'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      '/options', // Replace with the route name of OptionsScreen
+                      (route) =>
+                          false, // This predicate will remove all routes from the stack
+                    );
+                    //blaaaaaaaaaaaaaaaaaaaa
+                  },
+                  child: Text('Exit'),
                 ),
               ],
             ),
@@ -146,6 +162,8 @@ class _DisplayScreenState extends State<DisplayScreen> {
             final data = jsonDecode(
                 utf8.decode(response.bodyBytes, allowMalformed: true));
             if (data['item'] != "empty") {
+              Navigator.of(context).pop();
+
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) =>
                     DisplayScreen(data: data, inventory: inventory),
@@ -153,6 +171,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
             } else {
               showDialog(
                 context: context,
+                barrierDismissible: false,
                 builder: (context) => AlertDialog(
                   title: Text('Data Not Found'),
                   content: Text(
@@ -163,7 +182,19 @@ class _DisplayScreenState extends State<DisplayScreen> {
                         scanAnotherTimeFail(inventory);
                         //blaaaaaaaaaaaaaaaaaaaa
                       },
-                      child: Text('OK'),
+                      child: Text('Scan Again'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/options', // Replace with the route name of OptionsScreen
+                          (route) =>
+                              false, // This predicate will remove all routes from the stack
+                        );
+                        //blaaaaaaaaaaaaaaaaaaaa
+                      },
+                      child: Text('Exit'),
                     ),
                   ],
                 ),
@@ -241,11 +272,33 @@ class _DisplayScreenState extends State<DisplayScreen> {
                 //mainAxisAlignment: MainAxisAlignment.center,
                 //crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  widget.data['item']['image'] == ''
+                      ? Container()
+                      : InkWell(
+                          onTap: () {
+                            // Open a dialog with a larger version of the image
+                            showDialog(
+                              context: context,
+                              builder: (context) => ImageDialog(
+                                imageUrl: widget.data['item']['image'],
+                              ),
+                            );
+                          },
+                          child: ClipOval(
+                            child: Image.network(
+                              widget.data['item'][
+                                  'image'], // Replace with the actual URL from your database
+                              width: 60, // Adjust the width as needed
+                              height: 60, // Adjust the height as needed
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
                   // Display the data in a DataTable
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
-                      dataRowMaxHeight: screenHeight * 0.15,
+                      dataRowMaxHeight: screenHeight * 0.11,
                       columns: [
                         DataColumn(label: Text('')),
                         DataColumn(label: Text('')),
