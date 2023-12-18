@@ -36,11 +36,11 @@ class _LoginPageState extends State<LoginPage> {
 
   // Save user credentials to shared preferences
   Future<void> saveUserCredentials(String username, String password,
-      int? branch, String ip, String dbName) async {
+      String branch, String ip, String dbName) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('username', username);
     prefs.setString('password', password);
-    prefs.setInt('branch', branch ?? 0);
+    prefs.setString('branch', branch);
     prefs.setString('dbName', dbName);
     prefs.setString('ip', ip);
   }
@@ -48,9 +48,8 @@ class _LoginPageState extends State<LoginPage> {
   // sign user in method
   Future<bool> signUserIn(String username, String password, String branch,
       int flag, String dB, String ip, BuildContext context) async {
-    int? branchAsInt = int.tryParse(branch);
     final url = Uri.parse(
-        'http://$ip/Checkuser/?username=$username&password=$password&branch=$branchAsInt&dbName=$dB');
+        'http://$ip/Checkuser/?username=$username&password=$password&branch=$branch&dbName=$dB');
 
     try {
       final response = await http.post(
@@ -66,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
         if (data['status'] == true) {
           // Successful login, handle the response as needed
           if (flag != 1) {
-            saveUserCredentials(username, password, branchAsInt, ip, dB);
+            saveUserCredentials(username, password, branch, ip, dB);
           }
           // Successful login, navigate to the HomeScreen
           Navigator.of(context).pushReplacement(
@@ -109,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? savedUsername = prefs.getString('username');
     String? savedPassword = prefs.getString('password');
-    int? savedBranch = prefs.getInt('branch');
+    String? savedBranch = prefs.getString('branch');
     String? savedIp = prefs.getString('ip');
 
     String? savedDb = prefs.getString('dbName');
@@ -122,8 +121,8 @@ class _LoginPageState extends State<LoginPage> {
       print("adim");
 
       // Credentials are found, attempt to sign in
-      return await signUserIn(savedUsername, savedPassword,
-          savedBranch.toString(), 1, savedDb, savedIp, context);
+      return await signUserIn(savedUsername, savedPassword, savedBranch, 1,
+          savedDb, savedIp, context);
     } else {
       print("jdid");
 
@@ -152,10 +151,10 @@ class _LoginPageState extends State<LoginPage> {
                         // logo
                         Icon(
                           Icons.lock,
-                          size: screenHeight * 0.13,
+                          size: screenHeight * 0.1,
                         ),
 
-                        SizedBox(height: screenHeight * 0.1),
+                        SizedBox(height: screenHeight * 0.015),
 
                         // welcome back, you've been missed!
                         Text(
@@ -167,7 +166,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
 
-                        SizedBox(height: screenHeight * 0.05),
+                        SizedBox(height: screenHeight * 0.04),
 
                         // username textfield
                         // username textfield
@@ -181,9 +180,10 @@ class _LoginPageState extends State<LoginPage> {
                             }
                             return null;
                           },
+                          flag: 0,
                         ),
 
-                        SizedBox(height: screenHeight * 0.020),
+                        SizedBox(height: screenHeight * 0.015),
 
                         // password textfield
                         // username textfield
@@ -197,9 +197,10 @@ class _LoginPageState extends State<LoginPage> {
                             }
                             return null;
                           },
+                          flag: 0,
                         ),
 
-                        SizedBox(height: screenHeight * 0.020),
+                        SizedBox(height: screenHeight * 0.015),
 
                         MyTextField(
                           controller: branchController,
@@ -213,8 +214,9 @@ class _LoginPageState extends State<LoginPage> {
                             }
                             return null;
                           },
+                          flag: 0,
                         ),
-                        SizedBox(height: screenHeight * 0.020),
+                        SizedBox(height: screenHeight * 0.015),
 
                         MyTextField(
                           controller: dBController,
@@ -226,8 +228,9 @@ class _LoginPageState extends State<LoginPage> {
                             }
                             return null;
                           },
+                          flag: 0,
                         ),
-                        SizedBox(height: screenHeight * 0.020),
+                        SizedBox(height: screenHeight * 0.015),
 
                         MyTextField(
                           controller: ipController,
@@ -239,9 +242,10 @@ class _LoginPageState extends State<LoginPage> {
                             }
                             return null;
                           },
+                          flag: 0,
                         ),
                         // Display error message
-                        SizedBox(height: screenHeight * 0.020),
+                        SizedBox(height: screenHeight * 0.015),
 
                         Text(
                           errorMessage,
@@ -250,7 +254,7 @@ class _LoginPageState extends State<LoginPage> {
                             fontSize: 14,
                           ),
                         ),
-                        SizedBox(height: screenHeight * 0.05),
+                        SizedBox(height: screenHeight * 0.005),
 
                         // sign in button
                         MyButton(
@@ -268,7 +272,6 @@ class _LoginPageState extends State<LoginPage> {
                           },
                           buttonName: "Login",
                         ),
-                        SizedBox(height: screenHeight * 0.020),
                       ],
                     ),
                   ),

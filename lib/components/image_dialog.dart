@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 class ImageDialog extends StatelessWidget {
@@ -7,6 +9,9 @@ class ImageDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final widthS = MediaQuery.of(context).size.width;
+    final heightS = MediaQuery.of(context).size.height;
+
     return Dialog(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -27,10 +32,11 @@ class ImageDialog extends StatelessWidget {
             actions: [], // Clear any actions from the AppBar
           ),
           Center(
-            child: Image.network(
-              imageUrl,
-              width: 200, // Adjust the width as needed
-              height: 200, // Adjust the height as needed
+            child: Image.memory(
+              base64Decode(imageUrl),
+
+              width: widthS * 0.75, // Adjust the width as needed
+              height: heightS * 0.5, // Adjust the height as needed
               fit: BoxFit.cover,
             ),
           ),

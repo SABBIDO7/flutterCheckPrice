@@ -20,7 +20,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final branchController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String errorMessage = '';
-  List<int> branches = []; // List to store fetched branches
+  List<String> branches = []; // List to store fetched branches
 
   @override
   void initState() {
@@ -43,7 +43,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
-          branches = List<int>.from(data['branches']);
+          branches = List<String>.from(data['branches']);
         });
       }
     } catch (e) {
@@ -55,19 +55,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? username = prefs.getString('username');
     String? password = prefs.getString('password');
-    int? branch = prefs.getInt('branch');
+    String? branch = prefs.getString('branch');
     String? dbName = prefs.getString('dbName');
     print(dbName);
-    int? branchAsInt = int.tryParse(branchUpdated);
     String? ip = prefs.getString('ip');
 
-    if (branch == branchAsInt) {
+    if (branch == branchUpdated) {
       setState(() {
         errorMessage = "You are already in this branch";
       });
     } else {
       final url = Uri.parse(
-          'http://$ip/updateBranch/?username=$username&password=$password&newbranch=$branchAsInt&dbName=$dbName');
+          'http://$ip/updateBranch/?username=$username&password=$password&newbranch=$branchUpdated&dbName=$dbName');
       try {
         final response = await http.post(
           url,
@@ -82,7 +81,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           print(data['status']);
           if (data['status'] == "True") {
             setState(() {
-              prefs.setInt('branch', branchAsInt ?? 0);
+              prefs.setString('branch', branchUpdated);
               errorMessage = "Your branch has been updated";
             });
           } else if (data['status'] == "noBranchFound") {
@@ -130,7 +129,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     value: null,
                     hintText: 'Select Branch',
                     onChanged: (dynamic selectedBranch) {
-                      branchController.text = selectedBranch?.toString() ?? '';
+                      branchController.text = selectedBranch;
                     },
                     validator: (dynamic value) {
                       if (value == null) {

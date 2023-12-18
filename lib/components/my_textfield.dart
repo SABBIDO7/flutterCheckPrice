@@ -5,14 +5,17 @@ class MyTextField extends StatelessWidget {
   final String hintText;
   final bool obscureText;
   final String? Function(String?)? validator; // Validator function
+  final int flag;
 
-  const MyTextField({
-    Key? key,
-    required this.controller,
-    required this.hintText,
-    required this.obscureText,
-    this.validator, // Add validator parameter
-  }) : super(key: key);
+  const MyTextField(
+      {Key? key,
+      required this.controller,
+      required this.hintText,
+      required this.obscureText,
+      this.validator,
+      required this.flag // Add validator parameter
+      })
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +31,9 @@ class MyTextField extends StatelessWidget {
           padding: const EdgeInsets.only(left: 15),
           child: TextFormField(
             // Use TextFormField instead of TextField
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+
+            textAlign: flag == 1 ? TextAlign.center : TextAlign.start,
             controller: controller,
             obscureText: obscureText,
             decoration: InputDecoration(

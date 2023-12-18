@@ -98,6 +98,7 @@ class Option extends StatelessWidget {
                           child: Container(
                             child: MyButton(
                               onTap: () {
+                                Navigator.of(context).pop();
                                 showcartCreate(
                                     context, username!, dbName!, ip!);
                               },
@@ -199,6 +200,7 @@ class Option extends StatelessWidget {
                         }
                         return null;
                       },
+                      flag: 0,
                     ),
                     Text(
                       errorMessage,
@@ -280,7 +282,7 @@ class Option extends StatelessWidget {
         inventory = '$username' + '_$inventory';
         inventory = inventory.replaceAll(RegExp(r"\s+"), "");
       }
-      int? branch = prefs.getInt('branch');
+      String? branch = prefs.getString('branch');
       // Make an API call with the scanned barcode
       final apiUrl =
           'http://$ip/getInventoryItem/'; // Replace with your API endpoint
@@ -298,7 +300,6 @@ class Option extends StatelessWidget {
 
         if (data['item'] != "empty") {
           print("jjjjjjjjjjjjjj");
-          Navigator.of(context).pop();
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) =>
                 DisplayScreen(data: data, inventory: inventory),
@@ -322,15 +323,10 @@ class Option extends StatelessWidget {
                 // ),
                 TextButton(
                   onPressed: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      '/options', // Replace with the route name of OptionsScreen
-                      (route) =>
-                          false, // This predicate will remove all routes from the stack
-                    );
+                    Navigator.of(context).pop();
                     //blaaaaaaaaaaaaaaaaaaaa
                   },
-                  child: Text('Exit'),
+                  child: Text('Cancel'),
                 ),
               ],
             ),
@@ -374,7 +370,7 @@ class Option extends StatelessWidget {
       String? dbName = prefs.getString('dbName');
       String? ip = prefs.getString('ip');
 
-      int? branch = prefs.getInt('branch');
+      String? branch = prefs.getString('branch');
       // Make an API call with the scanned barcode
       final apiUrl = 'http://$ip/getItem/'; // Replace with your API endpoint
       final response = await http.get(Uri.parse(
