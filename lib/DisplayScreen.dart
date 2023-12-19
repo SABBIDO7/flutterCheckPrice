@@ -286,6 +286,11 @@ class _DisplayScreenState extends State<DisplayScreen> {
                         child: ClipOval(
                           child: Image.memory(
                             base64Decode(widget.data['item']['image']),
+                            errorBuilder: (context, error, stackTrace) {
+                              // Handle the image loading error here
+                              return Icon(Icons
+                                  .error); // Display an error icon or placeholder
+                            },
                             width:
                                 screenWidth * 0.2, // Adjust the width as needed
                             height: screenHeight *
@@ -298,7 +303,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: DataTable(
-                    dataRowMaxHeight: screenHeight * 0.11,
+                    dataRowMaxHeight: screenHeight * 0.12,
                     columns: [
                       DataColumn(label: Text('')),
                       DataColumn(label: Text('')),
@@ -375,7 +380,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                         fontSize: 16),
                                   ),
                                   SizedBox(
-                                    width: screenWidth * 0.05,
+                                    width: screenWidth * 0.025,
                                   ),
                                   Text(
                                     widget.data['item']['Branch'],
@@ -397,7 +402,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                         fontSize: 16),
                                   ),
                                   SizedBox(
-                                    width: screenWidth * 0.05,
+                                    width: screenWidth * 0.025,
                                   ),
                                   Text(
                                     widget.data['item']['costPrice'] == 0
@@ -457,59 +462,99 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                     )),
                           DataCell(
                             SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Container(
-                                alignment: Alignment.center,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      child: Text(
-                                        widget.data['item']['S1'].toString(),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
+                              scrollDirection: Axis.vertical,
+                              child: Column(children: [
+                                Container(
+                                  height: screenHeight * 0.04,
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        child: Text(
+                                          "1-",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20),
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: screenWidth * 0.01,
-                                    ),
-                                    Text("|"),
-                                    // Add some spacing between the prices
-                                    SizedBox(
-                                      width: screenWidth * 0.01,
-                                    ),
-
-                                    Container(
-                                      child: Text(
-                                        widget.data['item']['S2'].toString(),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
+                                      SizedBox(
+                                        width: screenWidth * 0.025,
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: screenWidth * 0.01,
-                                    ),
-
-                                    Text("|"),
-                                    SizedBox(
-                                      width: screenWidth * 0.01,
-                                    ),
-
-                                    // Add some spacing between the prices
-                                    Container(
-                                      child: Text(
-                                        widget.data['item']['S3'].toString(),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
+                                      Container(
+                                        child: Text(
+                                          widget.data['item']['S1'].toString(),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
+                                Container(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        height: screenHeight * 0.04,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              child: const Text(
+                                                "2-",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: screenWidth * 0.025,
+                                            ),
+                                            Container(
+                                              child: Text(
+                                                widget.data['item']['S2']
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  height: screenHeight * 0.04,
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        child: Text(
+                                          "3-",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: screenWidth * 0.025,
+                                      ),
+                                      Container(
+                                        child: Text(
+                                          widget.data['item']['S3'].toString(),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ]),
                             ),
                           ),
                         ],
@@ -521,13 +566,13 @@ class _DisplayScreenState extends State<DisplayScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Quantity :",
+                                  "Qty :",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16),
                                 ),
                                 SizedBox(
-                                  width: screenWidth * 0.05,
+                                  width: screenWidth * 0.025,
                                 ),
                                 Text(
                                   widget.data['item']['quantity'].toString(),
@@ -543,13 +588,13 @@ class _DisplayScreenState extends State<DisplayScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Hand Quantity :",
+                                  "Hand Qty :",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16),
                                 ),
                                 SizedBox(
-                                  width: screenWidth * 0.05,
+                                  width: screenWidth * 0.025,
                                 ),
                                 Text(
                                   widget.data['item']['handQuantity'] == null
