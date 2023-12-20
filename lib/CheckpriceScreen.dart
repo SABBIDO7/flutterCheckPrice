@@ -305,104 +305,116 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                           )),
                                 DataCell(
                                   SingleChildScrollView(
-                                    scrollDirection: Axis.vertical,
-                                    child: Column(children: [
-                                      Container(
-                                        height: screenHeight * 0.04,
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              child: Text(
-                                                "1-",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: screenWidth * 0.025,
-                                            ),
-                                            Container(
-                                              child: Text(
-                                                widget.data['item']['S1']
-                                                    .toString(),
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              height: screenHeight * 0.04,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Container(
-                                                    child: const Text(
-                                                      "2-",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 20),
-                                                    ),
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: [
+                                        Column(children: [
+                                          Container(
+                                            height: screenHeight * 0.04,
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  child: Text(
+                                                    "1-",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 20),
                                                   ),
-                                                  SizedBox(
-                                                    width: screenWidth * 0.025,
+                                                ),
+                                                SizedBox(
+                                                  width: screenWidth * 0.025,
+                                                ),
+                                                Container(
+                                                  child: Text(
+                                                    widget.data['item']['S1']
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 20),
                                                   ),
-                                                  Container(
-                                                    child: Text(
-                                                      widget.data['item']['S2']
-                                                          .toString(),
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 20),
-                                                    ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Container(
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  height: screenHeight * 0.04,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Container(
+                                                        child: const Text(
+                                                          "2-",
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 20),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width:
+                                                            screenWidth * 0.025,
+                                                      ),
+                                                      Container(
+                                                        child: Text(
+                                                          widget.data['item']
+                                                                  ['S2']
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 20),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        height: screenHeight * 0.04,
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              child: Text(
-                                                "3-",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20),
-                                              ),
+                                          ),
+                                          Container(
+                                            height: screenHeight * 0.04,
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                  child: Text(
+                                                    "3-",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 20),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: screenWidth * 0.025,
+                                                ),
+                                                Container(
+                                                  child: Text(
+                                                    widget.data['item']['S3']
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 20),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            SizedBox(
-                                              width: screenWidth * 0.025,
-                                            ),
-                                            Container(
-                                              child: Text(
-                                                widget.data['item']['S3']
-                                                    .toString(),
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ]),
+                                          ),
+                                        ]),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],

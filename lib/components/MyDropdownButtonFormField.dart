@@ -19,7 +19,9 @@ class MyDropdownButtonFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10.0),
+      padding: MediaQuery.of(context).textScaleFactor > 1.25
+          ? const EdgeInsets.symmetric(horizontal: 0.0, vertical: 5.0)
+          : const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
       child: Align(
         alignment: Alignment.bottomCenter,
         child: Container(
@@ -36,7 +38,7 @@ class MyDropdownButtonFormField extends StatelessWidget {
             ],
           ),
           child: Padding(
-            padding: MediaQuery.of(context).textScaleFactor > 2.5
+            padding: MediaQuery.of(context).textScaleFactor > 1
                 ? const EdgeInsets.only(left: 1, right: 1)
                 : const EdgeInsets.only(left: 15, right: 15),
             child: DropdownButtonFormField<dynamic>(
@@ -53,10 +55,14 @@ class MyDropdownButtonFormField extends StatelessWidget {
                       Text(
                         '$branch',
                         style: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).textScaleFactor > 1.25
-                                    ? 13
-                                    : 16),
+                            fontSize: MediaQuery.of(context).textScaleFactor > 1
+                                ? MediaQuery.of(context).textScaleFactor > 1.75
+                                    ? MediaQuery.of(context).textScaleFactor >
+                                            2.25
+                                        ? 7
+                                        : 8
+                                    : 10
+                                : 16),
                         softWrap: true,
                       ),
                     ],

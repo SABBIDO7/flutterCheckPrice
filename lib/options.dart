@@ -12,12 +12,18 @@ import 'components/MyDropdownButtonFormField.dart';
 import 'components/my_button.dart';
 import 'components/my_textfield.dart';
 
-class Option extends StatelessWidget {
-  const Option({super.key});
+class Option extends StatefulWidget {
+  final String? param;
+  const Option({super.key, this.param});
+  @override
+  State<Option> createState() => _OptionState();
+}
 
-  void showCartDialog(BuildContext context) async {
+class _OptionState extends State<Option> {
+  void showCartDialog(BuildContext context, String? savedInventory) async {
     final inventoryController = TextEditingController();
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
     String errorMessage = '';
     List<dynamic> inventories = [];
 
@@ -70,8 +76,10 @@ class Option extends StatelessWidget {
                     ),
                     MyDropdownButtonFormField(
                       items: inventories,
-                      value: null,
-                      hintText: 'Select Inventory',
+                      value: savedInventory,
+                      hintText: MediaQuery.of(context).textScaleFactor > 1.5
+                          ? "Select"
+                          : "Select Inventory",
                       onChanged: (dynamic selectedInventory) {
                         inventoryController.text =
                             selectedInventory?.toString() ?? '';
@@ -98,7 +106,7 @@ class Option extends StatelessWidget {
                           child: Container(
                             child: MyButton(
                               onTap: () {
-                                Navigator.of(context).pop();
+                                //Navigator.of(context).pop();
                                 showcartCreate(
                                     context, username!, dbName!, ip!);
                               },
@@ -109,8 +117,13 @@ class Option extends StatelessWidget {
                         Expanded(
                           child: Container(
                             child: MyButton(
-                              onTap: () {
+                              onTap: () async {
                                 if (_formKey.currentState!.validate()) {
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+
+                                  prefs.setString(
+                                      'inventory', inventoryController.text);
                                   scanAndRetrieveData(
                                       context, inventoryController.text, 0);
                                 }
@@ -274,6 +287,7 @@ class Option extends StatelessWidget {
     // Check if a barcode was successfully scanned
     if (barcodeScanRes != '-1') {
       print(barcodeScanRes);
+      print("hohoho");
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? dbName = prefs.getString('dbName');
       String? ip = prefs.getString('ip');
@@ -281,6 +295,7 @@ class Option extends StatelessWidget {
       if (flag == 1) {
         inventory = '$username' + '_$inventory';
         inventory = inventory.replaceAll(RegExp(r"\s+"), "");
+        //inventory = combined;
       }
       String? branch = prefs.getString('branch');
       // Make an API call with the scanned barcode
@@ -288,7 +303,7 @@ class Option extends StatelessWidget {
           'http://$ip/getInventoryItem/'; // Replace with your API endpoint
       final response = await http.get(Uri.parse(
           '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName&username=$username&inventory=$inventory'));
-
+      print("hon");
       if (response.statusCode == 200) {
         print("heyyyyyy");
         // Data was found in the database
@@ -299,12 +314,26 @@ class Option extends StatelessWidget {
         print("rawaaa");
 
         if (data['item'] != "empty") {
+          if (flag == 2) {
+            print("hey niga");
+            Navigator.of(context).pop();
+          }
+
           print("jjjjjjjjjjjjjj");
-          Navigator.of(context).push(MaterialPageRoute(
+          Navigator.of(context)
+              .push(MaterialPageRoute(
             builder: (context) =>
                 DisplayScreen(data: data, inventory: inventory),
-          ));
+          ))
+              .then((value) {
+            // Callback function to be executed after the route is popped
+
+            // If value is true, call the showCartDialog function
+            showCartDialog(context, null);
+          });
         } else {
+          Navigator.of(context).pop();
+
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -313,14 +342,14 @@ class Option extends StatelessWidget {
               content: Text(
                   'The scanned item barcode was not found in this branch.'),
               actions: [
-                // TextButton(
-                //   onPressed: () {
-                //     print("vvvvvvvvvvvvvvvvvvvvvvvvv");
-                //     scanAndRetrieveData(context, inventory, 1);
-                //     //blaaaaaaaaaaaaaaaaaaaa
-                //   },
-                //   child: Text('Scan Again'),
-                // ),
+                TextButton(
+                  onPressed: () {
+                    print("vvvvvvvvvvvvvvvvvvvvvvvvv");
+                    scanAndRetrieveData(context, inventory, 2);
+                    //blaaaaaaaaaaaaaaaaaaaa
+                  },
+                  child: Text('Scan Again'),
+                ),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -355,7 +384,7 @@ class Option extends StatelessWidget {
   }
 
   // Function to handle scanning and data retrieval
-  Future<void> scanAndRetrieveDataPrice(BuildContext context) async {
+  Future<void> scanAndRetrieveDataPrice(BuildContext context, int flag) async {
     String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
       '#ff6666', // Scanner overlay color
       'Cancel', // Cancel button text
@@ -381,12 +410,20 @@ class Option extends StatelessWidget {
         final data =
             jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
         if (data['item'] != "empty") {
+          if (flag == 1) {
+            Navigator.of(context).pop();
+          }
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => CheckpriceScreen(data: data),
           ));
         } else {
+          if (flag == 1) {
+            Navigator.of(context).pop();
+          }
+
           showDialog(
             context: context,
+            barrierDismissible: false,
             builder: (context) => AlertDialog(
               title: Text('Data Not Found'),
               content: Text(
@@ -394,9 +431,18 @@ class Option extends StatelessWidget {
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    print("vvvvvvvvvvvvvvvvvvvvvvvvv");
+                    scanAndRetrieveDataPrice(context, 1);
+                    //blaaaaaaaaaaaaaaaaaaaa
                   },
-                  child: Text('OK'),
+                  child: Text('Scan Again'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    //blaaaaaaaaaaaaaaaaaaaa
+                  },
+                  child: Text('Cancel'),
                 ),
               ],
             ),
@@ -434,6 +480,28 @@ class Option extends StatelessWidget {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print("shou l wade3");
+    // Use Future.delayed to schedule the execution after initState has completed
+    Future.delayed(Duration.zero, () async {
+      // Retrieve the arguments
+
+      // Check if arguments are not null and of the expected type
+      if (widget.param != null) {
+        print("dddddddd");
+        // Call your function with the passed value
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? savedInventory = prefs.getString('inventory');
+        print("------------------------------");
+        print(savedInventory);
+        showCartDialog(context, savedInventory);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final mediaQueryData = MediaQuery.of(context);
 
@@ -465,14 +533,14 @@ class Option extends StatelessWidget {
             MyButton(
               onTap: () {
                 //here i want to add a cart that opens contains a comboBox getting data from api and two buttons
-                showCartDialog(context);
+                showCartDialog(context, null);
               },
               buttonName: "hand Collected",
             ),
             SizedBox(height: screenHeight * 0.05),
             MyButton(
               onTap: () {
-                scanAndRetrieveDataPrice(context);
+                scanAndRetrieveDataPrice(context, 0);
               },
               buttonName: "checkPrice",
             ),

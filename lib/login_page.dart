@@ -98,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       print("Error: $e");
       setState(() {
-        errorMessage = 'wrong ip or server down';
+        errorMessage = 'wrong ip or server down\nCheck your WIFI';
       });
       return false;
     }
