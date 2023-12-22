@@ -31,6 +31,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
       ScanMode.BARCODE, // Scan mode
     );
     if (barcodeScanRes == '-1') {
+      Navigator.of(context).pop();
       Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => Option(param: '1'),
       ));
