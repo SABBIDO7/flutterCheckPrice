@@ -320,6 +320,8 @@ class _OptionState extends State<Option> {
           }
 
           print("jjjjjjjjjjjjjj");
+          Navigator.of(context).pop();
+
           Navigator.of(context)
               .push(MaterialPageRoute(
             builder: (context) =>

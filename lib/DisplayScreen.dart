@@ -30,6 +30,11 @@ class _DisplayScreenState extends State<DisplayScreen> {
       true, // Show flash icon
       ScanMode.BARCODE, // Scan mode
     );
+    if (barcodeScanRes == '-1') {
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => Option(param: '1'),
+      ));
+    }
 
     // Check if a barcode was successfully scanned
     if (barcodeScanRes != '-1') {
@@ -142,6 +147,11 @@ class _DisplayScreenState extends State<DisplayScreen> {
           true, // Show flash icon
           ScanMode.BARCODE, // Scan mode
         );
+        if (barcodeScanRes == '-1') {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => Option(param: '1'),
+          ));
+        }
 
         // Check if a barcode was successfully scanned
         if (barcodeScanRes != '-1') {
