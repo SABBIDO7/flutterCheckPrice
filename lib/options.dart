@@ -20,8 +20,8 @@ class Option extends StatefulWidget {
 }
 
 class _OptionState extends State<Option> {
-  void showCartDialog(BuildContext context, String? savedInventory) async {
-    final inventoryController = TextEditingController();
+  void showCartDialog(String? savedInventory) async {
+    final inventoryController = TextEditingController(text: savedInventory);
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
     String errorMessage = '';
@@ -106,7 +106,7 @@ class _OptionState extends State<Option> {
                           child: Container(
                             child: MyButton(
                               onTap: () {
-                                //Navigator.of(context).pop();
+                                Navigator.of(context).pop();
                                 showcartCreate(
                                     context, username!, dbName!, ip!);
                               },
@@ -118,6 +118,8 @@ class _OptionState extends State<Option> {
                           child: Container(
                             child: MyButton(
                               onTap: () async {
+                                print("shoubek");
+                                print(inventoryController.text);
                                 if (_formKey.currentState!.validate()) {
                                   SharedPreferences prefs =
                                       await SharedPreferences.getInstance();
@@ -292,12 +294,18 @@ class _OptionState extends State<Option> {
       String? dbName = prefs.getString('dbName');
       String? ip = prefs.getString('ip');
       String? username = prefs.getString('username');
+      String? inventorytst = prefs.getString('inventory');
       if (flag == 1) {
-        inventory = '$username' + '_$inventory';
+        inventory = 'dc_' + '$username' + '_$inventory';
         inventory = inventory.replaceAll(RegExp(r"\s+"), "");
         //inventory = combined;
       }
       String? branch = prefs.getString('branch');
+      print("///////////////////////////////");
+      print(inventorytst);
+
+      print("///////////////////////////////");
+
       // Make an API call with the scanned barcode
       final apiUrl =
           'http://$ip/getInventoryItem/'; // Replace with your API endpoint
@@ -316,22 +324,28 @@ class _OptionState extends State<Option> {
         if (data['item'] != "empty") {
           if (flag == 2) {
             print("hey niga");
-            Navigator.of(context).pop();
+            //Navigator.of(context).pop();
           }
 
           print("jjjjjjjjjjjjjj");
           Navigator.of(context).pop();
-
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString('inventory', inventory);
           Navigator.of(context)
               .push(MaterialPageRoute(
             builder: (context) =>
                 DisplayScreen(data: data, inventory: inventory),
           ))
-              .then((value) {
+              .then((value) async {
             // Callback function to be executed after the route is popped
-
+            print("dxxxxxxx");
+            // Call your function with the passed value
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            String? savedInventory = prefs.getString('inventory');
+            print("------------------------------");
+            print(savedInventory);
+            showCartDialog(savedInventory);
             // If value is true, call the showCartDialog function
-            showCartDialog(context, null);
           });
         } else {
           Navigator.of(context).pop();
@@ -498,7 +512,7 @@ class _OptionState extends State<Option> {
         String? savedInventory = prefs.getString('inventory');
         print("------------------------------");
         print(savedInventory);
-        showCartDialog(context, savedInventory);
+        showCartDialog(savedInventory);
       }
     });
   }
@@ -535,7 +549,7 @@ class _OptionState extends State<Option> {
             MyButton(
               onTap: () {
                 //here i want to add a cart that opens contains a comboBox getting data from api and two buttons
-                showCartDialog(context, null);
+                showCartDialog(null);
               },
               buttonName: "hand Collected",
             ),

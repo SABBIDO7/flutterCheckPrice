@@ -260,9 +260,11 @@ class _DisplayScreenState extends State<DisplayScreen> {
 
     return WillPopScope(
       onWillPop: () async {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => Option(param: '1'),
-        ));
+        Navigator.of(context).pop();
+
+        // Navigator.of(context).push(MaterialPageRoute(
+        //   builder: (context) => Option(param: '1'),
+        // ));
         return false;
       },
       child: Scaffold(
@@ -485,7 +487,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: MediaQuery.of(context)
                                                             .textScaleFactor >
-                                                        1
+                                                        1.75
                                                     ? 9
                                                     : 18),
                                           ),
@@ -501,7 +503,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: MediaQuery.of(context)
                                                             .textScaleFactor >
-                                                        1
+                                                        1.75
                                                     ? 9
                                                     : 18),
                                           ),
@@ -529,7 +531,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                                       fontSize: MediaQuery.of(
                                                                       context)
                                                                   .textScaleFactor >
-                                                              1
+                                                              1.75
                                                           ? 9
                                                           : 18),
                                                 ),
@@ -547,7 +549,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                                       fontSize: MediaQuery.of(
                                                                       context)
                                                                   .textScaleFactor >
-                                                              1
+                                                              1.75
                                                           ? 9
                                                           : 18),
                                                 ),
@@ -571,7 +573,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: MediaQuery.of(context)
                                                             .textScaleFactor >
-                                                        1
+                                                        1.75
                                                     ? 9
                                                     : 18),
                                           ),
@@ -587,7 +589,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: MediaQuery.of(context)
                                                             .textScaleFactor >
-                                                        1
+                                                        1.75
                                                     ? 9
                                                     : 18),
                                           ),
