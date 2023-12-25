@@ -40,7 +40,7 @@ class MyDropdownButtonFormField extends StatelessWidget {
           child: Padding(
             padding: MediaQuery.of(context).textScaleFactor > 1
                 ? const EdgeInsets.only(left: 1, right: 1)
-                : const EdgeInsets.only(left: 15, right: 15),
+                : const EdgeInsets.only(left: 0, right: 0),
             child: DropdownButtonFormField<dynamic>(
               isDense: true,
               itemHeight: null,
@@ -52,18 +52,34 @@ class MyDropdownButtonFormField extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        '$branch',
-                        style: TextStyle(
-                            fontSize: MediaQuery.of(context).textScaleFactor > 1
-                                ? MediaQuery.of(context).textScaleFactor > 1.75
-                                    ? MediaQuery.of(context).textScaleFactor >
-                                            2.25
-                                        ? 7
-                                        : 8
-                                    : 16 //kenit 10
-                                : 16),
-                        softWrap: true,
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        child: Expanded(
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Text(
+                                '$branch',
+                                style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).textScaleFactor >
+                                                1
+                                            ? MediaQuery.of(context)
+                                                        .textScaleFactor >
+                                                    1.75
+                                                ? MediaQuery.of(context)
+                                                            .textScaleFactor >
+                                                        2.25
+                                                    ? 7
+                                                    : 8
+                                                : 16 //kenit 10
+                                            : 16),
+                                softWrap: true,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),

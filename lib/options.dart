@@ -166,7 +166,10 @@ class _OptionState extends State<Option> {
       final data =
           jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
       if (data['status'] == true) {
-        return "True";
+        print(data['result'][0]);
+        String name = data['result'][0];
+        print(name);
+        return name;
       } else {
         return "False";
       }
@@ -233,11 +236,11 @@ class _OptionState extends State<Option> {
                             child: MyButton(
                               onTap: () async {
                                 if (_formKey.currentState!.validate()) {
-                                  if (await saveDb(username, db,
-                                          nameController.text, ip) ==
-                                      "True") {
+                                  String inventory_name = await saveDb(
+                                      username, db, nameController.text, ip);
+                                  if (inventory_name != "False") {
                                     scanAndRetrieveData(
-                                        context, nameController.text, 1);
+                                        context, inventory_name, 1);
                                   } else {
                                     showDialog(
                                       context: context,
@@ -290,11 +293,13 @@ class _OptionState extends State<Option> {
     String? ip = prefs.getString('ip');
     String? username = prefs.getString('username');
     String? inventorytst = prefs.getString('inventory');
-    if (flag == 1) {
-      inventory = 'dc_' + '$username' + '_$inventory';
-      inventory = inventory.replaceAll(RegExp(r"\s+"), "");
-      //inventory = combined;
-    }
+    print(inventory);
+    print("sakados");
+    // if (flag == 1) {
+    //   inventory = 'dc_' + '$username' + '_$inventory';
+    //   inventory = inventory.replaceAll(RegExp(r"\s+"), "");
+    //   //inventory = combined;
+    // }
     print("lkooooo");
     prefs.setString('inventory', inventory);
     // Check if a barcode was successfully scanned
