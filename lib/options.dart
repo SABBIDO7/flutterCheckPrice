@@ -285,21 +285,23 @@ class _OptionState extends State<Option> {
       true, // Show flash icon
       ScanMode.BARCODE, // Scan mode
     );
-
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? dbName = prefs.getString('dbName');
+    String? ip = prefs.getString('ip');
+    String? username = prefs.getString('username');
+    String? inventorytst = prefs.getString('inventory');
+    if (flag == 1) {
+      inventory = 'dc_' + '$username' + '_$inventory';
+      inventory = inventory.replaceAll(RegExp(r"\s+"), "");
+      //inventory = combined;
+    }
+    print("lkooooo");
+    prefs.setString('inventory', inventory);
     // Check if a barcode was successfully scanned
     if (barcodeScanRes != '-1') {
       print(barcodeScanRes);
       print("hohoho");
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? dbName = prefs.getString('dbName');
-      String? ip = prefs.getString('ip');
-      String? username = prefs.getString('username');
-      String? inventorytst = prefs.getString('inventory');
-      if (flag == 1) {
-        inventory = 'dc_' + '$username' + '_$inventory';
-        inventory = inventory.replaceAll(RegExp(r"\s+"), "");
-        //inventory = combined;
-      }
+
       String? branch = prefs.getString('branch');
       print("///////////////////////////////");
       print(inventorytst);
@@ -329,8 +331,7 @@ class _OptionState extends State<Option> {
 
           print("jjjjjjjjjjjjjj");
           Navigator.of(context).pop();
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          prefs.setString('inventory', inventory);
+
           Navigator.of(context)
               .push(MaterialPageRoute(
             builder: (context) =>
@@ -366,13 +367,13 @@ class _OptionState extends State<Option> {
                   },
                   child: Text('Scan Again'),
                 ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    //blaaaaaaaaaaaaaaaaaaaa
-                  },
-                  child: Text('Cancel'),
-                ),
+                // TextButton(
+                //   onPressed: () {
+                //     Navigator.of(context).pop();
+                //     //blaaaaaaaaaaaaaaaaaaaa
+                //   },
+                //   child: Text('Cancel'),
+                // ),
               ],
             ),
           );
@@ -396,6 +397,15 @@ class _OptionState extends State<Option> {
           ),
         );
       }
+    } else if (barcodeScanRes == '-1') {
+      print("fetttttttOpP");
+
+      Navigator.of(context).pop();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? savedInventory = prefs.getString('inventory');
+      print("------------------------------");
+      print(savedInventory);
+      showCartDialog(savedInventory);
     }
   }
 
@@ -453,13 +463,13 @@ class _OptionState extends State<Option> {
                   },
                   child: Text('Scan Again'),
                 ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    //blaaaaaaaaaaaaaaaaaaaa
-                  },
-                  child: Text('Cancel'),
-                ),
+                // TextButton(
+                //   onPressed: () {
+                //     Navigator.of(context).pop();
+                //     //blaaaaaaaaaaaaaaaaaaaa
+                //   },
+                //   child: Text('Cancel'),
+                // ),
               ],
             ),
           );
@@ -504,8 +514,13 @@ class _OptionState extends State<Option> {
     Future.delayed(Duration.zero, () async {
       // Retrieve the arguments
 
+      var arguments = ModalRoute.of(context)?.settings.arguments;
+
+      print("thissssss");
+      print(arguments);
+      print("shish");
       // Check if arguments are not null and of the expected type
-      if (widget.param != null) {
+      if (arguments == 2) {
         print("dddddddd");
         // Call your function with the passed value
         SharedPreferences prefs = await SharedPreferences.getInstance();

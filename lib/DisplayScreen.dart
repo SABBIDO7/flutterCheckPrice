@@ -8,7 +8,7 @@ import 'components/my_textfield.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'options.dart';
+//import 'options.dart';
 
 // ignore: must_be_immutable
 class DisplayScreen extends StatefulWidget {
@@ -23,6 +23,98 @@ class DisplayScreen extends StatefulWidget {
 class _DisplayScreenState extends State<DisplayScreen> {
   TextEditingController _inputController = TextEditingController(text: '1');
 
+  Future<void> scanRetreiveData(String inventory) async {
+    String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+      '#ff6666', // Scanner overlay color
+      'Cancel', // Cancel button text
+      true, // Show flash icon
+      ScanMode.BARCODE, // Scan mode
+    );
+    if (barcodeScanRes == '-1') {
+      print("fettttttt");
+      Navigator.of(context).pop();
+    }
+
+    // Check if a barcode was successfully scanned
+    if (barcodeScanRes != '-1') {
+      print(barcodeScanRes);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? dbName = prefs.getString('dbName');
+      String? ip = prefs.getString('ip');
+      String? username = prefs.getString('username');
+      String? branch = prefs.getString('branch');
+      // Make an API call with the scanned barcode
+      final apiUrl =
+          'http://$ip/getInventoryItem/'; // Replace with your API endpoint
+      final response = await http.get(Uri.parse(
+          '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName&username=$username&inventory=$inventory'));
+
+      if (response.statusCode == 200) {
+        // Data was found in the database
+        //final data = jsonDecode(response.body);
+        // final encoding = Encoding.getByName('utf-8'); // Use UTF-8 encoding
+        final newdata =
+            jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
+        if (newdata['item'] != "empty") {
+          setState(() {
+            widget.data = newdata;
+          });
+        } else {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => AlertDialog(
+              title: Text('Data Not Found'),
+              content: Text(
+                  'The scanned item barcode was not found in this branch.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+
+                    scanRetreiveData(inventory);
+                    //blaaaaaaaaaaaaaaaaaaaa
+                  },
+                  child: Text('Scan Again'),
+                ),
+                // TextButton(
+                //   onPressed: () {
+                //     Navigator.pushNamedAndRemoveUntil(
+                //       context,
+                //       '/options', // Replace with the route name of OptionsScreen
+                //       (route) =>
+                //           false, // This predicate will remove all routes from the stack
+                //     );
+                //     //blaaaaaaaaaaaaaaaaaaaa
+                //   },
+                //   child: Text('Exit'),
+                // ),
+              ],
+            ),
+          );
+        }
+        // Navigate to a new screen to display the data
+      } else {
+        // Data not found in the database
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Data Not Found'),
+            content: Text('Request error.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> scanAnotherTimeFail(String inventory) async {
     String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
       '#ff6666', // Scanner overlay color
@@ -31,10 +123,10 @@ class _DisplayScreenState extends State<DisplayScreen> {
       ScanMode.BARCODE, // Scan mode
     );
     if (barcodeScanRes == '-1') {
-      Navigator.of(context).pop();
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => Option(param: '1'),
-      ));
+      Navigator.of(context).pop(1);
+      // Navigator.of(context).push(MaterialPageRoute(
+      //   builder: (context) => Option(param: '1'),
+      // ));
     }
 
     // Check if a barcode was successfully scanned
@@ -141,95 +233,8 @@ class _DisplayScreenState extends State<DisplayScreen> {
         // Successful login, handle the response as needed
         ////////////////////////////////////////////////////
         // Function to handle scanning and data retrieval
-
-        String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', // Scanner overlay color
-          'Cancel', // Cancel button text
-          true, // Show flash icon
-          ScanMode.BARCODE, // Scan mode
-        );
-        if (barcodeScanRes == '-1') {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => Option(param: '1'),
-          ));
-        }
-
-        // Check if a barcode was successfully scanned
-        if (barcodeScanRes != '-1') {
-          print(barcodeScanRes);
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          String? dbName = prefs.getString('dbName');
-          String? ip = prefs.getString('ip');
-          String? username = prefs.getString('username');
-          String? branch = prefs.getString('branch');
-          // Make an API call with the scanned barcode
-          final apiUrl =
-              'http://$ip/getInventoryItem/'; // Replace with your API endpoint
-          final response = await http.get(Uri.parse(
-              '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName&username=$username&inventory=$inventory'));
-
-          if (response.statusCode == 200) {
-            // Data was found in the database
-            //final data = jsonDecode(response.body);
-            // final encoding = Encoding.getByName('utf-8'); // Use UTF-8 encoding
-            final newdata = jsonDecode(
-                utf8.decode(response.bodyBytes, allowMalformed: true));
-            if (newdata['item'] != "empty") {
-              setState(() {
-                widget.data = newdata;
-              });
-            } else {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) => AlertDialog(
-                  title: Text('Data Not Found'),
-                  content: Text(
-                      'The scanned item barcode was not found in this branch.'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        scanAnotherTimeFail(inventory);
-                        //blaaaaaaaaaaaaaaaaaaaa
-                      },
-                      child: Text('Scan Again'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          '/options', // Replace with the route name of OptionsScreen
-                          (route) =>
-                              false, // This predicate will remove all routes from the stack
-                        );
-                        //blaaaaaaaaaaaaaaaaaaaa
-                      },
-                      child: Text('Exit'),
-                    ),
-                  ],
-                ),
-              );
-            }
-            // Navigate to a new screen to display the data
-          } else {
-            // Data not found in the database
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text('Data Not Found'),
-                content: Text('Request error.'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('OK'),
-                  ),
-                ],
-              ),
-            );
-          }
-        }
+//honnnnnnnnnnnnn
+        scanRetreiveData(inventory);
       } else {
         // Handle login failure (e.g., incorrect credentials)
         print("Failure");
