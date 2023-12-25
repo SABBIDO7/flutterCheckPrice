@@ -209,8 +209,8 @@ class _LoginPageState extends State<LoginPage> {
                           validator: (value) {
                             if (value == null ||
                                 value.isEmpty ||
-                                !RegExp(r'^[0-9]+$').hasMatch(value)) {
-                              return 'Please enter a valid Branche Number';
+                                !RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
+                              return 'Please enter a valid Branch Number (letters and numbers only)';
                             }
                             return null;
                           },
