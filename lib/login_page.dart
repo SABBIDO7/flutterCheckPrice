@@ -40,13 +40,15 @@ class _LoginPageState extends State<LoginPage> {
       /*String password,*/
       String branch,
       String ip,
-      String dbName) async {
+      String dbName,
+      int flag) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('username', username);
     //prefs.setString('password', password);
     prefs.setString('branch', branch);
     prefs.setString('dbName', dbName);
     prefs.setString('ip', ip);
+    prefs.setInt('flag', 1);
   }
 
   // sign user in method
@@ -69,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
         if (data['status'] == true) {
           // Successful login, handle the response as needed
           if (flag != 1) {
-            saveUserCredentials(username, /* password,*/ branch, ip, dB);
+            saveUserCredentials(username, /* password,*/ branch, ip, dB, 1);
           }
           // Successful login, navigate to the HomeScreen
           Navigator.of(context).pushReplacement(
@@ -110,19 +112,17 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<bool> checkSavedCredentials() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? savedUsername = prefs.getString('username');
+    String savedUsername = prefs.getString('username') ?? "";
 
-    String? savedBranch = prefs.getString('branch');
-    String? savedIp = prefs.getString('ip');
+    String savedBranch = prefs.getString('branch') ?? "";
+    String savedIp = prefs.getString('ip') ?? "";
 
-    String? savedDb = prefs.getString('dbName');
+    String savedDb = prefs.getString('dbName') ?? "";
+    int savedFlag = prefs.getInt('flag') ?? 0;
 
-    if (savedUsername != null &&
-        savedBranch != null &&
-        savedDb != null &&
-        savedIp != null) {
+    if (savedFlag != 0) {
       print("adim");
-
+      //eendo prob
       // Credentials are found, attempt to sign in
       return await signUserIn(
           savedUsername, savedBranch, 1, savedDb, savedIp, context);

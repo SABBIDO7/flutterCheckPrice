@@ -70,10 +70,20 @@ class _OptionState extends State<Option> {
                   children: [
                     // Add your ComboBox and other widgets here
                     // ...
-                    Text(
-                      "Select Inventory",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Select Inventory",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        Text(
+                          "$username",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ],
                     ),
                     MyDropdownButtonFormField(
                       items: inventories,
