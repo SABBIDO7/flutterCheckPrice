@@ -53,43 +53,48 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> updateBranch(String branchUpdated, BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? username = prefs.getString('username');
-    String? password = prefs.getString('password');
+    //String? username = prefs.getString('username');
+    //String? password = prefs.getString('password');
     String? branch = prefs.getString('branch');
     String? dbName = prefs.getString('dbName');
     print(dbName);
-    String? ip = prefs.getString('ip');
+    //String? ip = prefs.getString('ip');
 
     if (branch == branchUpdated) {
       setState(() {
         errorMessage = "You are already in this branch";
       });
     } else {
-      final url = Uri.parse(
-          'http://$ip/updateBranch/?username=$username&password=$password&newbranch=$branchUpdated&dbName=$dbName');
-      try {
-        final response = await http.post(
-          url,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        );
-        print(response);
+      setState(() {
+        prefs.setString('branch', branchUpdated);
+        errorMessage = "Your branch has been updated";
+      });
 
-        if (response.statusCode == 201) {
-          final data = jsonDecode(response.body);
-          print(data['status']);
-          if (data['status'] == "True") {
-            setState(() {
-              prefs.setString('branch', branchUpdated);
-              errorMessage = "Your branch has been updated";
-            });
-          } else if (data['status'] == "noBranchFound") {
-            setState(() {
-              errorMessage = "This branch does not exsist";
-            });
-          }
-        }
+      // final url = Uri.parse(
+      //     'http://$ip/updateBranch/?username=$username&newbranch=$branchUpdated&dbName=$dbName');
+      try {
+        // final response = await http.post(
+        //   url,
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //   },
+        // );
+        // print(response);
+
+        // if (response.statusCode == 201) {
+        //   final data = jsonDecode(response.body);
+        //   print(data['status']);
+        //   if (data['status'] == "True") {
+        //     setState(() {
+        //       prefs.setString('branch', branchUpdated);
+        //       errorMessage = "Your branch has been updated";
+        //     });
+        //   } else if (data['status'] == "noBranchFound") {
+        //     setState(() {
+        //       errorMessage = "This branch does not exsist";
+        //     });
+        //   }
+        // }
       } catch (e) {
         print("Error: $e");
       }
@@ -125,19 +130,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   SizedBox(height: screenHeight * 0.05),
                   // Branch dropdown using MyDropdownButtonFormField
                   MyDropdownButtonFormField(
-                    items: branches,
-                    value: null,
-                    hintText: 'Select Branch',
-                    onChanged: (dynamic selectedBranch) {
-                      branchController.text = selectedBranch;
-                    },
-                    validator: (dynamic value) {
-                      if (value == null) {
-                        return 'Please select a branch';
-                      }
-                      return null;
-                    },
-                  ),
+                      items: branches,
+                      value: null,
+                      hintText: 'Select Branch',
+                      onChanged: (dynamic selectedBranch) {
+                        branchController.text = selectedBranch;
+                      },
+                      validator: (dynamic value) {
+                        if (value == null) {
+                          return 'Please select a branch';
+                        }
+                        return null;
+                      },
+                      flag: 0,
+                      username: ''),
                   /* MyTextField(
                     controller: branchController,
                     hintText: 'New Branch',

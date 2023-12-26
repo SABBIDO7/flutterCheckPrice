@@ -409,7 +409,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                             ),
                             DataCell(
                               Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Text(
@@ -633,7 +633,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                             ),
                             DataCell(
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
                                     "Hand Qty :",

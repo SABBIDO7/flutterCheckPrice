@@ -56,10 +56,11 @@ class _OptionState extends State<Option> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
+        return AlertDialog(
           backgroundColor: Colors.grey[200],
-          child: Container(
-            padding: EdgeInsets.all(16.0),
+          content: Container(
+            width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.all(2),
             child: SingleChildScrollView(
               child: Form(
                 key: _formKey,
@@ -90,6 +91,8 @@ class _OptionState extends State<Option> {
                         }
                         return null;
                       },
+                      flag: 1,
+                      username: username,
                     ),
                     Text(
                       errorMessage,
@@ -190,6 +193,7 @@ class _OptionState extends State<Option> {
         return Dialog(
           backgroundColor: Colors.grey[200],
           child: Container(
+            width: (MediaQuery.of(context).size.width),
             padding: EdgeInsets.all(16.0),
             child: SingleChildScrollView(
               child: Form(

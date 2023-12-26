@@ -18,7 +18,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   // text editing controllers
   final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
+  //final passwordController = TextEditingController();
   final branchController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late Future<bool> response;
@@ -35,21 +35,25 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // Save user credentials to shared preferences
-  Future<void> saveUserCredentials(String username, String password,
-      String branch, String ip, String dbName) async {
+  Future<void> saveUserCredentials(
+      String username,
+      /*String password,*/
+      String branch,
+      String ip,
+      String dbName) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('username', username);
-    prefs.setString('password', password);
+    //prefs.setString('password', password);
     prefs.setString('branch', branch);
     prefs.setString('dbName', dbName);
     prefs.setString('ip', ip);
   }
 
   // sign user in method
-  Future<bool> signUserIn(String username, String password, String branch,
+  Future<bool> signUserIn(String username, /*String password,*/ String branch,
       int flag, String dB, String ip, BuildContext context) async {
     final url = Uri.parse(
-        'http://$ip/Checkuser/?username=$username&password=$password&branch=$branch&dbName=$dB');
+        'http://$ip/Checkuser/?username=$username&branch=$branch&dbName=$dB');
 
     try {
       final response = await http.post(
@@ -65,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
         if (data['status'] == true) {
           // Successful login, handle the response as needed
           if (flag != 1) {
-            saveUserCredentials(username, password, branch, ip, dB);
+            saveUserCredentials(username, /* password,*/ branch, ip, dB);
           }
           // Successful login, navigate to the HomeScreen
           Navigator.of(context).pushReplacement(
@@ -107,22 +111,21 @@ class _LoginPageState extends State<LoginPage> {
   Future<bool> checkSavedCredentials() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? savedUsername = prefs.getString('username');
-    String? savedPassword = prefs.getString('password');
+
     String? savedBranch = prefs.getString('branch');
     String? savedIp = prefs.getString('ip');
 
     String? savedDb = prefs.getString('dbName');
 
     if (savedUsername != null &&
-        savedPassword != null &&
         savedBranch != null &&
         savedDb != null &&
         savedIp != null) {
       print("adim");
 
       // Credentials are found, attempt to sign in
-      return await signUserIn(savedUsername, savedPassword, savedBranch, 1,
-          savedDb, savedIp, context);
+      return await signUserIn(
+          savedUsername, savedBranch, 1, savedDb, savedIp, context);
     } else {
       print("jdid");
 
@@ -183,22 +186,22 @@ class _LoginPageState extends State<LoginPage> {
                           flag: 0,
                         ),
 
-                        SizedBox(height: screenHeight * 0.015),
+                        // SizedBox(height: screenHeight * 0.015),
 
-                        // password textfield
-                        // username textfield
-                        MyTextField(
-                          controller: passwordController,
-                          hintText: 'Password',
-                          obscureText: true,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a valid password';
-                            }
-                            return null;
-                          },
-                          flag: 0,
-                        ),
+                        // // password textfield
+                        // // username textfield
+                        // MyTextField(
+                        //   controller: passwordController,
+                        //   hintText: 'Password',
+                        //   obscureText: true,
+                        //   validator: (value) {
+                        //     if (value == null || value.isEmpty) {
+                        //       return 'Please enter a valid password';
+                        //     }
+                        //     return null;
+                        //   },
+                        //   flag: 0,
+                        // ),
 
                         SizedBox(height: screenHeight * 0.015),
 
@@ -262,7 +265,7 @@ class _LoginPageState extends State<LoginPage> {
                             if (_formKey.currentState!.validate()) {
                               signUserIn(
                                   usernameController.text,
-                                  passwordController.text,
+                                  //passwordController.text,
                                   branchController.text,
                                   0,
                                   dBController.text,
