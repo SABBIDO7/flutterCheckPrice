@@ -22,6 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   final branchController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late Future<bool> response;
+  late Future<dynamic> savedCreds;
   String errorMessage = '';
   final dBController = TextEditingController();
   final ipController = TextEditingController();
@@ -30,6 +31,9 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     response = checkSavedCredentials();
+
+    savedCreds = getSavedCredentials();
+
     errorMessage = '';
     print('inital $response');
   }
@@ -63,14 +67,14 @@ class _LoginPageState extends State<LoginPage> {
         headers: {
           'Content-Type': 'application/json',
         },
-      ).timeout(Duration(seconds: 10));
+      ).timeout(Duration(seconds: 5));
       print(response);
 
       if (response.statusCode == 201) {
         final data = jsonDecode(response.body);
         if (data['status'] == true) {
           // Successful login, handle the response as needed
-          if (flag != 1) {
+          if (flag == -1) {
             saveUserCredentials(username, /* password,*/ branch, ip, dB, 1);
           }
           // Successful login, navigate to the HomeScreen
@@ -118,17 +122,53 @@ class _LoginPageState extends State<LoginPage> {
     String savedIp = prefs.getString('ip') ?? "";
 
     String savedDb = prefs.getString('dbName') ?? "";
-    int savedFlag = prefs.getInt('flag') ?? 0;
-
-    if (savedFlag != 0) {
+    int savedFlag = prefs.getInt('flag') ?? -1;
+    print(savedFlag);
+    print("opaa");
+    if (savedFlag != -1) {
       print("adim");
       //eendo prob
-      // Credentials are found, attempt to sign in
-      return await signUserIn(
-          savedUsername, savedBranch, 1, savedDb, savedIp, context);
+      if (savedFlag == 1) {
+        // Credentials are found, attempt to sign in //dayman ha tsahyik she mayfout aal app eza sah bet fawto aal app else bterjaa btekhdi aa login page maa l error li sar
+        return await signUserIn(
+            savedUsername, savedBranch, 1, savedDb, savedIp, context);
+      }
+      //eemil logout bi ido
+      return false;
     } else {
       print("jdid");
 
+      return false;
+    }
+  }
+
+  Future<dynamic> getSavedCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String savedUsername = prefs.getString('username') ?? "";
+
+    String savedBranch = prefs.getString('branch') ?? "";
+    String savedIp = prefs.getString('ip') ?? "";
+
+    String savedDb = prefs.getString('dbName') ?? "";
+    int savedFlag = prefs.getInt('flag') ?? -1;
+    print(savedFlag);
+    print("opa");
+    if (savedFlag == 0 || savedFlag == 1) {
+      setState(() {
+        usernameController.text = savedUsername;
+        print("ppppppppppppppppppp");
+        print(usernameController.text);
+        branchController.text = savedBranch;
+        dBController.text = savedDb;
+        ipController.text = savedIp;
+      });
+      return {
+        "username": savedUsername,
+        "branch": savedBranch,
+        "ip": savedIp,
+        "db": savedDb
+      };
+    } else {
       return false;
     }
   }
@@ -137,151 +177,159 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final mediaQueryData = MediaQuery.of(context);
     final screenHeight = mediaQueryData.size.height;
+
     return FutureBuilder<bool>(
       future: response,
       builder: (context, snapshot) {
         if (snapshot.data == false) {
-          return Scaffold(
-            backgroundColor: Colors.grey[200],
-            body: SafeArea(
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // logo
-                        Icon(
-                          Icons.lock,
-                          size: screenHeight * 0.1,
-                        ),
+          return FutureBuilder<dynamic>(
+              future: savedCreds,
+              builder: (context, snapshotCredentials) {
+                // Check if the data is still loading
 
-                        SizedBox(height: screenHeight * 0.015),
+                return Scaffold(
+                  backgroundColor: Colors.grey[200],
+                  body: SafeArea(
+                    child: Center(
+                      child: SingleChildScrollView(
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // logo
+                              Icon(
+                                Icons.lock,
+                                size: screenHeight * 0.1,
+                              ),
 
-                        // welcome back, you've been missed!
-                        Text(
-                          'Paradox Welcome back',
-                          style: TextStyle(
-                            color: Colors.grey[700],
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                              SizedBox(height: screenHeight * 0.015),
+
+                              // welcome back, you've been missed!
+                              Text(
+                                'Paradox Welcome back',
+                                style: TextStyle(
+                                  color: Colors.grey[700],
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+
+                              SizedBox(height: screenHeight * 0.04),
+
+                              // username textfield
+                              // username textfield
+                              MyTextField(
+                                controller: usernameController,
+                                hintText: 'Username',
+                                obscureText: false,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a valid username';
+                                  }
+                                  return null;
+                                },
+                                flag: 0,
+                              ),
+
+                              // SizedBox(height: screenHeight * 0.015),
+
+                              // // password textfield
+                              // // username textfield
+                              // MyTextField(
+                              //   controller: passwordController,
+                              //   hintText: 'Password',
+                              //   obscureText: true,
+                              //   validator: (value) {
+                              //     if (value == null || value.isEmpty) {
+                              //       return 'Please enter a valid password';
+                              //     }
+                              //     return null;
+                              //   },
+                              //   flag: 0,
+                              // ),
+
+                              SizedBox(height: screenHeight * 0.015),
+
+                              MyTextField(
+                                controller: branchController,
+                                hintText: 'Branch Number',
+                                obscureText: false,
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.isEmpty ||
+                                      !RegExp(r'^[a-zA-Z0-9]+$')
+                                          .hasMatch(value)) {
+                                    return 'Please enter a valid Branch Number (letters and numbers only)';
+                                  }
+                                  return null;
+                                },
+                                flag: 0,
+                              ),
+                              SizedBox(height: screenHeight * 0.015),
+
+                              MyTextField(
+                                controller: dBController,
+                                hintText: 'DB Name',
+                                obscureText: false,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a valid username';
+                                  }
+                                  return null;
+                                },
+                                flag: 0,
+                              ),
+                              SizedBox(height: screenHeight * 0.015),
+
+                              MyTextField(
+                                controller: ipController,
+                                hintText: 'Server ip',
+                                obscureText: false,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a valid ip';
+                                  }
+                                  return null;
+                                },
+                                flag: 0,
+                              ),
+                              // Display error message
+                              SizedBox(height: screenHeight * 0.015),
+
+                              Text(
+                                errorMessage,
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              SizedBox(height: screenHeight * 0.005),
+
+                              // sign in button
+                              MyButton(
+                                onTap: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    signUserIn(
+                                        usernameController.text,
+                                        //passwordController.text,
+                                        branchController.text,
+                                        -1,
+                                        dBController.text,
+                                        ipController.text,
+                                        context);
+                                  }
+                                },
+                                buttonName: "Login",
+                              ),
+                            ],
                           ),
                         ),
-
-                        SizedBox(height: screenHeight * 0.04),
-
-                        // username textfield
-                        // username textfield
-                        MyTextField(
-                          controller: usernameController,
-                          hintText: 'Username',
-                          obscureText: false,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a valid username';
-                            }
-                            return null;
-                          },
-                          flag: 0,
-                        ),
-
-                        // SizedBox(height: screenHeight * 0.015),
-
-                        // // password textfield
-                        // // username textfield
-                        // MyTextField(
-                        //   controller: passwordController,
-                        //   hintText: 'Password',
-                        //   obscureText: true,
-                        //   validator: (value) {
-                        //     if (value == null || value.isEmpty) {
-                        //       return 'Please enter a valid password';
-                        //     }
-                        //     return null;
-                        //   },
-                        //   flag: 0,
-                        // ),
-
-                        SizedBox(height: screenHeight * 0.015),
-
-                        MyTextField(
-                          controller: branchController,
-                          hintText: 'Branch Number',
-                          obscureText: false,
-                          validator: (value) {
-                            if (value == null ||
-                                value.isEmpty ||
-                                !RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
-                              return 'Please enter a valid Branch Number (letters and numbers only)';
-                            }
-                            return null;
-                          },
-                          flag: 0,
-                        ),
-                        SizedBox(height: screenHeight * 0.015),
-
-                        MyTextField(
-                          controller: dBController,
-                          hintText: 'DB Name',
-                          obscureText: false,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a valid username';
-                            }
-                            return null;
-                          },
-                          flag: 0,
-                        ),
-                        SizedBox(height: screenHeight * 0.015),
-
-                        MyTextField(
-                          controller: ipController,
-                          hintText: 'Server ip',
-                          obscureText: false,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a valid ip';
-                            }
-                            return null;
-                          },
-                          flag: 0,
-                        ),
-                        // Display error message
-                        SizedBox(height: screenHeight * 0.015),
-
-                        Text(
-                          errorMessage,
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 14,
-                          ),
-                        ),
-                        SizedBox(height: screenHeight * 0.005),
-
-                        // sign in button
-                        MyButton(
-                          onTap: () {
-                            if (_formKey.currentState!.validate()) {
-                              signUserIn(
-                                  usernameController.text,
-                                  //passwordController.text,
-                                  branchController.text,
-                                  0,
-                                  dBController.text,
-                                  ipController.text,
-                                  context);
-                            }
-                          },
-                          buttonName: "Login",
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),
-          );
+                );
+              });
         } else {
           return Scaffold(
             body: Center(

@@ -22,6 +22,7 @@ class Option extends StatefulWidget {
 class _OptionState extends State<Option> {
   void showCartDialog(String? savedInventory) async {
     final inventoryController = TextEditingController(text: savedInventory);
+    final barcodeController = TextEditingController();
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
     String errorMessage = '';
@@ -67,6 +68,7 @@ class _OptionState extends State<Option> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Add your ComboBox and other widgets here
                     // ...
@@ -111,9 +113,23 @@ class _OptionState extends State<Option> {
                         fontSize: 14,
                       ),
                     ),
+                    MyTextField(
+                      controller: barcodeController,
+                      hintText: 'Barcode Number',
+                      obscureText: false,
+                      flag: 0,
+                    ),
+                    Text(
+                      errorMessage,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 14,
+                      ),
+                    ),
+
                     // Example buttons
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
                           child: Container(
@@ -140,7 +156,10 @@ class _OptionState extends State<Option> {
                                   prefs.setString(
                                       'inventory', inventoryController.text);
                                   scanAndRetrieveData(
-                                      context, inventoryController.text, 0);
+                                      context,
+                                      inventoryController.text,
+                                      0,
+                                      barcodeController.text);
                                 }
                               },
                               buttonName: "Scan",
@@ -148,7 +167,36 @@ class _OptionState extends State<Option> {
                           ),
                         ),
                       ],
-                    )
+                    ),
+                    // SizedBox(
+                    //   height: MediaQuery.of(context).size.height * 0.01,
+                    // ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     Expanded(
+                    //       child: Container(
+                    //         child: MyButton(
+                    //           onTap: () async {
+                    //             if (_formKey.currentState!.validate()) {
+                    //               SharedPreferences prefs =
+                    //                   await SharedPreferences.getInstance();
+
+                    //               prefs.setString(
+                    //                   'inventory', inventoryController.text);
+                    //               scanAndRetrieveData(
+                    //                   context,
+                    //                   inventoryController.text,
+                    //                   0,
+                    //                   barcodeController.text);
+                    //             }
+                    //           },
+                    //           buttonName: "Barcode Input",
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // )
                   ],
                 ),
               ),
@@ -254,7 +302,7 @@ class _OptionState extends State<Option> {
                                       username, db, nameController.text, ip);
                                   if (inventory_name != "False") {
                                     scanAndRetrieveData(
-                                        context, inventory_name, 1);
+                                        context, inventory_name, 1, "");
                                   } else {
                                     showDialog(
                                       context: context,
@@ -295,13 +343,17 @@ class _OptionState extends State<Option> {
 
   // Function to handle scanning and data retrieval
   Future<void> scanAndRetrieveData(
-      BuildContext context, String inventory, int flag) async {
-    String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-      '#ff6666', // Scanner overlay color
-      'Cancel', // Cancel button text
-      true, // Show flash icon
-      ScanMode.BARCODE, // Scan mode
-    );
+      BuildContext context, String inventory, int flag, String input) async {
+    String barcodeScanRes = input;
+    if (input == "") {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666', // Scanner overlay color
+        'Cancel', // Cancel button text
+        true, // Show flash icon
+        ScanMode.BARCODE, // Scan mode
+      );
+    }
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? dbName = prefs.getString('dbName');
     String? ip = prefs.getString('ip');
@@ -353,8 +405,8 @@ class _OptionState extends State<Option> {
 
           Navigator.of(context)
               .push(MaterialPageRoute(
-            builder: (context) =>
-                DisplayScreen(data: data, inventory: inventory),
+            builder: (context) => DisplayScreen(
+                data: data, inventory: inventory, username: username),
           ))
               .then((value) async {
             // Callback function to be executed after the route is popped
@@ -375,13 +427,16 @@ class _OptionState extends State<Option> {
             barrierDismissible: false,
             builder: (context) => AlertDialog(
               title: Text('Data Not Found'),
-              content: Text(
-                  'The scanned item barcode was not found in this branch.'),
+              content: input != ""
+                  ? Text(
+                      'The scanned item barcode was not found in this branch.\nThe scanned Item Number: $input')
+                  : Text(
+                      'The scanned item barcode was not found in this branch.'),
               actions: [
                 TextButton(
                   onPressed: () {
                     print("vvvvvvvvvvvvvvvvvvvvvvvvv");
-                    scanAndRetrieveData(context, inventory, 2);
+                    scanAndRetrieveData(context, inventory, 2, "");
                     //blaaaaaaaaaaaaaaaaaaaa
                   },
                   child: Text('Scan Again'),

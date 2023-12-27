@@ -102,8 +102,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> logout(BuildContext context) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.remove("flag");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('flag', 0);
     Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
     // Replace '/login' with your actual login route
   }

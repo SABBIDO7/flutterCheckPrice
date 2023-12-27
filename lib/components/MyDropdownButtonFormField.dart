@@ -88,8 +88,8 @@ class MyDropdownButtonFormField extends StatelessWidget {
                                                       2.25
                                                   ? 7
                                                   : 8
-                                              : 16 //kenit 10
-                                          : 16),
+                                              : 14 //kenit 10
+                                          : 14),
                                   softWrap: true,
                                 ),
                               ),

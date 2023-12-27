@@ -14,7 +14,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DisplayScreen extends StatefulWidget {
   Map<String, dynamic> data;
   final String inventory;
-  DisplayScreen({required this.data, required this.inventory});
+  final String? username;
+  DisplayScreen(
+      {required this.data, required this.inventory, required this.username});
 
   @override
   _DisplayScreenState createState() => _DisplayScreenState();
@@ -260,7 +262,8 @@ class _DisplayScreenState extends State<DisplayScreen> {
     final mediaQueryData = MediaQuery.of(context);
     final screenHeight = mediaQueryData.size.height;
     final screenWidth = mediaQueryData.size.width;
-
+    final displayedText =
+        widget.inventory.toString().replaceFirst('dc_${widget.username}_', '');
     print(screenHeight);
 
     return WillPopScope(
@@ -275,7 +278,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
       child: Scaffold(
         backgroundColor: Colors.grey[200],
         appBar: AppBar(
-          title: Text('${widget.inventory}'),
+          title: Text(displayedText, style: const TextStyle(fontSize: 18)),
           backgroundColor: Colors.deepPurple,
         ),
         body: Center(
