@@ -236,7 +236,8 @@ class _DisplayScreenState extends State<DisplayScreen> {
         ////////////////////////////////////////////////////
         // Function to handle scanning and data retrieval
 //honnnnnnnnnnnnn
-        scanRetreiveData(inventory);
+        //scanRetreiveData(inventory);
+        Navigator.of(context).pop();
       } else {
         // Handle login failure (e.g., incorrect credentials)
         print("Failure");
