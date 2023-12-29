@@ -637,28 +637,41 @@ class _OptionState extends State<Option> {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min, // Set mainAxisSize to min
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            child: Image(
+              image: AssetImage('assets/paradoxlogo.jpg'),
+              height: 350,
+              width: 350,
+              // Adjust the width as needed
+            ),
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min, // Set mainAxisSize to min
 
-          children: [
-            MyButton(
-              onTap: () {
-                //here i want to add a cart that opens contains a comboBox getting data from api and two buttons
-                showCartDialog(null);
-              },
-              buttonName: "hand Collected",
+              children: [
+                MyButton(
+                  onTap: () {
+                    //here i want to add a cart that opens contains a comboBox getting data from api and two buttons
+                    showCartDialog(null);
+                  },
+                  buttonName: "hand Collected",
+                ),
+                SizedBox(height: screenHeight * 0.05),
+                MyButton(
+                  onTap: () {
+                    scanAndRetrieveDataPrice(context, 0);
+                  },
+                  buttonName: "checkPrice",
+                ),
+              ],
             ),
-            SizedBox(height: screenHeight * 0.05),
-            MyButton(
-              onTap: () {
-                scanAndRetrieveDataPrice(context, 0);
-              },
-              buttonName: "checkPrice",
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
