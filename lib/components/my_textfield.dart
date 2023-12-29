@@ -27,24 +27,76 @@ class MyTextField extends StatelessWidget {
           border: Border.all(color: Colors.white),
           borderRadius: BorderRadius.circular(15),
         ),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 15),
-          child: TextFormField(
-            // Use TextFormField instead of TextField
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        child: Row(
+          children: [
+            flag == 1
+                ? GestureDetector(
+                    onTap: () {
+                      int currentValue = int.parse(controller.text);
 
-            textAlign: flag == 1 ? TextAlign.center : TextAlign.start,
-            controller: controller,
-            obscureText: obscureText,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: hintText,
-              hintStyle: TextStyle(color: Colors.grey[500]),
-              errorStyle: TextStyle(
-                  fontSize: 16), // Set the font size for the error message
+                      // Increment the value
+                      currentValue--;
+
+                      // Update the controller with the new value
+                      controller.text = currentValue.toString();
+
+                      // Handle the "-" button tap
+                      // You may want to decrement the value in the controller here
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Icon(
+                        Icons.remove,
+                        size: 26,
+                      ),
+                    ),
+                  )
+                : Container(),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 15),
+                child: TextFormField(
+                  // Use TextFormField instead of TextField
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+
+                  textAlign: flag == 1 ? TextAlign.center : TextAlign.start,
+                  controller: controller,
+                  obscureText: obscureText,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: hintText,
+                    hintStyle: TextStyle(color: Colors.grey[500]),
+                    errorStyle: TextStyle(
+                        fontSize:
+                            16), // Set the font size for the error message
+                  ),
+                  validator: validator, // Attach the validator function
+                ),
+              ),
             ),
-            validator: validator, // Attach the validator function
-          ),
+            flag == 1
+                ? GestureDetector(
+                    onTap: () {
+                      int currentValue = int.parse(controller.text);
+
+                      // Increment the value
+                      currentValue++;
+
+                      // Update the controller with the new value
+                      controller.text = currentValue.toString();
+                      // Handle the "+" button tap
+                      // You may want to increment the value in the controller here
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Icon(
+                        Icons.add,
+                        size: 26,
+                      ),
+                    ),
+                  )
+                : Container(),
+          ],
         ),
       ),
     );

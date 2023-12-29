@@ -32,6 +32,7 @@ class _OptionState extends State<Option> {
     String? dbName = prefs.getString('dbName');
     String? ip = prefs.getString('ip');
     String? username = prefs.getString('username');
+    String? branch = prefs.getString('branch');
 
     // Make an API call with the scanned barcode
     final apiUrl =
@@ -77,6 +78,11 @@ class _OptionState extends State<Option> {
                       children: [
                         Text(
                           "Select Inventory",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        Text(
+                          "Branch: $branch",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 16),
                         ),
@@ -436,7 +442,9 @@ class _OptionState extends State<Option> {
                 TextButton(
                   onPressed: () {
                     print("vvvvvvvvvvvvvvvvvvvvvvvvv");
-                    scanAndRetrieveData(context, inventory, 2, "");
+                    //scanAndRetrieveData(context, inventory, 2, input);
+                    Navigator.of(context).pop();
+                    showCartDialog(inventory);
                     //blaaaaaaaaaaaaaaaaaaaa
                   },
                   child: Text('Scan Again'),
