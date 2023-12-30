@@ -262,7 +262,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                             ),
                             DataRow(
                               cells: [
-                                widget.data['item']['sp'] == null
+                                widget.data['item']['sp'] == 'None'
                                     ? widget.data['item']['vat'] == 0
                                         ? DataCell(Center(
                                             child: Text(
@@ -512,7 +512,9 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                 MyButton(
                   onTap: () {
                     // Validation passed, make the update call
-                    ScanAgain();
+                    Navigator.of(context).pop();
+
+                    //ScanAgain();
                   },
                   buttonName: "Scan Again",
                 ),

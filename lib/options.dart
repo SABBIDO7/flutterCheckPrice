@@ -1,3 +1,4 @@
+//import 'package:checkprice/components/customTable.dart';
 import 'package:checkprice/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -307,8 +308,17 @@ class _OptionState extends State<Option> {
                                   String inventory_name = await saveDb(
                                       username, db, nameController.text, ip);
                                   if (inventory_name != "False") {
-                                    scanAndRetrieveData(
-                                        context, inventory_name, 1, "");
+                                    /* scanAndRetrieveData(
+                                        context, inventory_name, 1, "");*/
+                                    Navigator.of(context).pop();
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+
+                                    prefs.setString(
+                                        'inventory', inventory_name);
+                                    String? savedInventory =
+                                        prefs.getString('inventory');
+                                    showCartDialog(savedInventory);
                                   } else {
                                     showDialog(
                                       context: context,
@@ -337,6 +347,127 @@ class _OptionState extends State<Option> {
                         ),
                       ],
                     )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showCartDialogCheckPrice() async {
+    final barcodeController = TextEditingController();
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+    String errorMessage = '';
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? username = prefs.getString('username');
+    String? branch = prefs.getString('branch');
+
+    // Make an API call with the scanned barcode
+
+    //final mediaQueryData = MediaQuery.of(context);
+
+    //final screenHeight = mediaQueryData.size.height;
+    //final screenWidth = mediaQueryData.size.width;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.grey[200],
+          content: Container(
+            width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.all(2),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Add your ComboBox and other widgets here
+                    // ...
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Branch: $branch",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        Text(
+                          "$username",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ],
+                    ),
+
+                    MyTextField(
+                      controller: barcodeController,
+                      hintText: 'Barcode Number',
+                      obscureText: false,
+                      flag: 0,
+                    ),
+                    Text(
+                      errorMessage,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 14,
+                      ),
+                    ),
+
+                    // Example buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            child: MyButton(
+                              onTap: () async {
+                                scanAndRetrieveDataPrice(
+                                    context, 1, barcodeController.text);
+                              },
+                              buttonName: "Scan",
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    // SizedBox(
+                    //   height: MediaQuery.of(context).size.height * 0.01,
+                    // ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     Expanded(
+                    //       child: Container(
+                    //         child: MyButton(
+                    //           onTap: () async {
+                    //             if (_formKey.currentState!.validate()) {
+                    //               SharedPreferences prefs =
+                    //                   await SharedPreferences.getInstance();
+
+                    //               prefs.setString(
+                    //                   'inventory', inventoryController.text);
+                    //               scanAndRetrieveData(
+                    //                   context,
+                    //                   inventoryController.text,
+                    //                   0,
+                    //                   barcodeController.text);
+                    //             }
+                    //           },
+                    //           buttonName: "Barcode Input",
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // )
                   ],
                 ),
               ),
@@ -413,6 +544,7 @@ class _OptionState extends State<Option> {
               .push(MaterialPageRoute(
             builder: (context) => DisplayScreen(
                 data: data, inventory: inventory, username: username),
+            //CustomTable(),
           ))
               .then((value) async {
             // Callback function to be executed after the route is popped
@@ -492,13 +624,17 @@ class _OptionState extends State<Option> {
   }
 
   // Function to handle scanning and data retrieval
-  Future<void> scanAndRetrieveDataPrice(BuildContext context, int flag) async {
-    String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-      '#ff6666', // Scanner overlay color
-      'Cancel', // Cancel button text
-      true, // Show flash icon
-      ScanMode.BARCODE, // Scan mode
-    );
+  Future<void> scanAndRetrieveDataPrice(
+      BuildContext context, int flag, String input) async {
+    String barcodeScanRes = input;
+    if (input == "") {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666', // Scanner overlay color
+        'Cancel', // Cancel button text
+        true, // Show flash icon
+        ScanMode.BARCODE, // Scan mode
+      );
+    }
 
     // Check if a barcode was successfully scanned
     if (barcodeScanRes != '-1') {
@@ -520,10 +656,23 @@ class _OptionState extends State<Option> {
         if (data['item'] != "empty") {
           if (flag == 1) {
             Navigator.of(context).pop();
+          } else {
+            Navigator.of(context).pop();
           }
-          Navigator.of(context).push(MaterialPageRoute(
+
+          Navigator.of(context)
+              .push(MaterialPageRoute(
             builder: (context) => CheckpriceScreen(data: data),
-          ));
+            //CustomTable(),
+          ))
+              .then((value) async {
+            // Callback function to be executed after the route is popped
+            print("dxxxxxxx");
+            // Call your function with the passed value
+
+            showCartDialogCheckPrice();
+            // If value is true, call the showCartDialog function
+          });
         } else {
           if (flag == 1) {
             Navigator.of(context).pop();
@@ -540,7 +689,8 @@ class _OptionState extends State<Option> {
                 TextButton(
                   onPressed: () {
                     print("vvvvvvvvvvvvvvvvvvvvvvvvv");
-                    scanAndRetrieveDataPrice(context, 1);
+                    Navigator.of(context).pop();
+                    showCartDialogCheckPrice();
                     //blaaaaaaaaaaaaaaaaaaaa
                   },
                   child: Text('Scan Again'),
@@ -637,41 +787,44 @@ class _OptionState extends State<Option> {
           ),
         ],
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            child: Image(
-              image: AssetImage('assets/paradoxlogo.jpg'),
-              height: 350,
-              width: 350,
-              // Adjust the width as needed
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              child: Image(
+                image: AssetImage('assets/paradoxlogo.jpg'),
+                height: 350,
+                width: 350,
+                // Adjust the width as needed
+              ),
             ),
-          ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min, // Set mainAxisSize to min
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min, // Set mainAxisSize to min
 
-              children: [
-                MyButton(
-                  onTap: () {
-                    //here i want to add a cart that opens contains a comboBox getting data from api and two buttons
-                    showCartDialog(null);
-                  },
-                  buttonName: "hand Collected",
-                ),
-                SizedBox(height: screenHeight * 0.05),
-                MyButton(
-                  onTap: () {
-                    scanAndRetrieveDataPrice(context, 0);
-                  },
-                  buttonName: "checkPrice",
-                ),
-              ],
+                children: [
+                  MyButton(
+                    onTap: () {
+                      //here i want to add a cart that opens contains a comboBox getting data from api and two buttons
+                      showCartDialog(null);
+                    },
+                    buttonName: "hand Collected",
+                  ),
+                  SizedBox(height: screenHeight * 0.05),
+                  MyButton(
+                    onTap: () {
+                      showCartDialogCheckPrice();
+                    },
+                    buttonName: "checkPrice",
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
