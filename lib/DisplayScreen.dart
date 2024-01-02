@@ -344,20 +344,20 @@ class _DisplayScreenState extends State<DisplayScreen> {
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16),
                           ),
-                          widget.data['item']['sp'] == "None" ||
+                          widget.data['item']['sp'] == "" ||
                                   widget.data['item']['sp'] == null
                               ? Text(
-                                  widget.data['item']['sp'].toString(),
+                                  "-",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16),
                                 )
                               : Text(
-                                  "-",
+                                  widget.data['item']['sp'].toString(),
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16),
-                                ),
+                                )
                         ],
                       ),
                       Row(
@@ -367,20 +367,20 @@ class _DisplayScreenState extends State<DisplayScreen> {
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16),
                           ),
-                          widget.data['item']['sp'] == "None" ||
+                          widget.data['item']['sp'] == "" ||
                                   widget.data['item']['sp'] == null
                               ? Text(
-                                  widget.data['item']['vat'].toString(),
+                                  "-",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16),
                                 )
                               : Text(
-                                  "-",
+                                  widget.data['item']['vat'].toString(),
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16),
-                                ),
+                                )
                         ],
                       ),
                     ],
