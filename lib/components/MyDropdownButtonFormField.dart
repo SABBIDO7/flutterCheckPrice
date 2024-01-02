@@ -68,6 +68,7 @@ class MyDropdownButtonFormField extends StatelessWidget {
             child: DropdownButtonFormField<dynamic>(
               isDense: true,
               itemHeight: null,
+              isExpanded: true,
               value: value,
               hint: Text(
                 hintText,

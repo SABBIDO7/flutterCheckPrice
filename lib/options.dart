@@ -69,28 +69,59 @@ class _OptionState extends State<Option> {
                 key: _formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Add your ComboBox and other widgets here
                     // ...
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Select Inventory",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
+                        Flexible(
+                          child: Center(
+                            child: Text(
+                              "Inventory",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width > 320
+                                          ? 16
+                                          : 14),
+                            ),
+                          ),
                         ),
-                        Text(
-                          "Branch: $branch",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
+                        Flexible(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Center(
+                              child: Text(
+                                "Branch: $branch",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width > 320
+                                            ? 16
+                                            : 14),
+                              ),
+                            ),
+                          ),
                         ),
-                        Text(
-                          "$username",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
+                        Flexible(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Center(
+                              child: Text(
+                                "$username",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width > 320
+                                            ? 16
+                                            : 14),
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -567,9 +598,8 @@ class _OptionState extends State<Option> {
               title: Text('Data Not Found'),
               content: input != ""
                   ? Text(
-                      'The scanned item barcode was not found in this branch.\nThe scanned Item Number: $input')
-                  : Text(
-                      'The scanned item barcode was not found in this branch.'),
+                      'The scanned item barcode was not found.\nThe scanned Item Number: $input')
+                  : Text('The scanned item barcode was not found.'),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -683,8 +713,7 @@ class _OptionState extends State<Option> {
             barrierDismissible: false,
             builder: (context) => AlertDialog(
               title: Text('Data Not Found'),
-              content: Text(
-                  'The scanned item barcode was not found in this branch.'),
+              content: Text('The scanned item barcode was not found.'),
               actions: [
                 TextButton(
                   onPressed: () {

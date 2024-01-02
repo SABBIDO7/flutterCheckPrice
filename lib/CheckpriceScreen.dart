@@ -59,8 +59,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
             context: context,
             builder: (context) => AlertDialog(
               title: Text('Data Not Found'),
-              content: Text(
-                  'The scanned item barcode was not found in this branch.'),
+              content: Text('The scanned item barcode was not found.'),
               actions: [
                 TextButton(
                   onPressed: () {

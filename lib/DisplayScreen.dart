@@ -67,8 +67,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
             barrierDismissible: false,
             builder: (context) => AlertDialog(
               title: Text('Data Not Found'),
-              content: Text(
-                  'The scanned item barcode was not found in this branch.'),
+              content: Text('The scanned item barcode was not found.'),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -163,8 +162,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
             barrierDismissible: false,
             builder: (context) => AlertDialog(
               title: Text('Data Not Found'),
-              content: Text(
-                  'The scanned item barcode was not found in this branch.'),
+              content: Text('The scanned item barcode was not found.'),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -258,6 +256,23 @@ class _DisplayScreenState extends State<DisplayScreen> {
 
 // ...
 
+  String replaceAfterUnderscore(String input, int startPosition, int length) {
+    int underscoreIndex = input.indexOf('_');
+
+    if (underscoreIndex != -1 &&
+        underscoreIndex + startPosition + length <= input.length) {
+      String prefix = input.substring(0, underscoreIndex + startPosition);
+      String suffix = input.substring(underscoreIndex + startPosition + length);
+      // Erase the last two digits
+      String result = '$prefix$suffix';
+      input = result.substring(0, result.length - 2);
+
+      return input; // Replace with 'XXXX' or any desired characters
+    }
+
+    return input; // Return the original string if the replacement is not possible
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQueryData = MediaQuery.of(context);
@@ -279,7 +294,8 @@ class _DisplayScreenState extends State<DisplayScreen> {
       child: Scaffold(
         backgroundColor: Colors.grey[200],
         appBar: AppBar(
-          title: Text(displayedText, style: const TextStyle(fontSize: 18)),
+          title: Text(replaceAfterUnderscore(displayedText, 3, 4),
+              style: const TextStyle(fontSize: 18)),
           backgroundColor: Colors.deepPurple,
         ),
         body: Center(
@@ -719,6 +735,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                     ? DataCell(Center(
                                         child: Text(
                                           "Sale Price",
+                                          textAlign: TextAlign.center,
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 16),

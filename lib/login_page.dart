@@ -227,6 +227,9 @@ class _LoginPageState extends State<LoginPage> {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter a valid username';
                                   }
+                                  if (value.contains(' ')) {
+                                    return 'Username cannot contain spaces';
+                                  }
                                   return null;
                                 },
                                 flag: 0,
