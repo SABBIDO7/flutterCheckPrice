@@ -45,10 +45,10 @@ class MyTextField extends StatelessWidget {
                       // You may want to decrement the value in the controller here
                     },
                     child: Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: Icon(
                         Icons.remove,
-                        size: 26,
+                        size: 30,
                       ),
                     ),
                   )
@@ -90,10 +90,10 @@ class MyTextField extends StatelessWidget {
                       // You may want to increment the value in the controller here
                     },
                     child: Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: Icon(
                         Icons.add,
-                        size: 26,
+                        size: 30,
                       ),
                     ),
                   )

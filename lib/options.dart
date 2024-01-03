@@ -69,7 +69,7 @@ class _OptionState extends State<Option> {
             "Create Item",
             style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.of(context).size.width > 320 ? 16 : 14),
+                fontSize: MediaQuery.of(context).size.width > 320 ? 18 : 14),
           ),
           backgroundColor: Colors.grey[200],
           content: Container(
@@ -96,7 +96,7 @@ class _OptionState extends State<Option> {
                       errorMessage,
                       style: TextStyle(
                         color: Colors.red,
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                     ),
                     MyTextField(
@@ -118,7 +118,7 @@ class _OptionState extends State<Option> {
                       errorMessage,
                       style: TextStyle(
                         color: Colors.red,
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                     ),
                     MyTextField(
@@ -138,7 +138,7 @@ class _OptionState extends State<Option> {
                       errorMessage,
                       style: TextStyle(
                         color: Colors.red,
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                     ),
 
@@ -879,15 +879,15 @@ class _OptionState extends State<Option> {
                     },
                     child: Text('Scan Again'),
                   ),
-                  // TextButton(
-                  //   onPressed: () {
-                  //     Navigator.of(context).pop();
-                  //     showCartDialogCreateItem(
-                  //         barcodeScanRes, inventory, dbName, branch);
-                  //     //blaaaaaaaaaaaaaaaaaaaa
-                  //   },
-                  //   child: Text('Create Item'),
-                  // ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      showCartDialogCreateItem(
+                          barcodeScanRes, inventory, dbName, branch);
+                      //blaaaaaaaaaaaaaaaaaaaa
+                    },
+                    child: Text('Create Item'),
+                  ),
                 ],
               ),
             );
@@ -996,15 +996,15 @@ class _OptionState extends State<Option> {
                     },
                     child: Text('Scan Again'),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      print("vvvvvvvvvvvvvvvvvvvvvvvvv");
-                      Navigator.of(context).pop();
+                  // TextButton(
+                  //   onPressed: () {
+                  //     print("vvvvvvvvvvvvvvvvvvvvvvvvv");
+                  //     Navigator.of(context).pop();
 
-                      //blaaaaaaaaaaaaaaaaaaaa
-                    },
-                    child: Text('Create Item'),
-                  ),
+                  //     //blaaaaaaaaaaaaaaaaaaaa
+                  //   },
+                  //   child: Text('Create Item'),
+                  // ),
                   // TextButton(
                   //   onPressed: () {
                   //     Navigator.of(context).pop();
