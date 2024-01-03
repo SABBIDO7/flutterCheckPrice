@@ -21,45 +21,56 @@ class Option extends StatefulWidget {
 }
 
 class _OptionState extends State<Option> {
-  void showCartDialog(String? savedInventory) async {
-    final inventoryController = TextEditingController(text: savedInventory);
-    final barcodeController = TextEditingController();
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-    String errorMessage = '';
-    List<dynamic> inventories = [];
-
+  saveItemInDb(String itemNumber, String itemName, String inventory,
+      String? dbName, String? branch, String handQuantity) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? dbName = prefs.getString('dbName');
     String? ip = prefs.getString('ip');
-    String? username = prefs.getString('username');
+    String? inventory = prefs.getString('inventory');
     String? branch = prefs.getString('branch');
 
-    // Make an API call with the scanned barcode
-    final apiUrl =
-        'http://$ip/getInventories/'; // Replace with your API endpoint
-    final response =
-        await http.get(Uri.parse('$apiUrl?username=$username&dbName=$dbName'));
+    try {
+      // Make an API call with the scanned barcode
+      final apiUrl = 'http://$ip/createItem/'; // Replace with your API endpoint
+      final response = await http.post(Uri.parse(
+          '$apiUrl?itemNumber=$itemNumber&itemName=$itemName&inventory=$inventory&dbName=$dbName&branch=$branch&handQuantity=$handQuantity'));
 
-    if (response.statusCode == 200) {
-      // Data was found in the database
-      final data =
-          jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
-      if (data['status'] != false) {
-        print(data['result']);
-        print(data['status']);
-        print(inventories);
-        inventories = data['result'];
+      if (response.statusCode == 200) {
+        // Data was found in the database
+        final data =
+            jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
+        if (data['status'] == true) {
+          return "True";
+        } else {
+          return "False";
+        }
+      } else {
+        return "False";
       }
-    } else {}
-    //final mediaQueryData = MediaQuery.of(context);
+    } catch (e) {
+      // Handle the exception here
+      print("Error: $e");
+      return "False";
+    }
+  }
 
-    //final screenHeight = mediaQueryData.size.height;
-    //final screenWidth = mediaQueryData.size.width;
+  showCartDialogCreateItem(String barcodeCode, String inventory, String? dbName,
+      String? branch) async {
+    TextEditingController _inputController = TextEditingController(text: '1');
+    final barcodeController = TextEditingController(text: barcodeCode);
+    final itemNameController = TextEditingController();
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    String errorMessage = '';
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          title: Text(
+            "Create Item",
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.of(context).size.width > 320 ? 16 : 14),
+          ),
           backgroundColor: Colors.grey[200],
           content: Container(
             width: MediaQuery.of(context).size.width,
@@ -70,79 +81,38 @@ class _OptionState extends State<Option> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     // Add your ComboBox and other widgets here
                     // ...
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: Center(
-                            child: Text(
-                              "Inventory",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                      MediaQuery.of(context).size.width > 320
-                                          ? 16
-                                          : 14),
-                            ),
-                          ),
-                        ),
-                        Flexible(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Center(
-                              child: Text(
-                                "Branch: $branch",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width > 320
-                                            ? 16
-                                            : 14),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Flexible(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Center(
-                              child: Text(
-                                "$username",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width > 320
-                                            ? 16
-                                            : 14),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+
+                    MyTextField(
+                        controller: barcodeController,
+                        hintText: 'Barcode Number',
+                        obscureText: false,
+                        flag: 0,
+                        readOnly: true),
+                    Text(
+                      errorMessage,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 14,
+                      ),
                     ),
-                    MyDropdownButtonFormField(
-                      items: inventories,
-                      value: savedInventory,
-                      hintText: MediaQuery.of(context).textScaleFactor > 1.5
-                          ? "Select"
-                          : "Select Inventory",
-                      onChanged: (dynamic selectedInventory) {
-                        inventoryController.text =
-                            selectedInventory?.toString() ?? '';
-                      },
-                      validator: (dynamic value) {
-                        if (value == null) {
-                          return 'Please select an inventory';
+                    MyTextField(
+                      controller: itemNameController,
+                      hintText: 'Item Name',
+                      obscureText: false,
+                      flag: 0,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a valid username';
+                        }
+                        if (value.length > 120) {
+                          return 'Username cannot exceed\n120 characters';
                         }
                         return null;
                       },
-                      flag: 1,
-                      username: username,
                     ),
                     Text(
                       errorMessage,
@@ -152,11 +122,18 @@ class _OptionState extends State<Option> {
                       ),
                     ),
                     MyTextField(
-                      controller: barcodeController,
-                      hintText: 'Barcode Number',
-                      obscureText: false,
-                      flag: 0,
-                    ),
+                        controller: _inputController,
+                        hintText: 'Hand Quantity Collected',
+                        obscureText: false,
+                        validator: (value) {
+                          if (value == null ||
+                              value.isEmpty ||
+                              !RegExp(r'^-?\d+(\.\d+)?$').hasMatch(value)) {
+                            return 'Please enter a\nvalid hand quantity';
+                          }
+                          return null;
+                        },
+                        flag: 1),
                     Text(
                       errorMessage,
                       style: TextStyle(
@@ -172,69 +149,52 @@ class _OptionState extends State<Option> {
                         Expanded(
                           child: Container(
                             child: MyButton(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                                showcartCreate(
-                                    context, username!, dbName!, ip!);
+                              onTap: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  // scanAndRetrieveData(
+                                  //       context,
+                                  //       inventory,
+                                  //       0,
+                                  //       barcodeController.text);
+                                  if (await saveItemInDb(
+                                          barcodeCode,
+                                          itemNameController.text,
+                                          inventory,
+                                          dbName,
+                                          branch,
+                                          _inputController.text) ==
+                                      "True") {
+                                    // Validation passed, make the update call
+
+                                    Navigator.of(context).pop();
+                                    showCartDialog(inventory, "");
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text('Insertion Failed'),
+                                        content: Text('Server Request Error.\n' +
+                                            'Please Check your WIFI connection'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .pop(); // Close the AlertDialog
+                                            },
+                                            child: Text('OK'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                }
                               },
                               buttonName: "create",
                             ),
                           ),
                         ),
-                        Expanded(
-                          child: Container(
-                            child: MyButton(
-                              onTap: () async {
-                                print("shoubek");
-                                print(inventoryController.text);
-                                if (_formKey.currentState!.validate()) {
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-
-                                  prefs.setString(
-                                      'inventory', inventoryController.text);
-                                  scanAndRetrieveData(
-                                      context,
-                                      inventoryController.text,
-                                      0,
-                                      barcodeController.text);
-                                }
-                              },
-                              buttonName: "Scan",
-                            ),
-                          ),
-                        ),
                       ],
                     ),
-                    // SizedBox(
-                    //   height: MediaQuery.of(context).size.height * 0.01,
-                    // ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: [
-                    //     Expanded(
-                    //       child: Container(
-                    //         child: MyButton(
-                    //           onTap: () async {
-                    //             if (_formKey.currentState!.validate()) {
-                    //               SharedPreferences prefs =
-                    //                   await SharedPreferences.getInstance();
-
-                    //               prefs.setString(
-                    //                   'inventory', inventoryController.text);
-                    //               scanAndRetrieveData(
-                    //                   context,
-                    //                   inventoryController.text,
-                    //                   0,
-                    //                   barcodeController.text);
-                    //             }
-                    //           },
-                    //           buttonName: "Barcode Input",
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // )
                   ],
                 ),
               ),
@@ -245,35 +205,303 @@ class _OptionState extends State<Option> {
     );
   }
 
+  void showCartDialog(String? savedInventory, String barcodeVariable) async {
+    final inventoryController = TextEditingController(text: savedInventory);
+    final barcodeController = barcodeVariable == ""
+        ? TextEditingController()
+        : TextEditingController(text: barcodeVariable);
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+    String errorMessage = '';
+    List<dynamic> inventories = [];
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? dbName = prefs.getString('dbName');
+    String? ip = prefs.getString('ip');
+    String? username = prefs.getString('username');
+    String? branch = prefs.getString('branch');
+
+    try {
+      // Make an API call with the scanned barcode
+      final apiUrl =
+          'http://$ip/getInventories/'; // Replace with your API endpoint
+      final response = await http
+          .get(Uri.parse('$apiUrl?username=$username&dbName=$dbName'));
+
+      if (response.statusCode == 200) {
+        // Data was found in the database
+        final data =
+            jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
+        if (data['status'] != false) {
+          print(data['result']);
+          print(data['status']);
+          print(inventories);
+          inventories = data['result'];
+        }
+      }
+
+      //final mediaQueryData = MediaQuery.of(context);
+
+      //final screenHeight = mediaQueryData.size.height;
+      //final screenWidth = mediaQueryData.size.width;
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.grey[200],
+            content: Container(
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.all(2),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Add your ComboBox and other widgets here
+                      // ...
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Center(
+                              child: Text(
+                                "Inventory",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width > 320
+                                            ? 16
+                                            : 14),
+                              ),
+                            ),
+                          ),
+                          Flexible(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Center(
+                                child: Text(
+                                  "Branch: $branch",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width >
+                                                  320
+                                              ? 16
+                                              : 14),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Flexible(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Center(
+                                child: Text(
+                                  "$username",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width >
+                                                  320
+                                              ? 16
+                                              : 14),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      MyDropdownButtonFormField(
+                        items: inventories,
+                        value: savedInventory,
+                        hintText: MediaQuery.of(context).textScaleFactor > 1.5
+                            ? "Select"
+                            : "Select Inventory",
+                        onChanged: (dynamic selectedInventory) {
+                          inventoryController.text =
+                              selectedInventory?.toString() ?? '';
+                        },
+                        validator: (dynamic value) {
+                          if (value == null) {
+                            return 'Please select an inventory';
+                          }
+                          return null;
+                        },
+                        flag: 1,
+                        username: username,
+                      ),
+                      Text(
+                        errorMessage,
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 14,
+                        ),
+                      ),
+                      MyTextField(
+                        controller: barcodeController,
+                        hintText: 'Barcode Number',
+                        obscureText: false,
+                        flag: 0,
+                      ),
+                      Text(
+                        errorMessage,
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 14,
+                        ),
+                      ),
+
+                      // Example buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              child: MyButton(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                  showcartCreate(
+                                      context, username!, dbName!, ip!);
+                                },
+                                buttonName: "create",
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              child: MyButton(
+                                onTap: () async {
+                                  print("shoubek");
+                                  print(inventoryController.text);
+                                  if (_formKey.currentState!.validate()) {
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+
+                                    prefs.setString(
+                                        'inventory', inventoryController.text);
+                                    scanAndRetrieveData(
+                                        context,
+                                        inventoryController.text,
+                                        0,
+                                        barcodeController.text);
+                                  }
+                                },
+                                buttonName: "Scan",
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      // SizedBox(
+                      //   height: MediaQuery.of(context).size.height * 0.01,
+                      // ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.center,
+                      //   children: [
+                      //     Expanded(
+                      //       child: Container(
+                      //         child: MyButton(
+                      //           onTap: () async {
+                      //             if (_formKey.currentState!.validate()) {
+                      //               SharedPreferences prefs =
+                      //                   await SharedPreferences.getInstance();
+
+                      //               prefs.setString(
+                      //                   'inventory', inventoryController.text);
+                      //               scanAndRetrieveData(
+                      //                   context,
+                      //                   inventoryController.text,
+                      //                   0,
+                      //                   barcodeController.text);
+                      //             }
+                      //           },
+                      //           buttonName: "Barcode Input",
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      // Data not found in the database
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Data Not Found'),
+          content: Text('Request error.\nCheck your WIFI.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   Future<String> saveDb(
       String username, String dbName, String inventoryName, String ip) async {
     print(username);
 
-    final apiUrl =
-        'http://$ip/createInventory/'; // Replace with your API endpoint
+    try {
+      final apiUrl =
+          'http://$ip/createInventory/'; // Replace with your API endpoint
 
-    final response = await http.post(
-      Uri.parse(
-          '$apiUrl?dbName=$dbName&username=$username&inventory=$inventoryName'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
+      final response = await http.post(
+        Uri.parse(
+            '$apiUrl?dbName=$dbName&username=$username&inventory=$inventoryName'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
 
-    if (response.statusCode == 200) {
-      // Data was found in the database
-      final data =
-          jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
-      if (data['status'] == true) {
-        print(data['result'][0]);
-        String name = data['result'][0];
-        print(name);
-        return name;
+      if (response.statusCode == 200) {
+        // Data was found in the database
+        final data =
+            jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
+        if (data['status'] == true) {
+          print(data['result'][0]);
+          String name = data['result'][0];
+          print(name);
+          return name;
+        } else {
+          return "False";
+        }
       } else {
         return "False";
       }
-    } else {
-      return "No connection or Server Down";
+    } catch (e) {
+      // Data not found in the database
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Data Not Found'),
+          content: Text('Request error.\nCheck your WIFI.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return "False";
     }
   }
 
@@ -316,6 +544,9 @@ class _OptionState extends State<Option> {
                             !RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
                           return 'Please enter a valid name.\nNo Special characters.';
                         }
+                        if (value.length > 10) {
+                          return 'Inventory cannot acceed\n10 characters';
+                        }
                         return null;
                       },
                       flag: 0,
@@ -349,7 +580,7 @@ class _OptionState extends State<Option> {
                                         'inventory', inventory_name);
                                     String? savedInventory =
                                         prefs.getString('inventory');
-                                    showCartDialog(savedInventory);
+                                    showCartDialog(savedInventory, "");
                                   } else {
                                     showDialog(
                                       context: context,
@@ -423,18 +654,57 @@ class _OptionState extends State<Option> {
                   children: [
                     // Add your ComboBox and other widgets here
                     // ...
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   children: [
+                    //     Text(
+                    //       "Branch: $branch",
+                    //       style: TextStyle(
+                    //           fontWeight: FontWeight.bold, fontSize: 16),
+                    //     ),
+                    //     Text(
+                    //       "$username",
+                    //       style: TextStyle(
+                    //           fontWeight: FontWeight.bold, fontSize: 16),
+                    //     ),
+                    //   ],
+                    // ),
+
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Branch: $branch",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
+                        Flexible(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Center(
+                              child: Text(
+                                "Branch: $branch",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width > 320
+                                            ? 16
+                                            : 14),
+                              ),
+                            ),
+                          ),
                         ),
-                        Text(
-                          "$username",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
+                        Flexible(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Center(
+                              child: Text(
+                                "$username",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width > 320
+                                            ? 16
+                                            : 14),
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -546,84 +816,85 @@ class _OptionState extends State<Option> {
       print(inventorytst);
 
       print("///////////////////////////////");
+      try {
+        // Make an API call with the scanned barcode
+        final apiUrl =
+            'http://$ip/getInventoryItem/'; // Replace with your API endpoint
+        final response = await http.get(Uri.parse(
+            '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName&username=$username&inventory=$inventory'));
+        print("hon");
+        if (response.statusCode == 200) {
+          print("heyyyyyy");
+          // Data was found in the database
+          final data =
+              jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
+          print("broooooooooooooooooooo");
+          print(data['item']);
+          print("rawaaa");
 
-      // Make an API call with the scanned barcode
-      final apiUrl =
-          'http://$ip/getInventoryItem/'; // Replace with your API endpoint
-      final response = await http.get(Uri.parse(
-          '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName&username=$username&inventory=$inventory'));
-      print("hon");
-      if (response.statusCode == 200) {
-        print("heyyyyyy");
-        // Data was found in the database
-        final data =
-            jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
-        print("broooooooooooooooooooo");
-        print(data['item']);
-        print("rawaaa");
+          if (data['item'] != "empty") {
+            if (flag == 2) {
+              print("hey niga");
+              //Navigator.of(context).pop();
+            }
 
-        if (data['item'] != "empty") {
-          if (flag == 2) {
-            print("hey niga");
-            //Navigator.of(context).pop();
+            print("jjjjjjjjjjjjjj");
+            Navigator.of(context).pop();
+
+            Navigator.of(context)
+                .push(MaterialPageRoute(
+              builder: (context) => DisplayScreen(
+                  data: data, inventory: inventory, username: username),
+              //CustomTable(),
+            ))
+                .then((value) async {
+              // Callback function to be executed after the route is popped
+              print("dxxxxxxx");
+              // Call your function with the passed value
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              String? savedInventory = prefs.getString('inventory');
+              print("------------------------------");
+              print(savedInventory);
+              showCartDialog(savedInventory, "");
+              // If value is true, call the showCartDialog function
+            });
+          } else {
+            Navigator.of(context).pop();
+
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => AlertDialog(
+                title: Text('Data Not Found'),
+                content: Text(
+                    'The scanned item barcode was not found.\nThe scanned Item Number: $barcodeScanRes'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      print("vvvvvvvvvvvvvvvvvvvvvvvvv");
+                      //scanAndRetrieveData(context, inventory, 2, input);
+                      Navigator.of(context).pop();
+                      showCartDialog(inventory, "");
+                      //blaaaaaaaaaaaaaaaaaaaa
+                    },
+                    child: Text('Scan Again'),
+                  ),
+                  // TextButton(
+                  //   onPressed: () {
+                  //     Navigator.of(context).pop();
+                  //     showCartDialogCreateItem(
+                  //         barcodeScanRes, inventory, dbName, branch);
+                  //     //blaaaaaaaaaaaaaaaaaaaa
+                  //   },
+                  //   child: Text('Create Item'),
+                  // ),
+                ],
+              ),
+            );
           }
-
-          print("jjjjjjjjjjjjjj");
-          Navigator.of(context).pop();
-
-          Navigator.of(context)
-              .push(MaterialPageRoute(
-            builder: (context) => DisplayScreen(
-                data: data, inventory: inventory, username: username),
-            //CustomTable(),
-          ))
-              .then((value) async {
-            // Callback function to be executed after the route is popped
-            print("dxxxxxxx");
-            // Call your function with the passed value
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            String? savedInventory = prefs.getString('inventory');
-            print("------------------------------");
-            print(savedInventory);
-            showCartDialog(savedInventory);
-            // If value is true, call the showCartDialog function
-          });
-        } else {
-          Navigator.of(context).pop();
-
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => AlertDialog(
-              title: Text('Data Not Found'),
-              content: input != ""
-                  ? Text(
-                      'The scanned item barcode was not found.\nThe scanned Item Number: $input')
-                  : Text('The scanned item barcode was not found.'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    print("vvvvvvvvvvvvvvvvvvvvvvvvv");
-                    //scanAndRetrieveData(context, inventory, 2, input);
-                    Navigator.of(context).pop();
-                    showCartDialog(inventory);
-                    //blaaaaaaaaaaaaaaaaaaaa
-                  },
-                  child: Text('Scan Again'),
-                ),
-                // TextButton(
-                //   onPressed: () {
-                //     Navigator.of(context).pop();
-                //     //blaaaaaaaaaaaaaaaaaaaa
-                //   },
-                //   child: Text('Cancel'),
-                // ),
-              ],
-            ),
-          );
+          // Navigate to a new screen to display the data
         }
-        // Navigate to a new screen to display the data
-      } else {
+      } catch (e) {
         // Data not found in the database
         showDialog(
           context: context,
@@ -649,7 +920,7 @@ class _OptionState extends State<Option> {
       String? savedInventory = prefs.getString('inventory');
       print("------------------------------");
       print(savedInventory);
-      showCartDialog(savedInventory);
+      showCartDialog(savedInventory, "");
     }
   }
 
@@ -675,74 +946,84 @@ class _OptionState extends State<Option> {
 
       String? branch = prefs.getString('branch');
       // Make an API call with the scanned barcode
-      final apiUrl = 'http://$ip/getItem/'; // Replace with your API endpoint
-      final response = await http.get(Uri.parse(
-          '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName'));
+      try {
+        final apiUrl = 'http://$ip/getItem/'; // Replace with your API endpoint
+        final response = await http.get(Uri.parse(
+            '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName'));
 
-      if (response.statusCode == 200) {
-        // Data was found in the database
-        final data =
-            jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
-        if (data['item'] != "empty") {
-          if (flag == 1) {
-            Navigator.of(context).pop();
+        if (response.statusCode == 200) {
+          // Data was found in the database
+          final data =
+              jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
+          if (data['item'] != "empty") {
+            if (flag == 1) {
+              Navigator.of(context).pop();
+            } else {
+              Navigator.of(context).pop();
+            }
+
+            Navigator.of(context)
+                .push(MaterialPageRoute(
+              builder: (context) => CheckpriceScreen(data: data),
+              //CustomTable(),
+            ))
+                .then((value) async {
+              // Callback function to be executed after the route is popped
+              print("dxxxxxxx");
+              // Call your function with the passed value
+
+              showCartDialogCheckPrice();
+              // If value is true, call the showCartDialog function
+            });
           } else {
-            Navigator.of(context).pop();
+            if (flag == 1) {
+              Navigator.of(context).pop();
+            }
+
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => AlertDialog(
+                title: Text('Data Not Found'),
+                content: Text('The scanned item barcode was not found.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      print("vvvvvvvvvvvvvvvvvvvvvvvvv");
+                      Navigator.of(context).pop();
+                      showCartDialogCheckPrice();
+                      //blaaaaaaaaaaaaaaaaaaaa
+                    },
+                    child: Text('Scan Again'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      print("vvvvvvvvvvvvvvvvvvvvvvvvv");
+                      Navigator.of(context).pop();
+
+                      //blaaaaaaaaaaaaaaaaaaaa
+                    },
+                    child: Text('Create Item'),
+                  ),
+                  // TextButton(
+                  //   onPressed: () {
+                  //     Navigator.of(context).pop();
+                  //     //blaaaaaaaaaaaaaaaaaaaa
+                  //   },
+                  //   child: Text('Cancel'),
+                  // ),
+                ],
+              ),
+            );
           }
-
-          Navigator.of(context)
-              .push(MaterialPageRoute(
-            builder: (context) => CheckpriceScreen(data: data),
-            //CustomTable(),
-          ))
-              .then((value) async {
-            // Callback function to be executed after the route is popped
-            print("dxxxxxxx");
-            // Call your function with the passed value
-
-            showCartDialogCheckPrice();
-            // If value is true, call the showCartDialog function
-          });
-        } else {
-          if (flag == 1) {
-            Navigator.of(context).pop();
-          }
-
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => AlertDialog(
-              title: Text('Data Not Found'),
-              content: Text('The scanned item barcode was not found.'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    print("vvvvvvvvvvvvvvvvvvvvvvvvv");
-                    Navigator.of(context).pop();
-                    showCartDialogCheckPrice();
-                    //blaaaaaaaaaaaaaaaaaaaa
-                  },
-                  child: Text('Scan Again'),
-                ),
-                // TextButton(
-                //   onPressed: () {
-                //     Navigator.of(context).pop();
-                //     //blaaaaaaaaaaaaaaaaaaaa
-                //   },
-                //   child: Text('Cancel'),
-                // ),
-              ],
-            ),
-          );
+          // Navigate to a new screen to display the data
         }
-        // Navigate to a new screen to display the data
-      } else {
-        // Data not found in the database
+      } catch (e) {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: Text('Data Not Found'),
-            content: Text('Request error.'),
+            content: Text('Request error.\nCheck your WIFI.'),
             actions: [
               TextButton(
                 onPressed: () {
@@ -788,7 +1069,7 @@ class _OptionState extends State<Option> {
         String? savedInventory = prefs.getString('inventory');
         print("------------------------------");
         print(savedInventory);
-        showCartDialog(savedInventory);
+        showCartDialog(savedInventory, "");
       }
     });
   }
@@ -838,16 +1119,16 @@ class _OptionState extends State<Option> {
                   MyButton(
                     onTap: () {
                       //here i want to add a cart that opens contains a comboBox getting data from api and two buttons
-                      showCartDialog(null);
+                      showCartDialog(null, "");
                     },
-                    buttonName: "hand Collected",
+                    buttonName: "Quantity To Collect",
                   ),
                   SizedBox(height: screenHeight * 0.05),
                   MyButton(
                     onTap: () {
                       showCartDialogCheckPrice();
                     },
-                    buttonName: "checkPrice",
+                    buttonName: "Check Price",
                   ),
                 ],
               ),

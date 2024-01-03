@@ -39,41 +39,43 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
       String? ip = prefs.getString('ip');
 
       String? branch = prefs.getString('branch');
-      // Make an API call with the scanned barcode
-      final apiUrl = 'http://$ip/getItem/'; // Replace with your API endpoint
-      final response = await http.get(Uri.parse(
-          '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName'));
 
-      if (response.statusCode == 200) {
-        // Data was found in the database
-        final newdata =
-            jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
-        print(newdata['item']);
-        if (newdata['item'] != "empty") {
-          print("mmmihn");
-          setState(() {
-            widget.data = newdata;
-          });
-        } else {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text('Data Not Found'),
-              content: Text('The scanned item barcode was not found.'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('OK'),
-                ),
-              ],
-            ),
-          );
+      try {
+        // Make an API call with the scanned barcode
+        final apiUrl = 'http://$ip/getItem/'; // Replace with your API endpoint
+        final response = await http.get(Uri.parse(
+            '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName'));
+
+        if (response.statusCode == 200) {
+          // Data was found in the database
+          final newdata =
+              jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
+          print(newdata['item']);
+          if (newdata['item'] != "empty") {
+            print("mmmihn");
+            setState(() {
+              widget.data = newdata;
+            });
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('Data Not Found'),
+                content: Text('The scanned item barcode was not found.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }
+          // Navigate to a new screen to display the data
         }
-        // Navigate to a new screen to display the data
-      } else {
-        // Data not found in the database
+      } catch (e) {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -194,27 +196,23 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Row(
-                      children: [
-                        Text(
-                          "TTC :",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                        widget.data['item']['sp'] == "" ||
-                                widget.data['item']['sp'] == null
-                            ? Text(
-                                "-",
+                    widget.data['item']['sp'] != "" &&
+                            widget.data['item']['sp'] != null
+                        ? Row(
+                            children: [
+                              Text(
+                                "TTC :",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 16),
-                              )
-                            : Text(
+                              ),
+                              Text(
                                 widget.data['item']['sp'].toString(),
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 16),
                               )
-                      ],
-                    ),
+                            ],
+                          )
+                        : Container(),
                     Row(
                       children: [
                         Text(

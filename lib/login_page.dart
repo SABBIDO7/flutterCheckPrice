@@ -47,7 +47,8 @@ class _LoginPageState extends State<LoginPage> {
       String dbName,
       int flag) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('username', username);
+
+    prefs.setString('username', username.toLowerCase());
     //prefs.setString('password', password);
     prefs.setString('branch', branch);
     prefs.setString('dbName', dbName);
@@ -229,6 +230,9 @@ class _LoginPageState extends State<LoginPage> {
                                   }
                                   if (value.contains(' ')) {
                                     return 'Username cannot contain spaces';
+                                  }
+                                  if (value.length > 10) {
+                                    return 'Username cannot acceed\n10 characters';
                                   }
                                   return null;
                                 },

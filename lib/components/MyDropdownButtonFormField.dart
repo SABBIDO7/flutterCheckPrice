@@ -77,8 +77,14 @@ class MyDropdownButtonFormField extends StatelessWidget {
               items: items.map((dynamic branch) {
                 var displayedText;
                 if (flag == 1 && username != '') {
-                  displayedText =
-                      branch.toString().replaceFirst('dc_${username}_', '');
+                  print("hougaAAAAAAA");
+                  String? usernameLower = username?.toLowerCase();
+                  print(usernameLower);
+                  displayedText = branch
+                      .toString()
+                      .replaceFirst('dc_${usernameLower}_', '');
+                  print(displayedText);
+                  print(username);
                   displayedText = replaceAfterUnderscore(displayedText, 3, 4);
                   /*displayedText = displayedText.replaceRange(
                       2, 7, ''); */ // Replace at the 3rd position

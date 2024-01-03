@@ -33,7 +33,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
       ScanMode.BARCODE, // Scan mode
     );
     if (barcodeScanRes == '-1') {
-      print("fettttttt");
+      print("fettttttttttttttttttttttnew");
       Navigator.of(context).pop();
     }
 
@@ -45,63 +45,64 @@ class _DisplayScreenState extends State<DisplayScreen> {
       String? ip = prefs.getString('ip');
       String? username = prefs.getString('username');
       String? branch = prefs.getString('branch');
-      // Make an API call with the scanned barcode
-      final apiUrl =
-          'http://$ip/getInventoryItem/'; // Replace with your API endpoint
-      final response = await http.get(Uri.parse(
-          '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName&username=$username&inventory=$inventory'));
+      try {
+        // Make an API call with the scanned barcode
+        final apiUrl =
+            'http://$ip/getInventoryItem/'; // Replace with your API endpoint
+        final response = await http.get(Uri.parse(
+            '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName&username=$username&inventory=$inventory'));
 
-      if (response.statusCode == 200) {
-        // Data was found in the database
-        //final data = jsonDecode(response.body);
-        // final encoding = Encoding.getByName('utf-8'); // Use UTF-8 encoding
-        final newdata =
-            jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
-        if (newdata['item'] != "empty") {
-          setState(() {
-            widget.data = newdata;
-          });
-        } else {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => AlertDialog(
-              title: Text('Data Not Found'),
-              content: Text('The scanned item barcode was not found.'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
+        if (response.statusCode == 200) {
+          // Data was found in the database
+          //final data = jsonDecode(response.body);
+          // final encoding = Encoding.getByName('utf-8'); // Use UTF-8 encoding
+          final newdata =
+              jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
+          if (newdata['item'] != "empty") {
+            setState(() {
+              widget.data = newdata;
+            });
+          } else {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => AlertDialog(
+                title: Text('Data Not Found'),
+                content: Text('The scanned item barcode was not found.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
 
-                    scanRetreiveData(inventory);
-                    //blaaaaaaaaaaaaaaaaaaaa
-                  },
-                  child: Text('Scan Again'),
-                ),
-                // TextButton(
-                //   onPressed: () {
-                //     Navigator.pushNamedAndRemoveUntil(
-                //       context,
-                //       '/options', // Replace with the route name of OptionsScreen
-                //       (route) =>
-                //           false, // This predicate will remove all routes from the stack
-                //     );
-                //     //blaaaaaaaaaaaaaaaaaaaa
-                //   },
-                //   child: Text('Exit'),
-                // ),
-              ],
-            ),
-          );
+                      scanRetreiveData(inventory);
+                      //blaaaaaaaaaaaaaaaaaaaa
+                    },
+                    child: Text('Scan Again'),
+                  ),
+                  // TextButton(
+                  //   onPressed: () {
+                  //     Navigator.pushNamedAndRemoveUntil(
+                  //       context,
+                  //       '/options', // Replace with the route name of OptionsScreen
+                  //       (route) =>
+                  //           false, // This predicate will remove all routes from the stack
+                  //     );
+                  //     //blaaaaaaaaaaaaaaaaaaaa
+                  //   },
+                  //   child: Text('Exit'),
+                  // ),
+                ],
+              ),
+            );
+          }
+          // Navigate to a new screen to display the data
         }
-        // Navigate to a new screen to display the data
-      } else {
-        // Data not found in the database
+      } catch (e) {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: Text('Data Not Found'),
-            content: Text('Request error.'),
+            content: Text('Request error.\nCheck your WIFI.'),
             actions: [
               TextButton(
                 onPressed: () {
@@ -138,64 +139,65 @@ class _DisplayScreenState extends State<DisplayScreen> {
       String? ip = prefs.getString('ip');
       String? username = prefs.getString('username');
       String? branch = prefs.getString('branch');
-      // Make an API call with the scanned barcode
-      final apiUrl =
-          'http://$ip/getInventoryItem/'; // Replace with your API endpoint
-      final response = await http.get(Uri.parse(
-          '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName&username=$username&inventory=$inventory'));
+      try {
+        // Make an API call with the scanned barcode
+        final apiUrl =
+            'http://$ip/getInventoryItem/'; // Replace with your API endpoint
+        final response = await http.get(Uri.parse(
+            '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName&username=$username&inventory=$inventory'));
 
-      if (response.statusCode == 200) {
-        // Data was found in the database
-        //final data = jsonDecode(response.body);
-        // final encoding = Encoding.getByName('utf-8'); // Use UTF-8 encoding
-        final data =
-            jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
-        if (data['item'] != "empty") {
-          Navigator.of(context).pop();
-          print("bingooooo");
-          setState(() {
-            widget.data = data;
-          });
-        } else {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => AlertDialog(
-              title: Text('Data Not Found'),
-              content: Text('The scanned item barcode was not found.'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    scanAnotherTimeFail(inventory);
-                    //blaaaaaaaaaaaaaaaaaaaa
-                  },
-                  child: Text('Scan Again'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      '/options', // Replace with the route name of OptionsScreen
-                      (route) =>
-                          false, // This predicate will remove all routes from the stack
-                    );
-                    //blaaaaaaaaaaaaaaaaaaaa
-                  },
-                  child: Text('Exit'),
-                ),
-              ],
-            ),
-          );
+        if (response.statusCode == 200) {
+          // Data was found in the database
+          //final data = jsonDecode(response.body);
+          // final encoding = Encoding.getByName('utf-8'); // Use UTF-8 encoding
+          final data =
+              jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
+          if (data['item'] != "empty") {
+            Navigator.of(context).pop();
+            print("bingooooo");
+            setState(() {
+              widget.data = data;
+            });
+          } else {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => AlertDialog(
+                title: Text('Data Not Found'),
+                content: Text('The scanned item barcode was not found.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      scanAnotherTimeFail(inventory);
+                      //blaaaaaaaaaaaaaaaaaaaa
+                    },
+                    child: Text('Scan Again'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/options', // Replace with the route name of OptionsScreen
+                        (route) =>
+                            false, // This predicate will remove all routes from the stack
+                      );
+                      //blaaaaaaaaaaaaaaaaaaaa
+                    },
+                    child: Text('Exit'),
+                  ),
+                ],
+              ),
+            );
+          }
+          // Navigate to a new screen to display the data
         }
-        // Navigate to a new screen to display the data
-      } else {
-        // Data not found in the database
+      } catch (e) {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: Text('Data Not Found'),
-            content: Text('Request error.'),
+            content: Text('Request error.\nCheck your WIFI.'),
             actions: [
               TextButton(
                 onPressed: () {
@@ -241,7 +243,21 @@ class _DisplayScreenState extends State<DisplayScreen> {
         print("Failure");
       }
     } catch (e) {
-      print("Error: $e");
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Data Not Found'),
+          content: Text('Request error.\nCheck your WIFI.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
 
     /*final response2 = await get(Uri.parse('http://10.0.2.2:8000/getuser/'));
@@ -278,8 +294,9 @@ class _DisplayScreenState extends State<DisplayScreen> {
     final mediaQueryData = MediaQuery.of(context);
     final screenHeight = mediaQueryData.size.height;
     final screenWidth = mediaQueryData.size.width;
+    String? usernameLower = widget.username?.toLowerCase();
     final displayedText =
-        widget.inventory.toString().replaceFirst('dc_${widget.username}_', '');
+        widget.inventory.toString().replaceFirst('dc_${usernameLower}_', '');
     print(screenHeight);
 
     return WillPopScope(
@@ -337,29 +354,25 @@ class _DisplayScreenState extends State<DisplayScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            "TTC :",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          widget.data['item']['sp'] == "" ||
-                                  widget.data['item']['sp'] == null
-                              ? Text(
-                                  "-",
+                      widget.data['item']['sp'] != "" &&
+                              widget.data['item']['sp'] != null
+                          ? Row(
+                              children: [
+                                Text(
+                                  "TTC :",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16),
-                                )
-                              : Text(
+                                ),
+                                Text(
                                   widget.data['item']['sp'].toString(),
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16),
                                 )
-                        ],
-                      ),
+                              ],
+                            )
+                          : Container(),
                       Row(
                         children: [
                           Text(
