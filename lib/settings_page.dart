@@ -9,8 +9,11 @@ import 'components/my_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import 'components/switch.dart';
+
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final bool isOnline;
+  const SettingsScreen({super.key, required this.isOnline});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -28,6 +31,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     errorMessage = '';
     fetchBranches(); // Fetch branches when the screen initializes
   }
+
+  // Future<bool> isOnlineStatus() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   bool? isOnline = prefs.getBool('isOnline');
+  //   return isOnline ?? false;
+  // }
 
   Future<void> fetchBranches() async {
     // Fetch the list of branches from your backend API
@@ -179,6 +188,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       logout(context);
                     },
                     buttonName: "Logout",
+                  ),
+                  SizedBox(height: screenHeight * 0.05),
+                  Row(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 25),
+                        child: Text(
+                          "Switch Mode :",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      SwitchExample(isOnline: widget.isOnline),
+                    ],
                   ),
                 ],
               ),

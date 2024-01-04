@@ -1039,11 +1039,11 @@ class _OptionState extends State<Option> {
   }
 
   // Function to navigate to the settings page
-  void navigateToSettings(BuildContext context) {
+  void navigateToSettings(BuildContext context, bool isOnline) {
     // Navigate to the settings page
     // Replace 'SettingsScreen' with the actual screen you want to navigate to
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => SettingsScreen(),
+      builder: (context) => SettingsScreen(isOnline: isOnline),
     ));
   }
 
@@ -1090,9 +1090,11 @@ class _OptionState extends State<Option> {
           // Add the settings icon to the AppBar
           IconButton(
             icon: Icon(Icons.settings),
-            onPressed: () {
+            onPressed: () async {
               // Call the function to navigate to the settings page
-              navigateToSettings(context);
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              bool? isOnline = prefs.getBool('isOnline');
+              navigateToSettings(context, isOnline ?? false);
             },
           ),
         ],

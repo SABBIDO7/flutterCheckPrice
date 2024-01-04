@@ -54,6 +54,7 @@ class _LoginPageState extends State<LoginPage> {
     prefs.setString('dbName', dbName);
     prefs.setString('ip', ip);
     prefs.setInt('flag', 1);
+    prefs.setBool('isOnline', true);
   }
 
   // sign user in method
@@ -199,9 +200,21 @@ class _LoginPageState extends State<LoginPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               // logo
-                              Icon(
-                                Icons.lock,
-                                size: screenHeight * 0.1,
+                              // Icon(
+                              //   Icons.lock,
+                              //   size: screenHeight * 0.1,
+                              // ),
+
+                              Container(
+                                child: ClipOval(
+                                  child: Image(
+                                    image: AssetImage('assets/paradoxlogo.jpg'),
+                                    height: 90,
+                                    width: 90,
+                                    fit:
+                                        BoxFit.fill, // Adjust the fit as needed
+                                  ),
+                                ),
                               ),
 
                               SizedBox(height: screenHeight * 0.015),
