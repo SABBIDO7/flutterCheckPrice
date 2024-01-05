@@ -20,7 +20,8 @@ class MyDropdownButtonFormField extends StatelessWidget {
     required this.username,
   }) : super(key: key);
 
-  String replaceAfterUnderscore(String input, int startPosition, int length) {
+  Future<String> replaceAfterUnderscore(
+      String input, int startPosition, int length) async {
     int underscoreIndex = input.indexOf('_');
 
     if (underscoreIndex != -1 &&
@@ -29,7 +30,10 @@ class MyDropdownButtonFormField extends StatelessWidget {
       String suffix = input.substring(underscoreIndex + startPosition + length);
       // Erase the last two digits
       String result = '$prefix$suffix';
+      result = result.replaceAll("_off", "");
+
       input = result.substring(0, result.length - 2);
+
       print(result);
       print("displayedddd");
       print(input);

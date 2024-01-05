@@ -289,6 +289,20 @@ class _DisplayScreenState extends State<DisplayScreen> {
     return input; // Return the original string if the replacement is not possible
   }
 
+  Color getAppBarBackgroundColor() {
+    SharedPreferences prefs;
+    bool? isOnline;
+
+    Future<void> fetchData() async {
+      prefs = await SharedPreferences.getInstance();
+      isOnline = prefs.getBool('isOnline');
+    }
+
+    fetchData(); // Call the function to fetch data
+
+    return isOnline == true ? Colors.deepPurple : Colors.grey;
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQueryData = MediaQuery.of(context);
@@ -313,7 +327,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
         appBar: AppBar(
           title: Text(replaceAfterUnderscore(displayedText, 3, 4),
               style: const TextStyle(fontSize: 18)),
-          backgroundColor: Colors.deepPurple,
+          backgroundColor: getAppBarBackgroundColor(),
         ),
         body: Center(
           child: SingleChildScrollView(

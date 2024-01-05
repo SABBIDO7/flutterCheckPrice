@@ -95,6 +95,20 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
     }
   }
 
+  Color getAppBarBackgroundColor() {
+    SharedPreferences prefs;
+    bool? isOnline;
+
+    Future<void> fetchData() async {
+      prefs = await SharedPreferences.getInstance();
+      isOnline = prefs.getBool('isOnline');
+    }
+
+    fetchData(); // Call the function to fetch data
+
+    return isOnline == true ? Colors.deepPurple : Colors.grey;
+  }
+
   @override
   Widget build(BuildContext context) {
     final itemQuantities =

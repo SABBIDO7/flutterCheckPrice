@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'components/MyDropdownButtonFormField.dart';
 import 'components/my_button.dart';
 import 'components/my_textfield.dart';
+import 'offline/sqllite.dart';
 
 class Option extends StatefulWidget {
   final String? param;
@@ -220,24 +221,33 @@ class _OptionState extends State<Option> {
     String? ip = prefs.getString('ip');
     String? username = prefs.getString('username');
     String? branch = prefs.getString('branch');
+    bool? isOnline = prefs.getBool('isOnline');
 
     try {
-      // Make an API call with the scanned barcode
-      final apiUrl =
-          'http://$ip/getInventories/'; // Replace with your API endpoint
-      final response = await http
-          .get(Uri.parse('$apiUrl?username=$username&dbName=$dbName'));
+      if (isOnline == true) {
+        // Make an API call with the scanned barcode
+        final apiUrl =
+            'http://$ip/getInventories/'; // Replace with your API endpoint
+        final response = await http
+            .get(Uri.parse('$apiUrl?username=$username&dbName=$dbName'));
 
-      if (response.statusCode == 200) {
-        // Data was found in the database
-        final data =
-            jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
-        if (data['status'] != false) {
-          print(data['result']);
-          print(data['status']);
-          print(inventories);
-          inventories = data['result'];
+        if (response.statusCode == 200) {
+          // Data was found in the database
+          final data =
+              jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
+          if (data['status'] != false) {
+            print(data['result']);
+            print(data['status']);
+            print(inventories);
+            inventories = data['result'];
+          }
         }
+      }
+      if (isOnline == false) {
+        List<String> tables =
+            await YourDatabaseHelper().getInventories(username);
+        inventories = tables;
+        print("-------------------$inventories");
       }
 
       //final mediaQueryData = MediaQuery.of(context);
@@ -567,39 +577,81 @@ class _OptionState extends State<Option> {
                             child: MyButton(
                               onTap: () async {
                                 if (_formKey.currentState!.validate()) {
-                                  String inventory_name = await saveDb(
-                                      username, db, nameController.text, ip);
-                                  if (inventory_name != "False") {
-                                    /* scanAndRetrieveData(
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  bool? isOnline = prefs.getBool('isOnline');
+                                  if (isOnline == true) {
+                                    String inventory_name = await saveDb(
+                                        username, db, nameController.text, ip);
+                                    if (inventory_name != "False") {
+                                      /* scanAndRetrieveData(
                                         context, inventory_name, 1, "");*/
-                                    Navigator.of(context).pop();
-                                    SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
+                                      Navigator.of(context).pop();
 
-                                    prefs.setString(
-                                        'inventory', inventory_name);
-                                    String? savedInventory =
-                                        prefs.getString('inventory');
-                                    showCartDialog(savedInventory, "");
-                                  } else {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        title: Text('Inventory Already Exsist'),
-                                        content: Text(
-                                            'The name of the Inventory already exists.\n' +
-                                                'Please Choose another Name'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context)
-                                                  .pop(); // Close the AlertDialog
-                                            },
-                                            child: Text('OK'),
-                                          ),
-                                        ],
-                                      ),
-                                    );
+                                      prefs.setString(
+                                          'inventory', inventory_name);
+                                      String? savedInventory =
+                                          prefs.getString('inventory');
+                                      showCartDialog(savedInventory, "");
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title:
+                                              Text('Inventory Already Exsist'),
+                                          content: Text(
+                                              'The name of the Inventory already exists.\n' +
+                                                  'Please Choose another Name'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(); // Close the AlertDialog
+                                              },
+                                              child: Text('OK'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                  }
+                                  if (isOnline == false) {
+                                    String inventory_name = await YourDataSync()
+                                        .databaseHelper
+                                        .createInventoryTable(
+                                            username, db, nameController.text);
+                                    if (inventory_name != "False") {
+                                      /* scanAndRetrieveData(
+                                        context, inventory_name, 1, "");*/
+                                      Navigator.of(context).pop();
+
+                                      prefs.setString(
+                                          'inventory', inventory_name);
+                                      String? savedInventory =
+                                          prefs.getString('inventory');
+                                      print("===============$savedInventory");
+                                      showCartDialog(savedInventory, "");
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title:
+                                              Text('Inventory Already Exsist'),
+                                          content: Text(
+                                              'The name of the Inventory already exists.\n' +
+                                                  'Please Choose another Name'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(); // Close the AlertDialog
+                                              },
+                                              child: Text('OK'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }
                                   }
                                 }
                               },
@@ -946,25 +998,83 @@ class _OptionState extends State<Option> {
 
       String? branch = prefs.getString('branch');
       // Make an API call with the scanned barcode
-      try {
-        final apiUrl = 'http://$ip/getItem/'; // Replace with your API endpoint
-        final response = await http.get(Uri.parse(
-            '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName'));
+      bool? isOnline = prefs.getBool('isOnline');
 
-        if (response.statusCode == 200) {
+      try {
+        if (isOnline == true) {
+          final apiUrl =
+              'http://$ip/getItem/'; // Replace with your API endpoint
+          final response = await http.get(Uri.parse(
+              '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName'));
+
+          if (response.statusCode == 200) {
+            // Data was found in the database
+            final data = jsonDecode(
+                utf8.decode(response.bodyBytes, allowMalformed: true));
+            if (data['item'] != "empty") {
+              if (flag == 1) {
+                Navigator.of(context).pop();
+              } else {
+                Navigator.of(context).pop();
+              }
+
+              Navigator.of(context)
+                  .push(MaterialPageRoute(
+                builder: (context) => CheckpriceScreen(data: data),
+                //CustomTable(),
+              ))
+                  .then((value) async {
+                // Callback function to be executed after the route is popped
+                print("dxxxxxxx");
+                // Call your function with the passed value
+
+                showCartDialogCheckPrice();
+                // If value is true, call the showCartDialog function
+              });
+            } else {
+              if (flag == 1) {
+                Navigator.of(context).pop();
+              }
+
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => AlertDialog(
+                  title: Text('Data Not Found'),
+                  content: Text('The scanned item barcode was not found.'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        print("vvvvvvvvvvvvvvvvvvvvvvvvv");
+                        Navigator.of(context).pop();
+                        showCartDialogCheckPrice();
+                        //blaaaaaaaaaaaaaaaaaaaa
+                      },
+                      child: Text('Scan Again'),
+                    ),
+                  ],
+                ),
+              );
+            }
+            // Navigate to a new screen to display the data
+          }
+        }
+        if (isOnline == false) {
           // Data was found in the database
-          final data =
-              jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
-          if (data['item'] != "empty") {
+          Map<String, dynamic> result =
+              await YourDatabaseHelper().getItem(barcodeScanRes);
+          print(result);
+          if (result['item'] != "empty") {
             if (flag == 1) {
               Navigator.of(context).pop();
             } else {
               Navigator.of(context).pop();
             }
+            print("henge ${result['itemQB']}");
 
             Navigator.of(context)
                 .push(MaterialPageRoute(
-              builder: (context) => CheckpriceScreen(data: data),
+              builder: (context) => CheckpriceScreen(data: result),
               //CustomTable(),
             ))
                 .then((value) async {
@@ -996,22 +1106,6 @@ class _OptionState extends State<Option> {
                     },
                     child: Text('Scan Again'),
                   ),
-                  // TextButton(
-                  //   onPressed: () {
-                  //     print("vvvvvvvvvvvvvvvvvvvvvvvvv");
-                  //     Navigator.of(context).pop();
-
-                  //     //blaaaaaaaaaaaaaaaaaaaa
-                  //   },
-                  //   child: Text('Create Item'),
-                  // ),
-                  // TextButton(
-                  //   onPressed: () {
-                  //     Navigator.of(context).pop();
-                  //     //blaaaaaaaaaaaaaaaaaaaa
-                  //   },
-                  //   child: Text('Cancel'),
-                  // ),
                 ],
               ),
             );
@@ -1072,6 +1166,15 @@ class _OptionState extends State<Option> {
         showCartDialog(savedInventory, "");
       }
     });
+  }
+
+  Future<bool?> fetchIsOnline() async {
+    SharedPreferences prefs;
+    bool? isOnline;
+    prefs = await SharedPreferences.getInstance();
+    isOnline = prefs.getBool('isOnline');
+    print("ga ga $isOnline");
+    return isOnline;
   }
 
   @override

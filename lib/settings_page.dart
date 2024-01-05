@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:convert';
 //import 'dart:ffi';
 
@@ -10,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import 'components/switch.dart';
+import 'offline/sqllite.dart';
 
 class SettingsScreen extends StatefulWidget {
   final bool isOnline;
@@ -24,6 +27,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String errorMessage = '';
   List<String> branches = []; // List to store fetched branches
+  void refreshState() {
+    // Call setState to trigger a rebuild of the widget
+    setState(() {
+      // Your refresh logic here
+    });
+  }
 
   @override
   void initState() {
@@ -43,20 +52,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? ip = prefs.getString('ip');
     String? dbName = prefs.getString('dbName');
+    bool? isOnline = prefs.getBool('isOnline');
+    if (isOnline == true) {
+      final url = Uri.parse(
+          'http://$ip/getBranches/?dbName=$dbName'); // Replace with your API endpoint
 
-    final url = Uri.parse(
-        'http://$ip/getBranches/?dbName=$dbName'); // Replace with your API endpoint
-
-    try {
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          branches = List<String>.from(data['branches']);
-        });
+      try {
+        final response = await http.get(url);
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          setState(() {
+            branches = List<String>.from(data['branches']);
+          });
+        }
+      } catch (e) {
+        print("Error fetching branches: $e");
       }
-    } catch (e) {
-      print("Error fetching branches: $e");
+    } else {
+      try {
+        List<dynamic> branchesQuery =
+            await YourDataSync().databaseHelper.getBranches();
+        setState(() {
+          branches = List<String>.from(branchesQuery);
+        });
+      } catch (e) {
+        print('Error fetching branches: $e');
+      }
     }
   }
 
@@ -200,7 +221,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      SwitchExample(isOnline: widget.isOnline),
+                      SwitchExample(
+                          isOnline: widget.isOnline, onRefresh: refreshState),
                     ],
                   ),
                 ],
