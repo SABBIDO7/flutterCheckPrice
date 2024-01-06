@@ -30,6 +30,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void refreshState() {
     // Call setState to trigger a rebuild of the widget
     setState(() {
+      print("hiiiiiiiii rafrashit");
+      fetchBranches();
       // Your refresh logic here
     });
   }
@@ -41,19 +43,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
     fetchBranches(); // Fetch branches when the screen initializes
   }
 
-  // Future<bool> isOnlineStatus() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   bool? isOnline = prefs.getBool('isOnline');
-  //   return isOnline ?? false;
-  // }
+  Future<bool> isOnlineStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? isOnline = prefs.getBool('isOnline');
+    return isOnline ?? false;
+  }
 
   Future<void> fetchBranches() async {
+    print("fettt");
     // Fetch the list of branches from your backend API
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? ip = prefs.getString('ip');
     String? dbName = prefs.getString('dbName');
     bool? isOnline = prefs.getBool('isOnline');
     if (isOnline == true) {
+      print("onlinps");
       final url = Uri.parse(
           'http://$ip/getBranches/?dbName=$dbName'); // Replace with your API endpoint
 
@@ -69,11 +73,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
         print("Error fetching branches: $e");
       }
     } else {
+      print("oflineeee modeeee");
       try {
         List<dynamic> branchesQuery =
             await YourDataSync().databaseHelper.getBranches();
         setState(() {
           branches = List<String>.from(branchesQuery);
+          print("----------");
+          print(branches);
         });
       } catch (e) {
         print('Error fetching branches: $e');
@@ -136,6 +143,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
     prefs.setInt('flag', 0);
     Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
     // Replace '/login' with your actual login route
+  }
+
+  Future<void> SyncData() async {
+    try {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        barrierDismissible: false,
+      );
+      // Sync data
+      Color backgroundColor = const Color.fromRGBO(103, 58, 183, 1);
+      Widget content = Text("");
+      if (await YourDataSync().syncData() == false) {
+        backgroundColor = Colors.grey;
+        content = Text("Error in syncing Data");
+      } else {
+        backgroundColor = Colors.deepPurple;
+        content = Text("Data Synced Successfully");
+      }
+      final snackBar = SnackBar(
+        content: content,
+        duration: Duration(seconds: 2),
+        backgroundColor: backgroundColor,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      Navigator.of(context).pop();
+    } catch (e) {}
   }
 
   @override
@@ -221,8 +260,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      SwitchExample(
-                          isOnline: widget.isOnline, onRefresh: refreshState),
+                      Row(
+                        children: [
+                          SwitchExample(
+                              isOnline: widget.isOnline,
+                              onRefresh: refreshState),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: screenHeight * 0.05),
+
+                  Row(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 25),
+                        child: Text(
+                          "Sync Data :",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      MyButton(
+                        onTap: () async {
+                          bool isOnline = await isOnlineStatus();
+                          if (isOnline) {
+                            SyncData();
+                          } else {
+                            final snackBar = SnackBar(
+                              content:
+                                  Text('Cannot Async Data in Offline Mode.'),
+                              duration: Duration(seconds: 2),
+                              backgroundColor: Colors.grey,
+                            );
+
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          }
+                        },
+                        buttonName: "Sync Data",
+                      ),
                     ],
                   ),
                 ],

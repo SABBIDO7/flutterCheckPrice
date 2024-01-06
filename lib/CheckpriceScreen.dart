@@ -214,11 +214,11 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                             widget.data['item']['sp'] != null
                         ? Row(
                             children: [
-                              Text(
-                                "TTC :",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
-                              ),
+                              // Text(
+                              //   "TTC :",
+                              //   style: TextStyle(
+                              //       fontWeight: FontWeight.bold, fontSize: 16),
+                              // ),
                               Text(
                                 widget.data['item']['sp'].toString(),
                                 style: TextStyle(

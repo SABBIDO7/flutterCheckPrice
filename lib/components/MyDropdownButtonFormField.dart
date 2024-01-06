@@ -20,8 +20,7 @@ class MyDropdownButtonFormField extends StatelessWidget {
     required this.username,
   }) : super(key: key);
 
-  Future<String> replaceAfterUnderscore(
-      String input, int startPosition, int length) async {
+  String replaceAfterUnderscore(String input, int startPosition, int length) {
     int underscoreIndex = input.indexOf('_');
 
     if (underscoreIndex != -1 &&

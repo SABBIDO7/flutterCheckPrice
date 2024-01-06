@@ -8,6 +8,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class YourDatabaseHelper {
   static final YourDatabaseHelper _instance = YourDatabaseHelper._internal();
@@ -28,12 +29,20 @@ class YourDatabaseHelper {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? dbName = prefs.getString('dbName');
     final path = join(databasesPath, '$dbName.db');
+    // final pathtest = join(databasesPath, 'l.db');
+    // if (pathtest.isNotEmpty) {
+    //   print("mawjoud ");
+    // } else {
+    //   print("msh maejoud");
+    // }
+
     WidgetsFlutterBinding.ensureInitialized();
+    print(path);
+    print("trying...");
 
     return await openDatabase(
       path,
-      version: 3,
-      onCreate: (db, version) async {
+      onConfigure: (db) async {
         // Create tables here
         print("createdddddd tableeee");
         await db.execute('''
@@ -61,6 +70,27 @@ class YourDatabaseHelper {
   }
 
   Future<void> insertData(List<YourDataModel> data) async {
+    await deleteDatabaseFile();
+    print("lek");
+    List<String> databaseList = [];
+
+    try {
+      final databasesPath = await getDatabasesPath();
+      final dbDirectory = Directory(databasesPath);
+      final dbFiles = await dbDirectory.list();
+
+      await for (var file in dbFiles) {
+        if (file is File && file.path.endsWith('.db')) {
+          // It's a SQLite database file
+          print("ana bl looop");
+          print(file.path);
+          databaseList.add(file.path);
+        }
+      }
+      print("lllll::: $databaseList");
+    } catch (e) {
+      print('Error listing databases: $e');
+    }
     final Database db = await database;
 
     for (YourDataModel item in data) {
@@ -76,17 +106,19 @@ class YourDatabaseHelper {
     print("data deleted");
   }
 
-  void deleteDatabaseFile() async {
+  Future<void> deleteDatabaseFile() async {
     // Ensure the file exists before attempting to delete
     final databasesPath = await getDatabasesPath();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? dbName = prefs.getString('dbName');
     final path = join(databasesPath, '$dbName.db');
-    if (File(path).existsSync()) {
-      File(path).deleteSync();
-      print('Database file deleted.');
+    //bool fileExists = await databaseExists(path);
+    if (await databaseExists(path)) {
+      print("lek waynooo");
+      await deleteDatabase(path);
+      print('Database file deleted');
     } else {
-      print('Database file not found.');
+      print('Database file not found');
     }
   }
 
@@ -195,13 +227,18 @@ class YourDatabaseHelper {
   }
 
   Future<String> createInventoryTable(
-      String dbName, String username, String inventory) async {
+      String username, String dbName, String inventory) async {
     final Database db = await database;
     final currentDateTime = DateTime.now();
-    final abbreviatedDay = currentDateTime.toString().substring(0, 2);
-    final formattedDateTime =
-        "${abbreviatedDay}${currentDateTime.toString().replaceAll(RegExp(r'[^0-9]'), '')}";
+    String abbreviatedDay =
+        DateFormat.E().format(currentDateTime).substring(0, 2).toLowerCase();
+    // String currentDayName = DateTime.now().toLocal().toString().split(' ')[0];
 
+    String formattedDatetime =
+        DateFormat("yyyyMMdd_HHmmss").format(currentDateTime);
+
+    formattedDatetime = "${abbreviatedDay}${formattedDatetime}";
+    print("foramted date only :$formattedDatetime");
     try {
       // Check if the table already exists
       String checkQuery =
@@ -214,10 +251,11 @@ class YourDatabaseHelper {
         print("already exsists");
         return "False";
       }
-
+      username = username.toLowerCase();
+      inventory = inventory.toLowerCase();
       // Create the table
       String createQuery =
-          "CREATE TABLE DC_${username}_${inventory}_${formattedDateTime}_off ("
+          "CREATE TABLE dc_${username}_${inventory}_${formattedDatetime}_off ("
           "itemNumber VARCHAR(20) NULL DEFAULT NULL,"
           "GOID VARCHAR(20) NULL DEFAULT NULL,"
           "itemName VARCHAR(120) NULL DEFAULT NULL,"

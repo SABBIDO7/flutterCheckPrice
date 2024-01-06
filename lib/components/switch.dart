@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../offline/sqllite.dart';
-
 class SwitchExample extends StatefulWidget {
   final bool isOnline;
   final VoidCallback onRefresh;
@@ -25,7 +23,7 @@ class _SwitchExampleState extends State<SwitchExample> {
 
           LiteRollingSwitch(
             value: widget.isOnline,
-            width: 150,
+            width: 120,
             textOn: 'Online',
             textOff: 'Offline',
             colorOn: Colors.deepPurple,
@@ -37,58 +35,27 @@ class _SwitchExampleState extends State<SwitchExample> {
             onChanged: (bool state) async {
               print(state);
               if (state == false) {
-                // Show loading indicator
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                  barrierDismissible: false,
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.setBool('isOnline', false);
+                print("-------------${prefs.getBool('isOnline')}");
+                print('turned ${(state) ? 'on' : 'off'}');
+                // Show Snackbar
+                Color backgroundColor =
+                    (state) ? Colors.deepPurple : Colors.grey;
+
+                final snackBar = SnackBar(
+                  content: Text(
+                      'You Switched to ${(state) ? 'Online Mode' : 'Offline Mode'}'),
+                  duration: Duration(seconds: 2),
+                  backgroundColor: backgroundColor,
                 );
-                try {
-                  // Sync data
-                  if (await YourDataSync().syncData() == false) {
-                    Color backgroundColor = Colors.grey;
 
-                    final snackBar = SnackBar(
-                      content: Text('Error in syncing Data'),
-                      duration: Duration(seconds: 2),
-                      backgroundColor: backgroundColor,
-                    );
-
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  } else {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    prefs.setBool('isOnline', !widget.isOnline);
-                    print('turned ${(state) ? 'on' : 'off'}');
-                    // Show Snackbar
-                    Color backgroundColor =
-                        (state) ? Colors.deepPurple : Colors.grey;
-
-                    final snackBar = SnackBar(
-                      content: Text(
-                          'You Switched to ${(state) ? 'Online Mode' : 'Offline Mode'}'),
-                      duration: Duration(seconds: 2),
-                      backgroundColor: backgroundColor,
-                    );
-
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    widget.onRefresh();
-                  }
-                } catch (e) {
-                } finally {
-                  Navigator.pop(context);
-                }
-
-                // Close loading indicator
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
               } else {
-                YourDataSync().databaseHelper.deleteDatabaseFile();
                 //YourDataSync().databaseHelper.deleteTable();
                 SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.setBool('isOnline', !widget.isOnline);
+                prefs.setBool('isOnline', true);
+                print("-------------${prefs.getBool('isOnline')}");
                 print('turned ${(state) ? 'on' : 'off'}');
                 // Show Snackbar
                 Color backgroundColor =
@@ -103,6 +70,7 @@ class _SwitchExampleState extends State<SwitchExample> {
 
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
               }
+              widget.onRefresh();
             },
             onDoubleTap: () {},
             onSwipe: () {},
