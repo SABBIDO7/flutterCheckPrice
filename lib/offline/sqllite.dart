@@ -355,9 +355,19 @@ class YourDatabaseHelper {
               print("from the inventory table:");
               return {"status": true, "message": "Item inserted", "item": item};
             }
+          } else {
+            return {
+              "status": false,
+              "message": "Item not found why1",
+              "item": "{}"
+            };
           }
         }
-        return {"status": false, "message": "Item not found", "item": {}};
+        return {
+          "status": false,
+          "message": "Item not found why2",
+          "item": "{}"
+        };
 
         // Handle case where item is not found in the specified inventory
       }
@@ -365,6 +375,66 @@ class YourDatabaseHelper {
       // Handle errors
       print('Error: $e');
       return {"status": false, "message": "Error retrieving item", "item": {}};
+    }
+  }
+
+  Future<Map<String, dynamic>> updateHandQuantity(
+      String itemNumber,
+      double handQuantity,
+      String branch,
+      String inventory,
+      double oldHandQuantity) async {
+    final Database db = await database;
+
+    try {
+      // Calculate the new totalHandQuantity
+      double totalHandQuantity = handQuantity + oldHandQuantity;
+
+      // Update the handQuantity in the database
+      await db.rawUpdate('''
+      UPDATE $inventory 
+      SET handQuantity = ? 
+      WHERE itemNumber = UPPER(?)
+    ''', [totalHandQuantity, itemNumber.toUpperCase()]);
+
+      return {"status": true, "message": "Hand Quantity updated successfully"};
+    } catch (e) {
+      // Handle errors
+      throw Exception("Internal Server Error: $e");
+    }
+  }
+
+  Future<Map<String, dynamic>> createItem(String itemNumber, String itemName,
+      String inventory, String branch, double handQuantity) async {
+    final Database db = await database;
+
+    try {
+      YourDataModel item = YourDataModel(
+          itemName: itemName.toUpperCase(),
+          itemNumber: itemNumber.toUpperCase(),
+          GOID: itemNumber.toUpperCase(),
+          Branch: branch.toUpperCase(),
+          quantity: 0.0,
+          S1: 0.0,
+          S2: 0.0,
+          S3: 0.0,
+          handQuantity: handQuantity,
+          vat: 0.0,
+          sp: "",
+          costPrice: 0.0,
+          image: "",
+          Disc1: 0.0,
+          Disc2: 0.0,
+          Disc3: 0.0,
+          Qunit: 1);
+      await db.insert(inventory, item.toMap());
+      return {"status": true, "message": "Item inserted successfully"};
+    } catch (e) {
+      return {
+        "status": false,
+        "message": "Error checking tables: $e",
+        "item": "empty"
+      };
     }
   }
 

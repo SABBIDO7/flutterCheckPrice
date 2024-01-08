@@ -23,20 +23,26 @@ class MyDropdownButtonFormField extends StatelessWidget {
 
   String replaceAfterUnderscore(String input, int startPosition, int length) {
     int underscoreIndex = input.indexOf('_');
-
+    bool flagContainsOff = false;
     if (underscoreIndex != -1 &&
         underscoreIndex + startPosition + length <= input.length) {
       String prefix = input.substring(0, underscoreIndex + startPosition);
       String suffix = input.substring(underscoreIndex + startPosition + length);
       // Erase the last two digits
       String result = '$prefix$suffix';
-      result = result.replaceAll("_off", "");
+      if (result.contains("_off")) {
+        result = result.replaceAll("_off", "");
+        flagContainsOff = true;
+      }
 
       input = result.substring(0, result.length - 2);
 
       print(result);
       print("displayedddd");
       print(input);
+      if (flagContainsOff == true) {
+        input += "_off";
+      }
       return input; // Replace with 'XXXX' or any desired characters
     }
 

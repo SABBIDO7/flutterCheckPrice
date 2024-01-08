@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:checkprice/offline/sqllite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'components/image_dialog.dart';
@@ -15,8 +16,12 @@ class DisplayScreen extends StatefulWidget {
   Map<String, dynamic> data;
   final String inventory;
   final String? username;
+  bool isOnline;
   DisplayScreen(
-      {required this.data, required this.inventory, required this.username});
+      {required this.data,
+      required this.inventory,
+      required this.username,
+      required this.isOnline});
 
   @override
   _DisplayScreenState createState() => _DisplayScreenState();
@@ -223,24 +228,30 @@ class _DisplayScreenState extends State<DisplayScreen> {
         'http://$ip/handeQuantity_update/?itemNumber=$itemNumber&handQuantity=$handQuantity&branch=$branch&dbName=$dbName&inventory=$inventory&oldHandQuantity=$oldHandQuantity'); // Replace with your FastAPI login endpoint
 
     try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      );
-      print(response);
+      if (widget.isOnline) {
+        final response = await http.post(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        );
+        print(response);
 
-      if (response.statusCode == 200) {
-        // Successful login, handle the response as needed
-        ////////////////////////////////////////////////////
-        // Function to handle scanning and data retrieval
-//honnnnnnnnnnnnn
-        //scanRetreiveData(inventory);
-        Navigator.of(context).pop();
+        if (response.statusCode == 200) {
+          Navigator.of(context).pop();
+        } else {
+          // Handle login failure (e.g., incorrect credentials)
+          print("Failure");
+        }
       } else {
-        // Handle login failure (e.g., incorrect credentials)
-        print("Failure");
+        Map<String, dynamic> data = await YourDatabaseHelper()
+            .updateHandQuantity(itemNumber, double.parse(handQuantity), branch,
+                inventory, oldHandQuantity);
+        if (data["status"] == true) {
+          Navigator.of(context).pop();
+        } else {
+          print("Failure");
+        }
       }
     } catch (e) {
       showDialog(
@@ -274,15 +285,26 @@ class _DisplayScreenState extends State<DisplayScreen> {
 
   String replaceAfterUnderscore(String input, int startPosition, int length) {
     int underscoreIndex = input.indexOf('_');
-
+    bool flagContainsOff = false;
     if (underscoreIndex != -1 &&
         underscoreIndex + startPosition + length <= input.length) {
       String prefix = input.substring(0, underscoreIndex + startPosition);
       String suffix = input.substring(underscoreIndex + startPosition + length);
       // Erase the last two digits
       String result = '$prefix$suffix';
+      if (result.contains("_off")) {
+        result = result.replaceAll("_off", "");
+        flagContainsOff = true;
+      }
+
       input = result.substring(0, result.length - 2);
 
+      print(result);
+      print("displayedddd");
+      print(input);
+      if (flagContainsOff == true) {
+        input += "_off";
+      }
       return input; // Replace with 'XXXX' or any desired characters
     }
 
@@ -1615,7 +1637,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                         }
                       },
                       buttonName: "Update",
-                      isOnline: true),
+                      isOnline: widget.isOnline),
                   SizedBox(height: screenHeight * 0.01),
 
                   // Add any additional widgets or styling as needed

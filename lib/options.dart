@@ -1,4 +1,5 @@
 //import 'package:checkprice/components/customTable.dart';
+
 import 'package:checkprice/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -33,22 +34,38 @@ class _OptionState extends State<Option> {
     String? branch = prefs.getString('branch');
 
     try {
-      // Make an API call with the scanned barcode
-      final apiUrl = 'http://$ip/createItem/'; // Replace with your API endpoint
-      final response = await http.post(Uri.parse(
-          '$apiUrl?itemNumber=$itemNumber&itemName=$itemName&inventory=$inventory&dbName=$dbName&branch=$branch&handQuantity=$handQuantity'));
+      if (isOnlineFlag == true) {
+        // Make an API call with the scanned barcode
+        final apiUrl =
+            'http://$ip/createItem/'; // Replace with your API endpoint
+        final response = await http.post(Uri.parse(
+            '$apiUrl?itemNumber=$itemNumber&itemName=$itemName&inventory=$inventory&dbName=$dbName&branch=$branch&handQuantity=$handQuantity'));
 
-      if (response.statusCode == 200) {
-        // Data was found in the database
-        final data =
-            jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
-        if (data['status'] == true) {
-          return "True";
+        if (response.statusCode == 200) {
+          // Data was found in the database
+          final data =
+              jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
+          if (data['status'] == true) {
+            return "True";
+          } else {
+            return "False";
+          }
         } else {
           return "False";
         }
       } else {
-        return "False";
+        Map<dynamic, Object?> data = await YourDatabaseHelper().createItem(
+            itemNumber,
+            itemName,
+            inventory ?? "",
+            branch ?? "",
+            double.parse(handQuantity));
+        print(data);
+        if (data["status"] == true) {
+          return "True";
+        } else {
+          return "False";
+        }
       }
     } catch (e) {
       // Handle the exception here
@@ -904,7 +921,11 @@ class _OptionState extends State<Option> {
               Navigator.of(context)
                   .push(MaterialPageRoute(
                 builder: (context) => DisplayScreen(
-                    data: data, inventory: inventory, username: username),
+                  data: data,
+                  inventory: inventory,
+                  username: username,
+                  isOnline: isOnlineFlag,
+                ),
                 //CustomTable(),
               ))
                   .then((value) async {
@@ -955,9 +976,72 @@ class _OptionState extends State<Option> {
             // Navigate to a new screen to display the data
           }
         } else {
-          print("fetttttttttttttttt of inv");
-          await YourDatabaseHelper()
+          print("fetttttttttttttttt offlie inv");
+          Map<String, dynamic> data = await YourDatabaseHelper()
               .getInventoryItem(barcodeScanRes, branch ?? "", inventory);
+          print(data);
+          print(data["item"]);
+          print("dataaaa-----------------");
+          if (data["item"] != "{}") {
+            print(data["item"]);
+            print("finally");
+            Navigator.of(context).pop();
+
+            Navigator.of(context)
+                .push(MaterialPageRoute(
+              builder: (context) => DisplayScreen(
+                data: data,
+                inventory: inventory,
+                username: username,
+                isOnline: isOnlineFlag,
+              ),
+              //CustomTable(),
+            ))
+                .then((value) async {
+              // Callback function to be executed after the route is popped
+              print("dxxxxxxx");
+              // Call your function with the passed value
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              String? savedInventory = prefs.getString('inventory');
+              print("------------------------------");
+              print(savedInventory);
+              showCartDialog(savedInventory, "");
+              // If value is true, call the showCartDialog function
+            });
+          } else {
+            Navigator.of(context).pop();
+
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => AlertDialog(
+                title: Text('Data Not Found'),
+                content: Text(
+                    'The scanned item barcode was not found.\nThe scanned Item Number: $barcodeScanRes'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      print("vvvvvvvvvvvvvvvvvvvvvvvvv");
+                      //scanAndRetrieveData(context, inventory, 2, input);
+                      Navigator.of(context).pop();
+                      showCartDialog(inventory, "");
+                      //blaaaaaaaaaaaaaaaaaaaa
+                    },
+                    child: Text('Scan Again'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      showCartDialogCreateItem(
+                          barcodeScanRes, inventory, dbName, branch);
+                      //blaaaaaaaaaaaaaaaaaaaa
+                    },
+                    child: Text('Create Item'),
+                  ),
+                ],
+              ),
+            );
+          }
         }
       } catch (e) {
         // Data not found in the database
