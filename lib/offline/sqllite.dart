@@ -622,7 +622,9 @@ class YourDataSync {
 
     if (await isConnected()) {
       try {
-        Map<String, List<Map<String, dynamic>>> result = {};
+        List<Map<String, List<Map<String, dynamic>>>> result = [];
+        List tables = [];
+        List rowst = [];
 
         // Get all table names starting with "dc_user_"
         List<String> tableNames = await db
@@ -634,21 +636,30 @@ class YourDataSync {
                 .toList());
 
         // Fetch data for each table
+
         for (String tableName in tableNames) {
           // Get all rows from the current table
           List<Map<String, dynamic>> rows = await db.query(tableName);
-
+          tables.add(tableName);
+          rowst.add(rows);
           // Store rows in the result map
-          result[tableName] = rows;
+          // Create an entry for the current table in the result list
+          Map<String, List<Map<String, dynamic>>> tableEntry = {
+            tableName: rows,
+          };
+          print(tableEntry);
+          print("---------------");
+          // Store the entry in the result list
+          result.add(tableEntry);
         }
+
         print("------------resss");
         print(result);
-
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String? ip = prefs.getString('ip');
         String? dbName = prefs.getString('dbName');
         final url = Uri.parse(
-            'http://$ip/uploadData/?dbName=$dbName&result=$result'); // Replace with your FastAPI login endpoint
+            'http://$ip/uploadData/?dbName=$dbName&result=$rowst&result2=$tables'); // Replace with your FastAPI login endpoint
 
         try {
           final response = await http.post(
@@ -657,7 +668,7 @@ class YourDataSync {
               'Content-Type': 'application/json',
             },
           );
-          print(response);
+          //print(response);
 
           if (response.statusCode == 200) {
             // Handle success
