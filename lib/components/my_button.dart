@@ -3,7 +3,13 @@ import 'package:flutter/material.dart';
 class MyButton extends StatelessWidget {
   final Function()? onTap;
   final String buttonName;
-  const MyButton({super.key, required this.onTap, required this.buttonName});
+  final bool isOnline;
+  const MyButton({
+    super.key,
+    required this.onTap,
+    required this.buttonName,
+    required this.isOnline,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +19,7 @@ class MyButton extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         margin: const EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
-          color: Colors.deepPurple,
+          color: isOnline == true ? Colors.deepPurple : Colors.grey,
           borderRadius: BorderRadius.circular(15),
         ),
         child: Center(

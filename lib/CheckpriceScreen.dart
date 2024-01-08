@@ -11,8 +11,9 @@ import 'components/my_button.dart';
 // ignore: must_be_immutable
 class CheckpriceScreen extends StatefulWidget {
   Map<String, dynamic> data;
+  bool isOnline;
 
-  CheckpriceScreen({required this.data});
+  CheckpriceScreen({required this.data, required this.isOnline});
 
   @override
   _CheckpriceScreenState createState() => _CheckpriceScreenState();
@@ -126,10 +127,10 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
     print(screenWidth);
 
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         title: Text('Check Price'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor:
+            widget.isOnline == true ? Colors.deepPurple : Colors.grey,
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -904,6 +905,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                     //ScanAgain();
                   },
                   buttonName: "Scan Again",
+                  isOnline: widget.isOnline,
                 ),
                 SizedBox(height: screenHeight * 0.01),
 

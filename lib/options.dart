@@ -22,6 +22,8 @@ class Option extends StatefulWidget {
 }
 
 class _OptionState extends State<Option> {
+  late bool isOnlineFlag = false;
+
   saveItemInDb(String itemNumber, String itemName, String inventory,
       String? dbName, String? branch, String handQuantity) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -191,6 +193,7 @@ class _OptionState extends State<Option> {
                                 }
                               },
                               buttonName: "create",
+                              isOnline: isOnlineFlag,
                             ),
                           ),
                         ),
@@ -378,6 +381,7 @@ class _OptionState extends State<Option> {
                                       context, username!, dbName!, ip!);
                                 },
                                 buttonName: "create",
+                                isOnline: isOnlineFlag,
                               ),
                             ),
                           ),
@@ -401,6 +405,7 @@ class _OptionState extends State<Option> {
                                   }
                                 },
                                 buttonName: "Scan",
+                                isOnline: isOnlineFlag,
                               ),
                             ),
                           ),
@@ -656,6 +661,7 @@ class _OptionState extends State<Option> {
                                 }
                               },
                               buttonName: "create",
+                              isOnline: isOnlineFlag,
                             ),
                           ),
                         ),
@@ -787,6 +793,7 @@ class _OptionState extends State<Option> {
                                     context, 1, barcodeController.text);
                               },
                               buttonName: "Scan",
+                              isOnline: isOnlineFlag,
                             ),
                           ),
                         ),
@@ -869,82 +876,88 @@ class _OptionState extends State<Option> {
 
       print("///////////////////////////////");
       try {
-        // Make an API call with the scanned barcode
-        final apiUrl =
-            'http://$ip/getInventoryItem/'; // Replace with your API endpoint
-        final response = await http.get(Uri.parse(
-            '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName&username=$username&inventory=$inventory'));
-        print("hon");
-        if (response.statusCode == 200) {
-          print("heyyyyyy");
-          // Data was found in the database
-          final data =
-              jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
-          print("broooooooooooooooooooo");
-          print(data['item']);
-          print("rawaaa");
+        if (isOnlineFlag == true) {
+          // Make an API call with the scanned barcode
+          final apiUrl =
+              'http://$ip/getInventoryItem/'; // Replace with your API endpoint
+          final response = await http.get(Uri.parse(
+              '$apiUrl?itemNumber=$barcodeScanRes&branch=$branch&dbName=$dbName&username=$username&inventory=$inventory'));
+          print("hon");
+          if (response.statusCode == 200) {
+            print("heyyyyyy");
+            // Data was found in the database
+            final data = jsonDecode(
+                utf8.decode(response.bodyBytes, allowMalformed: true));
+            print("broooooooooooooooooooo");
+            print(data['item']);
+            print("rawaaa");
 
-          if (data['item'] != "empty") {
-            if (flag == 2) {
-              print("hey niga");
-              //Navigator.of(context).pop();
+            if (data['item'] != "empty") {
+              if (flag == 2) {
+                print("hey niga");
+                //Navigator.of(context).pop();
+              }
+
+              print("jjjjjjjjjjjjjj");
+              Navigator.of(context).pop();
+
+              Navigator.of(context)
+                  .push(MaterialPageRoute(
+                builder: (context) => DisplayScreen(
+                    data: data, inventory: inventory, username: username),
+                //CustomTable(),
+              ))
+                  .then((value) async {
+                // Callback function to be executed after the route is popped
+                print("dxxxxxxx");
+                // Call your function with the passed value
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                String? savedInventory = prefs.getString('inventory');
+                print("------------------------------");
+                print(savedInventory);
+                showCartDialog(savedInventory, "");
+                // If value is true, call the showCartDialog function
+              });
+            } else {
+              Navigator.of(context).pop();
+
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => AlertDialog(
+                  title: Text('Data Not Found'),
+                  content: Text(
+                      'The scanned item barcode was not found.\nThe scanned Item Number: $barcodeScanRes'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        print("vvvvvvvvvvvvvvvvvvvvvvvvv");
+                        //scanAndRetrieveData(context, inventory, 2, input);
+                        Navigator.of(context).pop();
+                        showCartDialog(inventory, "");
+                        //blaaaaaaaaaaaaaaaaaaaa
+                      },
+                      child: Text('Scan Again'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        showCartDialogCreateItem(
+                            barcodeScanRes, inventory, dbName, branch);
+                        //blaaaaaaaaaaaaaaaaaaaa
+                      },
+                      child: Text('Create Item'),
+                    ),
+                  ],
+                ),
+              );
             }
-
-            print("jjjjjjjjjjjjjj");
-            Navigator.of(context).pop();
-
-            Navigator.of(context)
-                .push(MaterialPageRoute(
-              builder: (context) => DisplayScreen(
-                  data: data, inventory: inventory, username: username),
-              //CustomTable(),
-            ))
-                .then((value) async {
-              // Callback function to be executed after the route is popped
-              print("dxxxxxxx");
-              // Call your function with the passed value
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              String? savedInventory = prefs.getString('inventory');
-              print("------------------------------");
-              print(savedInventory);
-              showCartDialog(savedInventory, "");
-              // If value is true, call the showCartDialog function
-            });
-          } else {
-            Navigator.of(context).pop();
-
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) => AlertDialog(
-                title: Text('Data Not Found'),
-                content: Text(
-                    'The scanned item barcode was not found.\nThe scanned Item Number: $barcodeScanRes'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      print("vvvvvvvvvvvvvvvvvvvvvvvvv");
-                      //scanAndRetrieveData(context, inventory, 2, input);
-                      Navigator.of(context).pop();
-                      showCartDialog(inventory, "");
-                      //blaaaaaaaaaaaaaaaaaaaa
-                    },
-                    child: Text('Scan Again'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      showCartDialogCreateItem(
-                          barcodeScanRes, inventory, dbName, branch);
-                      //blaaaaaaaaaaaaaaaaaaaa
-                    },
-                    child: Text('Create Item'),
-                  ),
-                ],
-              ),
-            );
+            // Navigate to a new screen to display the data
           }
-          // Navigate to a new screen to display the data
+        } else {
+          print("fetttttttttttttttt of inv");
+          await YourDatabaseHelper()
+              .getInventoryItem(barcodeScanRes, branch ?? "", inventory);
         }
       } catch (e) {
         // Data not found in the database
@@ -1020,7 +1033,8 @@ class _OptionState extends State<Option> {
 
               Navigator.of(context)
                   .push(MaterialPageRoute(
-                builder: (context) => CheckpriceScreen(data: data),
+                builder: (context) =>
+                    CheckpriceScreen(data: data, isOnline: isOnlineFlag),
                 //CustomTable(),
               ))
                   .then((value) async {
@@ -1074,7 +1088,10 @@ class _OptionState extends State<Option> {
 
             Navigator.of(context)
                 .push(MaterialPageRoute(
-              builder: (context) => CheckpriceScreen(data: result),
+              builder: (context) => CheckpriceScreen(
+                data: result,
+                isOnline: isOnlineFlag,
+              ),
               //CustomTable(),
             ))
                 .then((value) async {
@@ -1136,9 +1153,14 @@ class _OptionState extends State<Option> {
   void navigateToSettings(BuildContext context, bool isOnline) {
     // Navigate to the settings page
     // Replace 'SettingsScreen' with the actual screen you want to navigate to
-    Navigator.of(context).push(MaterialPageRoute(
+    Navigator.of(context)
+        .push(MaterialPageRoute(
       builder: (context) => SettingsScreen(isOnline: isOnline),
-    ));
+    ))
+        .then((result) async {
+      // Run your async function here
+      await isOnlineStatus();
+    });
   }
 
   @override
@@ -1166,15 +1188,18 @@ class _OptionState extends State<Option> {
         showCartDialog(savedInventory, "");
       }
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      isOnlineStatus();
+    });
   }
 
-  Future<bool?> fetchIsOnline() async {
-    SharedPreferences prefs;
-    bool? isOnline;
-    prefs = await SharedPreferences.getInstance();
-    isOnline = prefs.getBool('isOnline');
-    print("ga ga $isOnline");
-    return isOnline;
+  Future<bool> isOnlineStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? isOnline = prefs.getBool('isOnline');
+    setState(() {
+      isOnlineFlag = isOnline ?? true;
+    });
+    return isOnline ?? true;
   }
 
   @override
@@ -1185,10 +1210,9 @@ class _OptionState extends State<Option> {
     //final screenWidth = mediaQueryData.size.width;
 
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
-        title: Text('Options'),
+        title: isOnlineFlag == true ? Text('Options') : Text("Options-OFF"),
+        backgroundColor: isOnlineFlag == true ? Colors.deepPurple : Colors.grey,
         actions: [
           // Add the settings icon to the AppBar
           IconButton(
@@ -1227,6 +1251,7 @@ class _OptionState extends State<Option> {
                       showCartDialog(null, "");
                     },
                     buttonName: "Quantity To Collect",
+                    isOnline: isOnlineFlag,
                   ),
                   SizedBox(height: screenHeight * 0.05),
                   MyButton(
@@ -1234,6 +1259,7 @@ class _OptionState extends State<Option> {
                       showCartDialogCheckPrice();
                     },
                     buttonName: "Check Price",
+                    isOnline: isOnlineFlag,
                   ),
                 ],
               ),

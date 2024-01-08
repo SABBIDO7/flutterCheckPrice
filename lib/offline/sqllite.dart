@@ -297,6 +297,77 @@ class YourDatabaseHelper {
     }
   }
 
+  Future<Map<String, dynamic>> getInventoryItem(
+      String itemNumber, String branch, String inventory) async {
+    final Database db = await database;
+
+    try {
+      List<Map<String, dynamic>> rows = await db.rawQuery(
+          'SELECT * FROM $inventory WHERE itemNumber=? AND Branch=? LIMIT 1',
+          [itemNumber.toUpperCase(), branch.toUpperCase()]);
+
+      if (rows.isNotEmpty) {
+        Map<String, dynamic> row = rows.first;
+        print("sari3a");
+        // Your image processing logic here
+
+        return {
+          "status": true,
+          "message": "The item is fetched from the inventory table",
+          "item": row,
+        };
+      } else {
+        print("fet bel elseeee");
+        List<Map<String, dynamic>> dcItemRow = await db.query(
+          'dc_items',
+          where: 'itemNumber=? AND Branch=?',
+          whereArgs: [itemNumber.toUpperCase(), branch.toUpperCase()],
+          limit: 1,
+        );
+        if (dcItemRow.isEmpty) {
+          print("male2e maa branchhh");
+          dcItemRow = await db.query(
+            'dc_items',
+            where: 'itemNumber=?',
+            whereArgs: [itemNumber.toUpperCase()],
+            limit: 1,
+          );
+        }
+        if (dcItemRow.isNotEmpty) {
+          print("selke");
+          for (Map<String, Object?> item in dcItemRow) {
+            print("abel ma taazim");
+            print(item);
+            YourDataModel decerialized = YourDataModel.fromJson(item);
+
+            decerialized.Branch = branch;
+            print(decerialized);
+            Map<String, Object?> finalItem = decerialized.toMap();
+            print("azamit");
+            await db.insert(inventory, finalItem);
+            print("inserted");
+          }
+          List dcInventoryItem = await db.rawQuery(
+              'SELECT * FROM $inventory WHERE itemNumber=? AND Branch=? LIMIT 1',
+              [itemNumber.toUpperCase(), branch.toUpperCase()]);
+          if (dcInventoryItem.isNotEmpty) {
+            for (var item in dcInventoryItem) {
+              print("from the inventory table:");
+              return {"status": true, "message": "Item inserted", "item": item};
+            }
+          }
+        }
+        return {"status": false, "message": "Item not found", "item": {}};
+
+        // Handle case where item is not found in the specified inventory
+      }
+    } catch (e) {
+      // Handle errors
+      print('Error: $e');
+      return {"status": false, "message": "Error retrieving item", "item": {}};
+    }
+  }
+
   Future<List<YourDataModel>> getAllItems() async {
     final Database db = await database;
 
@@ -365,7 +436,7 @@ class YourDataModel {
   final String itemName;
   final String itemNumber;
   final String GOID;
-  final String Branch;
+  String Branch;
   final double quantity;
   final double S1;
   final double S2;
@@ -451,7 +522,7 @@ class YourDataSync {
   final YourDatabaseHelper databaseHelper = YourDatabaseHelper();
 
   Future<bool> syncData() async {
-    if (await _isConnected()) {
+    if (await isConnected()) {
       try {
         print("masa l kher");
         final List<YourDataModel> data = await apiService.fetchData();
@@ -476,7 +547,7 @@ class YourDataSync {
     }
   }
 
-  Future<bool> _isConnected() async {
+  Future<bool> isConnected() async {
     var connectivityResult = await Connectivity().checkConnectivity();
     return connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi;

@@ -25,6 +25,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   final branchController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late bool isOnlineFlag = false;
   String errorMessage = '';
   List<String> branches = []; // List to store fetched branches
   void refreshState() {
@@ -32,6 +33,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       print("hiiiiiiiii rafrashit");
       fetchBranches();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        isOnlineStatus();
+      });
       // Your refresh logic here
     });
   }
@@ -40,13 +44,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     errorMessage = '';
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      isOnlineStatus();
+    });
     fetchBranches(); // Fetch branches when the screen initializes
   }
 
   Future<bool> isOnlineStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool? isOnline = prefs.getBool('isOnline');
-    return isOnline ?? false;
+
+    setState(() {
+      isOnlineFlag = isOnline ?? true;
+    });
+    return isOnline ?? true;
   }
 
   Future<void> fetchBranches() async {
@@ -97,45 +108,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
     print(dbName);
     //String? ip = prefs.getString('ip');
 
-    if (branch == branchUpdated) {
-      setState(() {
-        errorMessage = "You are already in this branch";
-      });
-    } else {
+    if (branch != branchUpdated) {
       setState(() {
         prefs.setString('branch', branchUpdated);
         errorMessage = "Your branch has been updated";
       });
-
-      // final url = Uri.parse(
-      //     'http://$ip/updateBranch/?username=$username&newbranch=$branchUpdated&dbName=$dbName');
-      try {
-        // final response = await http.post(
-        //   url,
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        // );
-        // print(response);
-
-        // if (response.statusCode == 201) {
-        //   final data = jsonDecode(response.body);
-        //   print(data['status']);
-        //   if (data['status'] == "True") {
-        //     setState(() {
-        //       prefs.setString('branch', branchUpdated);
-        //       errorMessage = "Your branch has been updated";
-        //     });
-        //   } else if (data['status'] == "noBranchFound") {
-        //     setState(() {
-        //       errorMessage = "This branch does not exsist";
-        //     });
-        //   }
-        // }
-      } catch (e) {
-        print("Error: $e");
-      }
     }
+    // } else {
+    //   // final url = Uri.parse(
+    //   //     'http://$ip/updateBranch/?username=$username&newbranch=$branchUpdated&dbName=$dbName');
+    //   // try {
+    //   //   // final response = await http.post(
+    //   //   //   url,
+    //   //   //   headers: {
+    //   //   //     'Content-Type': 'application/json',
+    //   //   //   },
+    //   //   // );
+    //   //   // print(response);
+
+    //   //   // if (response.statusCode == 201) {
+    //   //   //   final data = jsonDecode(response.body);
+    //   //   //   print(data['status']);
+    //   //   //   if (data['status'] == "True") {
+    //   //   //     setState(() {
+    //   //   //       prefs.setString('branch', branchUpdated);
+    //   //   //       errorMessage = "Your branch has been updated";
+    //   //   //     });
+    //   //   //   } else if (data['status'] == "noBranchFound") {
+    //   //   //     setState(() {
+    //   //   //       errorMessage = "This branch does not exsist";
+    //   //   //     });
+    //   //   //   }
+    //   //   // }
+    //   // } catch (e) {
+    //   //   print("Error: $e");
+    //   // }
+    // }
   }
 
   Future<void> logout(BuildContext context) async {
@@ -184,10 +192,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     print(screenHeight);
 
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title: Text('Settings'),
-        backgroundColor: Colors.deepPurple,
+        title: isOnlineFlag == true ? Text('Settings') : Text("Settings-OFF"),
+        backgroundColor: isOnlineFlag == true ? Colors.deepPurple : Colors.grey,
       ),
       body: SafeArea(
         child: Center(
@@ -241,13 +248,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       }
                     },
                     buttonName: "Update",
+                    isOnline: isOnlineFlag,
                   ),
                   SizedBox(height: screenHeight * 0.05),
                   MyButton(
                     onTap: () {
-                      logout(context);
+                      if (isOnlineFlag == true) {
+                        logout(context);
+                      } else {}
                     },
                     buttonName: "Logout",
+                    isOnline: isOnlineFlag,
                   ),
                   SizedBox(height: screenHeight * 0.05),
                   Row(
@@ -283,13 +294,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       MyButton(
                         onTap: () async {
-                          bool isOnline = await isOnlineStatus();
-                          if (isOnline) {
+                          //bool isOnline = await isOnlineStatus();
+
+                          bool isConnected = await YourDataSync().isConnected();
+                          if (isConnected) {
                             SyncData();
                           } else {
                             final snackBar = SnackBar(
-                              content:
-                                  Text('Cannot Async Data in Offline Mode.'),
+                              content: Text('Cannot Async Data without WIFI.'),
                               duration: Duration(seconds: 2),
                               backgroundColor: Colors.grey,
                             );
@@ -299,6 +311,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           }
                         },
                         buttonName: "Sync Data",
+                        isOnline: isOnlineFlag,
                       ),
                     ],
                   ),

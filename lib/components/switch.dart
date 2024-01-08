@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../offline/sqllite.dart';
+
 class SwitchExample extends StatefulWidget {
   final bool isOnline;
   final VoidCallback onRefresh;
@@ -35,6 +37,20 @@ class _SwitchExampleState extends State<SwitchExample> {
             onChanged: (bool state) async {
               print(state);
               if (state == false) {
+                bool isConnected = await YourDataSync().isConnected();
+                if (!isConnected) {
+                  // Show an alert or snackbar indicating no internet connection
+                  // You can customize this based on your UI/UX preferences
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                          'No internet connection. Please check your connection.'),
+                      duration: Duration(seconds: 2),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return; // Do not update the state if there is no connection
+                }
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.setBool('isOnline', false);
                 print("-------------${prefs.getBool('isOnline')}");
