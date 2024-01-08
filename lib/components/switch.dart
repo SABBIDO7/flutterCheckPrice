@@ -35,22 +35,27 @@ class _SwitchExampleState extends State<SwitchExample> {
             animationDuration: const Duration(milliseconds: 0),
             textOnColor: Colors.white,
             onChanged: (bool state) async {
+              bool isConnected = await YourDataSync().isConnected();
+              if (!isConnected) {
+                // Show an alert or snackbar indicating no internet connection
+                // You can customize this based on your UI/UX preferences
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'No internet connection. Please check your connection.',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                    duration: Duration(seconds: 2),
+                    backgroundColor: Colors.red,
+                    padding: EdgeInsets.all(20),
+                  ),
+                );
+
+                return; // Do not update the state if there is no connection
+              }
               print(state);
               if (state == false) {
-                bool isConnected = await YourDataSync().isConnected();
-                if (!isConnected) {
-                  // Show an alert or snackbar indicating no internet connection
-                  // You can customize this based on your UI/UX preferences
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                          'No internet connection. Please check your connection.'),
-                      duration: Duration(seconds: 2),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                  return; // Do not update the state if there is no connection
-                }
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.setBool('isOnline', false);
                 print("-------------${prefs.getBool('isOnline')}");
@@ -61,9 +66,12 @@ class _SwitchExampleState extends State<SwitchExample> {
 
                 final snackBar = SnackBar(
                   content: Text(
-                      'You Switched to ${(state) ? 'Online Mode' : 'Offline Mode'}'),
+                    'You Switched to ${(state) ? 'Online Mode' : 'Offline Mode'}',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
                   duration: Duration(seconds: 2),
                   backgroundColor: backgroundColor,
+                  padding: EdgeInsets.all(20.0),
                 );
 
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -79,13 +87,17 @@ class _SwitchExampleState extends State<SwitchExample> {
 
                 final snackBar = SnackBar(
                   content: Text(
-                      'You Switched to ${(state) ? 'Online Mode' : 'Offline Mode'}'),
+                    'You Switched to ${(state) ? 'Online Mode' : 'Offline Mode'}',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
                   duration: Duration(seconds: 2),
                   backgroundColor: backgroundColor,
+                  padding: EdgeInsets.all(20.0),
                 );
 
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
               }
+
               widget.onRefresh();
             },
             onDoubleTap: () {},

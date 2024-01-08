@@ -185,6 +185,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
     } catch (e) {}
   }
 
+  Future<void> UploadData() async {
+    try {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        barrierDismissible: false,
+      );
+      // Sync data
+      Color backgroundColor = const Color.fromRGBO(103, 58, 183, 1);
+      Widget content = Text("");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? username = prefs.getString('username');
+      if (await YourDataSync().uploadData(username ?? "") == false) {
+        backgroundColor = Colors.grey;
+        content = Text("Error in Uploading Data");
+      } else {
+        backgroundColor = Colors.deepPurple;
+        content = Text("Data Uploaded Successfully");
+      }
+      final snackBar = SnackBar(
+        content: content,
+        duration: Duration(seconds: 2),
+        backgroundColor: backgroundColor,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      Navigator.of(context).pop();
+    } catch (e) {}
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQueryData = MediaQuery.of(context);
@@ -301,9 +335,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             SyncData();
                           } else {
                             final snackBar = SnackBar(
-                              content: Text('Cannot Async Data without WIFI.'),
+                              content: Text(
+                                'Cannot Sync Data without WIFI.',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 14),
+                              ),
                               duration: Duration(seconds: 2),
                               backgroundColor: Colors.grey,
+                              padding: EdgeInsets.all(20),
                             );
 
                             ScaffoldMessenger.of(context)
@@ -315,6 +354,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ],
                   ),
+                  SizedBox(height: screenHeight * 0.05),
+                  Row(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 25),
+                        child: Text(
+                          "Send Data :",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      MyButton(
+                        onTap: () async {
+                          //bool isOnline = await isOnlineStatus();
+
+                          bool isConnected = await YourDataSync().isConnected();
+                          if (isConnected) {
+                            UploadData();
+                          } else {
+                            final snackBar = SnackBar(
+                              content: Text(
+                                'Cannot Upload Data without WIFI.',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 14),
+                              ),
+                              duration: Duration(seconds: 2),
+                              backgroundColor: Colors.grey,
+                              padding: EdgeInsets.all(20),
+                            );
+
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          }
+                        },
+                        buttonName: "Upload Data",
+                        isOnline: isOnlineFlag,
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),

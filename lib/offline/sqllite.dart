@@ -617,6 +617,71 @@ class YourDataSync {
     }
   }
 
+  Future<bool> uploadData(String username) async {
+    final Database db = await YourDatabaseHelper().database;
+
+    if (await isConnected()) {
+      try {
+        Map<String, List<Map<String, dynamic>>> result = {};
+
+        // Get all table names starting with "dc_user_"
+        List<String> tableNames = await db
+            .rawQuery(
+              "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'dc_${username}%'",
+            )
+            .then((value) => value
+                .map((Map<String, dynamic> map) => map['name'].toString())
+                .toList());
+
+        // Fetch data for each table
+        for (String tableName in tableNames) {
+          // Get all rows from the current table
+          List<Map<String, dynamic>> rows = await db.query(tableName);
+
+          // Store rows in the result map
+          result[tableName] = rows;
+        }
+        print("------------resss");
+        print(result);
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? ip = prefs.getString('ip');
+        String? dbName = prefs.getString('dbName');
+        final url = Uri.parse(
+            'http://$ip/uploadData/?dbName=$dbName&result=$result'); // Replace with your FastAPI login endpoint
+
+        try {
+          final response = await http.post(
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          );
+          print(response);
+
+          if (response.statusCode == 200) {
+            // Handle success
+            return true;
+          } else {
+            // Handle failure
+            print("Failure");
+            return false;
+          }
+        } catch (e) {
+          print('Error syncing data: $e');
+          return false;
+        }
+      } catch (e) {
+        print('Error syncing data: $e');
+        return false;
+      }
+    } else {
+      // Handle no internet connection
+      print('No internet connection');
+      return false;
+    }
+  }
+
   Future<bool> isConnected() async {
     var connectivityResult = await Connectivity().checkConnectivity();
     return connectivityResult == ConnectivityResult.mobile ||
