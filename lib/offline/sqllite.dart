@@ -658,15 +658,25 @@ class YourDataSync {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String? ip = prefs.getString('ip');
         String? dbName = prefs.getString('dbName');
-        final url = Uri.parse(
-            'http://$ip/uploadData/?dbName=$dbName&result=$rowst&result2=$tables'); // Replace with your FastAPI login endpoint
+        // Replace with your FastAPI login endpoint
 
         try {
+          //List<Map<String,Object>> rowstJson = jsonEncode(rowst);
+          //String tablesJson = jsonEncode(tables);
+
+          final url = Uri.parse('http://$ip/uploadData/?dbName=$dbName');
+// Replace with your FastAPI endpoint
+
+// Include 'rowstJson' and 'tablesJson' in the request body
           final response = await http.post(
             url,
             headers: {
               'Content-Type': 'application/json',
             },
+            body: jsonEncode({
+              'result': rowst,
+              'result2': tables,
+            }),
           );
           //print(response);
 
