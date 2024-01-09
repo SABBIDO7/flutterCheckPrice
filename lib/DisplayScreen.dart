@@ -349,7 +349,8 @@ class _DisplayScreenState extends State<DisplayScreen> {
         appBar: AppBar(
           title: Text(replaceAfterUnderscore(displayedText, 3, 4),
               style: const TextStyle(fontSize: 18)),
-          backgroundColor: getAppBarBackgroundColor(),
+          backgroundColor:
+              widget.isOnline == true ? Colors.deepPurple : Colors.grey,
         ),
         body: Center(
           child: SingleChildScrollView(

@@ -428,6 +428,30 @@ class _OptionState extends State<Option> {
                           ),
                         ],
                       ),
+                      Expanded(
+                        child: Container(
+                          child: MyButton(
+                            onTap: () async {
+                              if (_formKey.currentState!.validate()) {
+                                Navigator.of(context).pop();
+                                if (await deleteInventory(
+                                        inventoryController.text) ==
+                                    "True") {
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  String? inventory =
+                                      prefs.getString("inventory");
+                                  if (inventoryController.text == inventory) {
+                                    prefs.setString('inventory', "");
+                                  }
+                                }
+                              }
+                            },
+                            buttonName: "Delete",
+                            isOnline: isOnlineFlag,
+                          ),
+                        ),
+                      ),
                       // SizedBox(
                       //   height: MediaQuery.of(context).size.height * 0.01,
                       // ),
@@ -535,6 +559,58 @@ class _OptionState extends State<Option> {
       );
       return "False";
     }
+  }
+
+  Future<String> deleteInventory(String inventory) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? dbName = prefs.getString('dbName');
+    String? ip = prefs.getString('ip');
+    bool? isOnline = prefs.getBool('isOnline');
+    if (isOnline == true) {
+      try {
+        final apiUrl =
+            'http://$ip/deleteInventory/'; // Replace with your API endpoint
+
+        final response = await http.post(
+          Uri.parse('$apiUrl?dbName=$dbName&inventory=$inventory'),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        );
+
+        if (response.statusCode == 200) {
+          // Data was found in the database
+          final data =
+              jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
+          if (data['status'] == true) {
+            return "True";
+          } else {
+            return "False";
+          }
+        } else {
+          return "False";
+        }
+      } catch (e) {
+        // Data not found in the database
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Inventory Not Deleted'),
+            content: Text('Request error.\nCheck your WIFI.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return "False";
+      }
+    }
+    return "False";
   }
 
   void showcartCreate(
