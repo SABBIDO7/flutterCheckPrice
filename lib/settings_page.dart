@@ -168,7 +168,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       Color backgroundColor = const Color.fromRGBO(103, 58, 183, 1);
       Widget content = Text("");
       if (await YourDataSync().syncData() == false) {
-        backgroundColor = Colors.grey;
+        backgroundColor = Colors.red;
         content = Text("Error in syncing Data");
       } else {
         backgroundColor = Colors.deepPurple;
@@ -203,7 +203,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       String? username = prefs.getString('username');
       bool finalres;
       if (await YourDataSync().uploadData(username ?? "") == false) {
-        backgroundColor = Colors.grey;
+        backgroundColor = Colors.red;
         content = Text("Error in Uploading Data");
         finalres = false;
       } else {
@@ -296,7 +296,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onTap: () {
                       if (isOnlineFlag == true) {
                         logout(context);
-                      } else {}
+                      } else {
+                        final snackBar = SnackBar(
+                          content: Text(
+                            'Cannot Logout in Offline Mode.',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 14),
+                          ),
+                          duration: Duration(seconds: 2),
+                          backgroundColor: Colors.red,
+                          padding: EdgeInsets.all(20),
+                        );
+
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
                     },
                     buttonName: "Logout",
                     isOnline: isOnlineFlag,
@@ -357,7 +370,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     ],
                                   ),
                                   content: Text(
-                                    'Are you sure you want to sync data?\nSyncing Data will Download the latest items and remove the Offline Data',
+                                    'Are you sure you want to sync data?\nSyncing Data will Download the latest items and remove the Offline Data in this DEVICE',
                                     style: TextStyle(fontSize: 16),
                                   ),
                                   actions: <Widget>[

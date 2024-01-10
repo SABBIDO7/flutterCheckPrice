@@ -282,9 +282,16 @@ class _OptionState extends State<Option> {
           return AlertDialog(
             backgroundColor: Colors.grey[200],
             title: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Text(
+                  "Select Inventory",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize:
+                          MediaQuery.of(context).size.width > 320 ? 18 : 16),
+                ),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop(); // Close the dialog
@@ -312,7 +319,7 @@ class _OptionState extends State<Option> {
                       // ...
 
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Flexible(
@@ -331,17 +338,34 @@ class _OptionState extends State<Option> {
                           Flexible(
                             child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-                              child: Center(
-                                child: Text(
-                                  "Branch: $branch",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width >
-                                                  320
-                                              ? 16
-                                              : 14),
-                                ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    "Branch: $branch",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width >
+                                                    320
+                                                ? 16
+                                                : 14),
+                                  ),
+                                  isOnlineFlag == true
+                                      ? Container()
+                                      : Center(
+                                          child: Text(
+                                            "OFFLINE",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: MediaQuery.of(context)
+                                                            .size
+                                                            .width >
+                                                        320
+                                                    ? 16
+                                                    : 14),
+                                          ),
+                                        ),
+                                ],
                               ),
                             ),
                           ),
@@ -365,28 +389,9 @@ class _OptionState extends State<Option> {
                         ],
                       ),
                       const SizedBox(
-                        height: 15,
+                        height: 25,
                       ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          isOnlineFlag == true
-                              ? Container()
-                              : Center(
-                                  child: Text(
-                                    "OFFLINE",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width >
-                                                    320
-                                                ? 16
-                                                : 14),
-                                  ),
-                                ),
-                        ],
-                      ),
+
                       MyDropdownButtonFormField(
                         items: inventories,
                         value: savedInventory,
@@ -445,82 +450,95 @@ class _OptionState extends State<Option> {
                               ),
                             ),
                           ),
-                          isOnlineFlag == true
-                              ? Expanded(
-                                  child: Container(
-                                    child: MyButton(
-                                      onTap: () async {
-                                        if (_formKey.currentState!.validate()) {
-                                          showDialog(
-                                            context: context,
-                                            barrierDismissible: false,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    // Add some spacing between icon and text
-                                                    Text('Delete Table'),
-                                                    Icon(Icons.warning,
-                                                        color: Colors
-                                                            .red), // Alert icon
-                                                  ],
-                                                ),
-                                                content: Text(
-                                                    'Are you sure you want to delete?'),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop(); // Close the dialog
-                                                    },
-                                                    child: Text('Cancel'),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () async {
-                                                      Navigator.of(context)
-                                                          .pop(); // Close the dialog
-                                                      // Call the delete function
-                                                      if (await deleteInventory(
-                                                              inventoryController
-                                                                  .text) ==
-                                                          "True") {
-                                                        SharedPreferences
-                                                            prefs =
-                                                            await SharedPreferences
-                                                                .getInstance();
-                                                        String? inventory =
-                                                            prefs.getString(
-                                                                "inventory");
-                                                        if (inventoryController
-                                                                .text ==
-                                                            inventory) {
-                                                          prefs.setString(
-                                                              'inventory', "");
-                                                        }
-                                                      }
-                                                    },
-                                                    child: Text('Delete'),
-                                                  ),
-                                                ],
-                                              );
-                                            },
+                          Expanded(
+                            child: Container(
+                              child: MyButton(
+                                onTap: () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    if (isOnlineFlag == true) {
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                // Add some spacing between icon and text
+                                                Text('Delete Table'),
+                                                Icon(Icons.warning,
+                                                    color: Colors
+                                                        .red), // Alert icon
+                                              ],
+                                            ),
+                                            content: Text(
+                                                'Are you sure you want to delete?'),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop(); // Close the dialog
+                                                },
+                                                child: Text('Cancel'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () async {
+                                                  Navigator.of(context)
+                                                      .pop(); // Close the dialog
+                                                  // Call the delete function
+                                                  if (await deleteInventory(
+                                                          inventoryController
+                                                              .text) ==
+                                                      "True") {
+                                                    SharedPreferences prefs =
+                                                        await SharedPreferences
+                                                            .getInstance();
+                                                    String? inventory = prefs
+                                                        .getString("inventory");
+                                                    if (inventoryController
+                                                            .text ==
+                                                        inventory) {
+                                                      prefs.setString(
+                                                          'inventory', "");
+                                                    }
+                                                  }
+                                                },
+                                                child: Text('Delete'),
+                                              ),
+                                            ],
                                           );
-                                        }
-                                      },
-                                      buttonName: "Delete",
-                                      isOnline: isOnlineFlag,
-                                      padding: 20,
-                                    ),
-                                  ),
-                                )
-                              : Container(),
+                                        },
+                                      );
+                                    } else {
+                                      final snackBar = SnackBar(
+                                        content: Text(
+                                          'Cannot Delete Table in Offline Mode.',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14),
+                                        ),
+                                        duration: Duration(seconds: 2),
+                                        backgroundColor: Colors.red,
+                                        padding: EdgeInsets.all(20),
+                                      );
+
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
+                                    }
+                                  }
+                                },
+                                buttonName: "Delete",
+                                isOnline: isOnlineFlag,
+                                padding: 20,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(
-                        height: 10,
+                        height: 15,
                       ),
                       Container(
                         child: MyButton(
@@ -720,17 +738,31 @@ class _OptionState extends State<Option> {
         return AlertDialog(
           backgroundColor: Colors.grey[200],
           title: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
-                },
-                child: Icon(
-                  Icons.close,
-                  color: isOnlineFlag == true ? Colors.deepPurple : Colors.grey,
-                ), // "X" icon
+              Row(
+                children: [
+                  Text(
+                    "Create New Inventory",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                ],
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                    },
+                    child: Icon(
+                      Icons.close,
+                      color: isOnlineFlag == true
+                          ? Colors.deepPurple
+                          : Colors.grey,
+                    ), // "X" icon
+                  ),
+                ],
               ),
             ],
           ),
@@ -742,31 +774,9 @@ class _OptionState extends State<Option> {
                 key: _formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(); // Close the dialog
-                          },
-                          child: Icon(
-                            Icons.close,
-                            color: isOnlineFlag == true
-                                ? Colors.deepPurple
-                                : Colors.grey,
-                          ), // "X" icon
-                        ),
-                      ],
-                    ),
-                    Text(
-                      "Create New Inventory",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                    ),
                     // Add your ComboBox and other widgets here
                     // ...
                     MyTextField(
@@ -922,9 +932,16 @@ class _OptionState extends State<Option> {
         return AlertDialog(
           backgroundColor: Colors.grey[200],
           title: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Text(
+                "Check Price",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize:
+                        MediaQuery.of(context).size.width > 320 ? 18 : 16),
+              ),
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop(); // Close the dialog
