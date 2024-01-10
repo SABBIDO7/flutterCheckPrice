@@ -1626,19 +1626,21 @@ class _DisplayScreenState extends State<DisplayScreen> {
 
                   // Sign in button
                   MyButton(
-                      onTap: () {
-                        if (_formKey.currentState!.validate()) {
-                          // Validation passed, make the update call
-                          update_hande_quantity(
-                              widget.data['item']['itemNumber'].toString(),
-                              _inputController.text,
-                              widget.data['item']['Branch'].toString(),
-                              widget.inventory,
-                              widget.data['item']['handQuantity']);
-                        }
-                      },
-                      buttonName: "Update",
-                      isOnline: widget.isOnline),
+                    onTap: () {
+                      if (_formKey.currentState!.validate()) {
+                        // Validation passed, make the update call
+                        update_hande_quantity(
+                            widget.data['item']['itemNumber'].toString(),
+                            _inputController.text,
+                            widget.data['item']['Branch'].toString(),
+                            widget.inventory,
+                            widget.data['item']['handQuantity']);
+                      }
+                    },
+                    buttonName: "Update",
+                    isOnline: widget.isOnline,
+                    padding: 20,
+                  ),
                   SizedBox(height: screenHeight * 0.01),
 
                   // Add any additional widgets or styling as needed

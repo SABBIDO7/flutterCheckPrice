@@ -211,6 +211,7 @@ class _OptionState extends State<Option> {
                               },
                               buttonName: "create",
                               isOnline: isOnlineFlag,
+                              padding: 20,
                             ),
                           ),
                         ),
@@ -275,10 +276,27 @@ class _OptionState extends State<Option> {
       //final screenHeight = mediaQueryData.size.height;
       //final screenWidth = mediaQueryData.size.width;
       showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             backgroundColor: Colors.grey[200],
+            title: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: Icon(
+                    Icons.close,
+                    color:
+                        isOnlineFlag == true ? Colors.deepPurple : Colors.grey,
+                  ), // "X" icon
+                ),
+              ],
+            ),
             content: Container(
               width: MediaQuery.of(context).size.width,
               padding: EdgeInsets.all(2),
@@ -288,12 +306,13 @@ class _OptionState extends State<Option> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       // Add your ComboBox and other widgets here
                       // ...
+
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Flexible(
@@ -343,6 +362,29 @@ class _OptionState extends State<Option> {
                               ),
                             ),
                           ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          isOnlineFlag == true
+                              ? Container()
+                              : Center(
+                                  child: Text(
+                                    "OFFLINE",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width >
+                                                    320
+                                                ? 16
+                                                : 14),
+                                  ),
+                                ),
                         ],
                       ),
                       MyDropdownButtonFormField(
@@ -399,59 +441,111 @@ class _OptionState extends State<Option> {
                                 },
                                 buttonName: "create",
                                 isOnline: isOnlineFlag,
+                                padding: 20,
                               ),
                             ),
                           ),
-                          Expanded(
-                            child: Container(
-                              child: MyButton(
-                                onTap: () async {
-                                  print("shoubek");
-                                  print(inventoryController.text);
-                                  if (_formKey.currentState!.validate()) {
-                                    SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
-
-                                    prefs.setString(
-                                        'inventory', inventoryController.text);
-                                    scanAndRetrieveData(
-                                        context,
-                                        inventoryController.text,
-                                        0,
-                                        barcodeController.text);
-                                  }
-                                },
-                                buttonName: "Scan",
-                                isOnline: isOnlineFlag,
-                              ),
-                            ),
-                          ),
+                          isOnlineFlag == true
+                              ? Expanded(
+                                  child: Container(
+                                    child: MyButton(
+                                      onTap: () async {
+                                        if (_formKey.currentState!.validate()) {
+                                          showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    // Add some spacing between icon and text
+                                                    Text('Delete Table'),
+                                                    Icon(Icons.warning,
+                                                        color: Colors
+                                                            .red), // Alert icon
+                                                  ],
+                                                ),
+                                                content: Text(
+                                                    'Are you sure you want to delete?'),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop(); // Close the dialog
+                                                    },
+                                                    child: Text('Cancel'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      Navigator.of(context)
+                                                          .pop(); // Close the dialog
+                                                      // Call the delete function
+                                                      if (await deleteInventory(
+                                                              inventoryController
+                                                                  .text) ==
+                                                          "True") {
+                                                        SharedPreferences
+                                                            prefs =
+                                                            await SharedPreferences
+                                                                .getInstance();
+                                                        String? inventory =
+                                                            prefs.getString(
+                                                                "inventory");
+                                                        if (inventoryController
+                                                                .text ==
+                                                            inventory) {
+                                                          prefs.setString(
+                                                              'inventory', "");
+                                                        }
+                                                      }
+                                                    },
+                                                    child: Text('Delete'),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        }
+                                      },
+                                      buttonName: "Delete",
+                                      isOnline: isOnlineFlag,
+                                      padding: 20,
+                                    ),
+                                  ),
+                                )
+                              : Container(),
                         ],
                       ),
-                      Expanded(
-                        child: Container(
-                          child: MyButton(
-                            onTap: () async {
-                              if (_formKey.currentState!.validate()) {
-                                Navigator.of(context).pop();
-                                if (await deleteInventory(
-                                        inventoryController.text) ==
-                                    "True") {
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-                                  String? inventory =
-                                      prefs.getString("inventory");
-                                  if (inventoryController.text == inventory) {
-                                    prefs.setString('inventory', "");
-                                  }
-                                }
-                              }
-                            },
-                            buttonName: "Delete",
-                            isOnline: isOnlineFlag,
-                          ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        child: MyButton(
+                          onTap: () async {
+                            print("shoubek");
+                            print(inventoryController.text);
+                            if (_formKey.currentState!.validate()) {
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+
+                              prefs.setString(
+                                  'inventory', inventoryController.text);
+                              scanAndRetrieveData(
+                                  context,
+                                  inventoryController.text,
+                                  0,
+                                  barcodeController.text);
+                            }
+                          },
+                          buttonName: "Scan",
+                          isOnline: isOnlineFlag,
+                          padding: 30,
                         ),
                       ),
+
                       // SizedBox(
                       //   height: MediaQuery.of(context).size.height * 0.01,
                       // ),
@@ -620,11 +714,27 @@ class _OptionState extends State<Option> {
     String errorMessage = '';
 
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
+        return AlertDialog(
           backgroundColor: Colors.grey[200],
-          child: Container(
+          title: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+                child: Icon(
+                  Icons.close,
+                  color: isOnlineFlag == true ? Colors.deepPurple : Colors.grey,
+                ), // "X" icon
+              ),
+            ],
+          ),
+          content: Container(
             width: (MediaQuery.of(context).size.width),
             padding: EdgeInsets.all(16.0),
             child: SingleChildScrollView(
@@ -635,6 +745,23 @@ class _OptionState extends State<Option> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close the dialog
+                          },
+                          child: Icon(
+                            Icons.close,
+                            color: isOnlineFlag == true
+                                ? Colors.deepPurple
+                                : Colors.grey,
+                          ), // "X" icon
+                        ),
+                      ],
+                    ),
                     Text(
                       "Create New Inventory",
                       style:
@@ -755,6 +882,7 @@ class _OptionState extends State<Option> {
                               },
                               buttonName: "create",
                               isOnline: isOnlineFlag,
+                              padding: 20,
                             ),
                           ),
                         ),
@@ -788,13 +916,29 @@ class _OptionState extends State<Option> {
     //final screenHeight = mediaQueryData.size.height;
     //final screenWidth = mediaQueryData.size.width;
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.grey[200],
+          title: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+                child: Icon(
+                  Icons.close,
+                  color: isOnlineFlag == true ? Colors.deepPurple : Colors.grey,
+                ), // "X" icon
+              ),
+            ],
+          ),
           content: Container(
             width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.all(2),
+            padding: const EdgeInsets.all(2),
             child: SingleChildScrollView(
               child: Form(
                 key: _formKey,
@@ -822,7 +966,7 @@ class _OptionState extends State<Option> {
                     // ),
 
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Flexible(
@@ -841,6 +985,26 @@ class _OptionState extends State<Option> {
                             ),
                           ),
                         ),
+                        isOnlineFlag == true
+                            ? Container()
+                            : Flexible(
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Center(
+                                    child: Text(
+                                      "OFFLINE",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width >
+                                                  320
+                                              ? 16
+                                              : 14),
+                                    ),
+                                  ),
+                                ),
+                              ),
                         Flexible(
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
@@ -887,6 +1051,7 @@ class _OptionState extends State<Option> {
                               },
                               buttonName: "Scan",
                               isOnline: isOnlineFlag,
+                              padding: 30,
                             ),
                           ),
                         ),
@@ -1412,6 +1577,7 @@ class _OptionState extends State<Option> {
                     },
                     buttonName: "Quantity To Collect",
                     isOnline: isOnlineFlag,
+                    padding: 20,
                   ),
                   SizedBox(height: screenHeight * 0.05),
                   MyButton(
@@ -1420,6 +1586,16 @@ class _OptionState extends State<Option> {
                     },
                     buttonName: "Check Price",
                     isOnline: isOnlineFlag,
+                    padding: 20,
+                  ),
+                  SizedBox(height: screenHeight * 0.05),
+                  MyButton(
+                    onTap: () {
+                      navigateToSettings(context, isOnlineFlag);
+                    },
+                    buttonName: "Settings",
+                    isOnline: isOnlineFlag,
+                    padding: 20,
                   ),
                 ],
               ),

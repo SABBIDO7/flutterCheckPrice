@@ -906,6 +906,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                   },
                   buttonName: "Scan Again",
                   isOnline: widget.isOnline,
+                  padding: 20,
                 ),
                 SizedBox(height: screenHeight * 0.01),
 

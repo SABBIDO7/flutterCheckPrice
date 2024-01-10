@@ -289,6 +289,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     },
                     buttonName: "Update",
                     isOnline: isOnlineFlag,
+                    padding: 20,
                   ),
                   SizedBox(height: screenHeight * 0.05),
                   MyButton(
@@ -299,6 +300,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     },
                     buttonName: "Logout",
                     isOnline: isOnlineFlag,
+                    padding: 20,
                   ),
                   SizedBox(height: screenHeight * 0.05),
                   Row(
@@ -340,10 +342,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           if (isConnected) {
                             // Show confirmation dialog
                             bool confirmSync = await showDialog(
+                              barrierDismissible: false,
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: Text('Sync Data'),
+                                  title: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      // Add some spacing between icon and text
+                                      Text('Sync Data'),
+                                      Icon(Icons.warning,
+                                          color: Colors.red), // Alert icon
+                                    ],
+                                  ),
                                   content: Text(
                                     'Are you sure you want to sync data?\nSyncing Data will Download the latest items and remove the Offline Data',
                                     style: TextStyle(fontSize: 16),
@@ -390,6 +402,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         },
                         buttonName: "Sync Data",
                         isOnline: isOnlineFlag,
+                        padding: 20,
                       ),
                     ],
                   ),
@@ -411,10 +424,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           bool isConnected = await YourDataSync().isConnected();
                           if (isConnected) {
                             bool confirmUpload = await showDialog(
+                              barrierDismissible: false,
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: Text('Upload Data'),
+                                  title: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      // Add some spacing between icon and text
+                                      Text('Upload Data'),
+                                      Icon(Icons.warning,
+                                          color: Colors.red), // Alert icon
+                                    ],
+                                  ),
                                   content: Text(
                                     'Are you sure you want to upload data?',
                                     style: TextStyle(fontSize: 16),
@@ -448,12 +471,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 String? username = prefs.getString('username');
                                 String? dbName = prefs.getString('dbName');
                                 bool confirmDelete = await showDialog(
+                                  barrierDismissible: false,
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: Text('Delete Offline Data'),
+                                      title: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          // Add some spacing between icon and text
+                                          Text('Delete Data'),
+                                          Icon(Icons.warning,
+                                              color: Colors.red), // Alert icon
+                                        ],
+                                      ),
                                       content: Text(
-                                        'Are you sure you want to DELETE OFFLNE DATA?',
+                                        'Are you sure you want to DELETE OFFLNE DATA in this DEVICE?',
                                         style: TextStyle(fontSize: 16),
                                       ),
                                       actions: <Widget>[
@@ -500,6 +533,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         },
                         buttonName: "Upload Data",
                         isOnline: isOnlineFlag,
+                        padding: 20,
                       ),
                     ],
                   )

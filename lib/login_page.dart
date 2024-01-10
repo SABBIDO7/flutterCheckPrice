@@ -328,20 +328,22 @@ class _LoginPageState extends State<LoginPage> {
 
                               // sign in button
                               MyButton(
-                                  onTap: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      signUserIn(
-                                          usernameController.text,
-                                          //passwordController.text,
-                                          branchController.text,
-                                          -1,
-                                          dBController.text,
-                                          ipController.text,
-                                          context);
-                                    }
-                                  },
-                                  buttonName: "Login",
-                                  isOnline: true),
+                                onTap: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    signUserIn(
+                                        usernameController.text,
+                                        //passwordController.text,
+                                        branchController.text,
+                                        -1,
+                                        dBController.text,
+                                        ipController.text,
+                                        context);
+                                  }
+                                },
+                                buttonName: "Login",
+                                isOnline: true,
+                                padding: 20,
+                              ),
                             ],
                           ),
                         ),

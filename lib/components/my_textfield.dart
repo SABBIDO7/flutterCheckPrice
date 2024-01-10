@@ -71,6 +71,15 @@ class MyTextField extends StatelessWidget {
                     errorStyle: TextStyle(
                         fontSize:
                             16), // Set the font size for the error message
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        Icons.clear,
+                        color: Colors.deepPurple,
+                      ),
+                      onPressed: () {
+                        controller.clear();
+                      },
+                    ),
                   ),
                   validator: validator, // Attach the validator function
                 ),

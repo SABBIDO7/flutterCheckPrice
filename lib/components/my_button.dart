@@ -4,11 +4,13 @@ class MyButton extends StatelessWidget {
   final Function()? onTap;
   final String buttonName;
   final bool isOnline;
+  final double padding;
   const MyButton({
     super.key,
     required this.onTap,
     required this.buttonName,
     required this.isOnline,
+    required this.padding,
   });
 
   @override
@@ -16,7 +18,7 @@ class MyButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(padding),
         margin: const EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
           color: isOnline == true ? Colors.deepPurple : Colors.grey,
