@@ -456,7 +456,7 @@ class _OptionState extends State<Option> {
                                 onTap: () async {
                                   if (_formKey.currentState!.validate()) {
                                     if (isOnlineFlag == true) {
-                                      showDialog(
+                                      bool deleteConfirm = await showDialog(
                                         context: context,
                                         barrierDismissible: false,
                                         builder: (BuildContext context) {
@@ -485,8 +485,6 @@ class _OptionState extends State<Option> {
                                               ),
                                               TextButton(
                                                 onPressed: () async {
-                                                  Navigator.of(context)
-                                                      .pop(); // Close the dialog
                                                   // Call the delete function
                                                   if (await deleteInventory(
                                                           inventoryController
@@ -503,6 +501,11 @@ class _OptionState extends State<Option> {
                                                       prefs.setString(
                                                           'inventory', "");
                                                     }
+                                                    Navigator.of(context).pop(
+                                                        true); // Close the dialog
+                                                  } else {
+                                                    Navigator.of(context)
+                                                        .pop(false);
                                                   }
                                                 },
                                                 child: Text('Delete'),
@@ -511,6 +514,38 @@ class _OptionState extends State<Option> {
                                           );
                                         },
                                       );
+                                      if (deleteConfirm == true) {
+                                        Navigator.of(context).pop();
+                                        final snackBar = SnackBar(
+                                          content: Text(
+                                            'Table Deleted Successfully.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14),
+                                          ),
+                                          duration: Duration(seconds: 2),
+                                          backgroundColor: Colors.deepPurple,
+                                          padding: EdgeInsets.all(20),
+                                        );
+
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBar);
+                                      } else if (deleteConfirm == false) {
+                                        final snackBar = SnackBar(
+                                          content: Text(
+                                            'Error while Deleting the Table.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14),
+                                          ),
+                                          duration: Duration(seconds: 2),
+                                          backgroundColor: Colors.red,
+                                          padding: EdgeInsets.all(20),
+                                        );
+
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBar);
+                                      }
                                     } else {
                                       final snackBar = SnackBar(
                                         content: Text(
