@@ -24,6 +24,45 @@ class Option extends StatefulWidget {
 
 class _OptionState extends State<Option> {
   late bool isOnlineFlag = false;
+  Future<bool> UploadData(String inventory) async {
+    try {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        barrierDismissible: false,
+      );
+      // Sync data
+      Color backgroundColor = const Color.fromRGBO(103, 58, 183, 1);
+      Widget content = Text("");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? username = prefs.getString('username');
+      bool finalres;
+      if (await YourDataSync().uploadData(username ?? "", inventory) == false) {
+        backgroundColor = Colors.red;
+        content = Text("Error in Uploading Data");
+        finalres = false;
+      } else {
+        backgroundColor = Colors.deepPurple;
+        content = Text("Data Uploaded Successfully");
+        finalres = true;
+      }
+      final snackBar = SnackBar(
+        content: content,
+        duration: Duration(seconds: 2),
+        backgroundColor: backgroundColor,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      Navigator.of(context).pop();
+      return finalres;
+    } catch (e) {
+      return false;
+    }
+  }
 
   saveItemInDb(String itemNumber, String itemName, String inventory,
       String? dbName, String? branch, String handQuantity) async {
@@ -265,7 +304,7 @@ class _OptionState extends State<Option> {
         }
       }
       if (isOnline == false) {
-        List<String> tables =
+        List<Map<String, dynamic>> tables =
             await YourDatabaseHelper().getInventories(username);
         inventories = tables;
         print("-------------------$inventories");
@@ -598,6 +637,133 @@ class _OptionState extends State<Option> {
                           padding: 30,
                         ),
                       ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      isOnlineFlag == false
+                          ? MyButton(
+                              onTap: () async {
+                                //bool isOnline = await isOnlineStatus();
+                                if (_formKey.currentState!.validate()) {
+                                  bool isConnected =
+                                      await YourDataSync().isConnected();
+
+                                  if (isConnected) {
+                                    bool confirmUpload = await showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              // Add some spacing between icon and text
+                                              Text('Upload Data'),
+                                              Icon(Icons.warning,
+                                                  color:
+                                                      Colors.red), // Alert icon
+                                            ],
+                                          ),
+                                          content: Text(
+                                            'Are you sure you want to upload data?',
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(false); // Cancel
+                                              },
+                                              child: Text('Cancel'),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(true); // Confirm
+                                              },
+                                              child: Text('Upload'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+
+                                    // Check if the user confirmed the sync
+                                    if (confirmUpload == true) {
+                                      bool result = await UploadData(
+                                          inventoryController.text);
+                                      if (result == true) {
+                                        bool confirmDelete = await showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  // Add some spacing between icon and text
+                                                  Text('Delete Data'),
+                                                  Icon(Icons.warning,
+                                                      color: Colors
+                                                          .red), // Alert icon
+                                                ],
+                                              ),
+                                              content: Text(
+                                                'Are you sure you want to DELETE OFFLNE DATA in this DEVICE?',
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context)
+                                                        .pop(false); // Cancel
+                                                  },
+                                                  child: Text('Cancel'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context)
+                                                        .pop(true); // Confirm
+                                                  },
+                                                  child: Text('Delete'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                        if (confirmDelete == true) {
+                                          await YourDatabaseHelper()
+                                              .deleteTablesStartingWith(
+                                                  dbName ?? "", "dc_$username");
+                                        }
+                                      }
+                                    }
+                                  } else {
+                                    final snackBar = SnackBar(
+                                      content: Text(
+                                        'Cannot Upload Data without WIFI.',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14),
+                                      ),
+                                      duration: Duration(seconds: 2),
+                                      backgroundColor: Colors.grey,
+                                      padding: EdgeInsets.all(20),
+                                    );
+
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+                                  }
+                                }
+                              },
+                              buttonName: "Upload Data",
+                              isOnline: isOnlineFlag,
+                              padding: 20,
+                            )
+                          : Container(),
 
                       // SizedBox(
                       //   height: MediaQuery.of(context).size.height * 0.01,

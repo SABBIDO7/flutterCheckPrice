@@ -185,45 +185,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
     } catch (e) {}
   }
 
-  Future<bool> UploadData() async {
-    try {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-        barrierDismissible: false,
-      );
-      // Sync data
-      Color backgroundColor = const Color.fromRGBO(103, 58, 183, 1);
-      Widget content = Text("");
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? username = prefs.getString('username');
-      bool finalres;
-      if (await YourDataSync().uploadData(username ?? "") == false) {
-        backgroundColor = Colors.red;
-        content = Text("Error in Uploading Data");
-        finalres = false;
-      } else {
-        backgroundColor = Colors.deepPurple;
-        content = Text("Data Uploaded Successfully");
-        finalres = true;
-      }
-      final snackBar = SnackBar(
-        content: content,
-        duration: Duration(seconds: 2),
-        backgroundColor: backgroundColor,
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  // Future<bool> UploadData() async {
+  //   try {
+  //     showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return Center(
+  //           child: CircularProgressIndicator(),
+  //         );
+  //       },
+  //       barrierDismissible: false,
+  //     );
+  //     // Sync data
+  //     Color backgroundColor = const Color.fromRGBO(103, 58, 183, 1);
+  //     Widget content = Text("");
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     String? username = prefs.getString('username');
+  //     bool finalres;
+  //     if (await YourDataSync().uploadData(username ?? "") == false) {
+  //       backgroundColor = Colors.red;
+  //       content = Text("Error in Uploading Data");
+  //       finalres = false;
+  //     } else {
+  //       backgroundColor = Colors.deepPurple;
+  //       content = Text("Data Uploaded Successfully");
+  //       finalres = true;
+  //     }
+  //     final snackBar = SnackBar(
+  //       content: content,
+  //       duration: Duration(seconds: 2),
+  //       backgroundColor: backgroundColor,
+  //     );
+  //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-      Navigator.of(context).pop();
-      return finalres;
-    } catch (e) {
-      return false;
-    }
-  }
+  //     Navigator.of(context).pop();
+  //     return finalres;
+  //   } catch (e) {
+  //     return false;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -413,143 +413,143 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 .showSnackBar(snackBar);
                           }
                         },
-                        buttonName: "Sync Data",
+                        buttonName: "Download items file",
                         isOnline: isOnlineFlag,
                         padding: 20,
                       ),
                     ],
                   ),
-                  SizedBox(height: screenHeight * 0.05),
-                  Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 25),
-                        child: Text(
-                          "Send Data :",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      MyButton(
-                        onTap: () async {
-                          //bool isOnline = await isOnlineStatus();
+                  // SizedBox(height: screenHeight * 0.05),
+                  // Row(
+                  //   children: [
+                  //     Container(
+                  //       margin: const EdgeInsets.symmetric(horizontal: 25),
+                  //       child: Text(
+                  //         "Send Data :",
+                  //         style: TextStyle(
+                  //             fontSize: 16, fontWeight: FontWeight.bold),
+                  //       ),
+                  //     ),
+                  //     MyButton(
+                  //       onTap: () async {
+                  //         //bool isOnline = await isOnlineStatus();
 
-                          bool isConnected = await YourDataSync().isConnected();
-                          if (isConnected) {
-                            bool confirmUpload = await showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      // Add some spacing between icon and text
-                                      Text('Upload Data'),
-                                      Icon(Icons.warning,
-                                          color: Colors.red), // Alert icon
-                                    ],
-                                  ),
-                                  content: Text(
-                                    'Are you sure you want to upload data?',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context)
-                                            .pop(false); // Cancel
-                                      },
-                                      child: Text('Cancel'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context)
-                                            .pop(true); // Confirm
-                                      },
-                                      child: Text('Upload'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
+                  //         bool isConnected = await YourDataSync().isConnected();
+                  //         if (isConnected) {
+                  //           bool confirmUpload = await showDialog(
+                  //             barrierDismissible: false,
+                  //             context: context,
+                  //             builder: (BuildContext context) {
+                  //               return AlertDialog(
+                  //                 title: Row(
+                  //                   mainAxisAlignment:
+                  //                       MainAxisAlignment.spaceBetween,
+                  //                   children: [
+                  //                     // Add some spacing between icon and text
+                  //                     Text('Upload Data'),
+                  //                     Icon(Icons.warning,
+                  //                         color: Colors.red), // Alert icon
+                  //                   ],
+                  //                 ),
+                  //                 content: Text(
+                  //                   'Are you sure you want to upload data?',
+                  //                   style: TextStyle(fontSize: 16),
+                  //                 ),
+                  //                 actions: <Widget>[
+                  //                   TextButton(
+                  //                     onPressed: () {
+                  //                       Navigator.of(context)
+                  //                           .pop(false); // Cancel
+                  //                     },
+                  //                     child: Text('Cancel'),
+                  //                   ),
+                  //                   TextButton(
+                  //                     onPressed: () {
+                  //                       Navigator.of(context)
+                  //                           .pop(true); // Confirm
+                  //                     },
+                  //                     child: Text('Upload'),
+                  //                   ),
+                  //                 ],
+                  //               );
+                  //             },
+                  //           );
 
-                            // Check if the user confirmed the sync
-                            if (confirmUpload == true) {
-                              bool result = await UploadData();
-                              if (result == true) {
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                String? username = prefs.getString('username');
-                                String? dbName = prefs.getString('dbName');
-                                bool confirmDelete = await showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          // Add some spacing between icon and text
-                                          Text('Delete Data'),
-                                          Icon(Icons.warning,
-                                              color: Colors.red), // Alert icon
-                                        ],
-                                      ),
-                                      content: Text(
-                                        'Are you sure you want to DELETE OFFLNE DATA in this DEVICE?',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context)
-                                                .pop(false); // Cancel
-                                          },
-                                          child: Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context)
-                                                .pop(true); // Confirm
-                                          },
-                                          child: Text('Delete'),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                                if (confirmDelete == true) {
-                                  await YourDatabaseHelper()
-                                      .deleteTablesStartingWith(
-                                          dbName ?? "", "dc_$username");
-                                }
-                              }
-                            }
-                          } else {
-                            final snackBar = SnackBar(
-                              content: Text(
-                                'Cannot Upload Data without WIFI.',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 14),
-                              ),
-                              duration: Duration(seconds: 2),
-                              backgroundColor: Colors.grey,
-                              padding: EdgeInsets.all(20),
-                            );
+                  //           // Check if the user confirmed the sync
+                  //           if (confirmUpload == true) {
+                  //             bool result = await UploadData();
+                  //             if (result == true) {
+                  //               SharedPreferences prefs =
+                  //                   await SharedPreferences.getInstance();
+                  //               String? username = prefs.getString('username');
+                  //               String? dbName = prefs.getString('dbName');
+                  //               bool confirmDelete = await showDialog(
+                  //                 barrierDismissible: false,
+                  //                 context: context,
+                  //                 builder: (BuildContext context) {
+                  //                   return AlertDialog(
+                  //                     title: Row(
+                  //                       mainAxisAlignment:
+                  //                           MainAxisAlignment.spaceBetween,
+                  //                       children: [
+                  //                         // Add some spacing between icon and text
+                  //                         Text('Delete Data'),
+                  //                         Icon(Icons.warning,
+                  //                             color: Colors.red), // Alert icon
+                  //                       ],
+                  //                     ),
+                  //                     content: Text(
+                  //                       'Are you sure you want to DELETE OFFLNE DATA in this DEVICE?',
+                  //                       style: TextStyle(fontSize: 16),
+                  //                     ),
+                  //                     actions: <Widget>[
+                  //                       TextButton(
+                  //                         onPressed: () {
+                  //                           Navigator.of(context)
+                  //                               .pop(false); // Cancel
+                  //                         },
+                  //                         child: Text('Cancel'),
+                  //                       ),
+                  //                       TextButton(
+                  //                         onPressed: () {
+                  //                           Navigator.of(context)
+                  //                               .pop(true); // Confirm
+                  //                         },
+                  //                         child: Text('Delete'),
+                  //                       ),
+                  //                     ],
+                  //                   );
+                  //                 },
+                  //               );
+                  //               if (confirmDelete == true) {
+                  //                 await YourDatabaseHelper()
+                  //                     .deleteTablesStartingWith(
+                  //                         dbName ?? "", "dc_$username");
+                  //               }
+                  //             }
+                  //           }
+                  //         } else {
+                  //           final snackBar = SnackBar(
+                  //             content: Text(
+                  //               'Cannot Upload Data without WIFI.',
+                  //               style: TextStyle(
+                  //                   fontWeight: FontWeight.bold, fontSize: 14),
+                  //             ),
+                  //             duration: Duration(seconds: 2),
+                  //             backgroundColor: Colors.grey,
+                  //             padding: EdgeInsets.all(20),
+                  //           );
 
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
-                          }
-                        },
-                        buttonName: "Upload Data",
-                        isOnline: isOnlineFlag,
-                        padding: 20,
-                      ),
-                    ],
-                  )
+                  //           ScaffoldMessenger.of(context)
+                  //               .showSnackBar(snackBar);
+                  //         }
+                  //       },
+                  //       buttonName: "Upload Data",
+                  //       isOnline: isOnlineFlag,
+                  //       padding: 20,
+                  //     ),
+                  //   ],
+                  // )
                 ],
               ),
             ),

@@ -86,11 +86,12 @@ class MyDropdownButtonFormField extends StatelessWidget {
               ),
               items: items.map((dynamic branch) {
                 var displayedText;
+                print("invvvvv-------------------------$branch");
                 if (flag == 1 && username != '') {
                   print("hougaAAAAAAA");
                   String? usernameLower = username?.toLowerCase();
                   print(usernameLower);
-                  displayedText = branch
+                  displayedText = branch['table_name']
                       .toString()
                       .replaceFirst('dc_${usernameLower}_', '');
                   print(displayedText);
@@ -98,6 +99,9 @@ class MyDropdownButtonFormField extends StatelessWidget {
                   displayedText = replaceAfterUnderscore(displayedText, 3, 4);
                   /*displayedText = displayedText.replaceRange(
                       2, 7, ''); */ // Replace at the 3rd position
+
+                  displayedText +=
+                      ' (${branch['row_count']}) ${branch['update_time']}';
 
                   print(
                       "displayeddddddd"); //replace from the 3rd and 7th character
@@ -107,7 +111,7 @@ class MyDropdownButtonFormField extends StatelessWidget {
                 }
 
                 return DropdownMenuItem<dynamic>(
-                  value: branch,
+                  value: flag == 1 ? branch['table_name'] : branch,
                   child: Container(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,

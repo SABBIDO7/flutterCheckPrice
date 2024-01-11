@@ -202,8 +202,9 @@ class YourDatabaseHelper {
     }
   }
 
-  Future<List<String>> getInventories(String? username) async {
+  Future<List<Map<String, dynamic>>> getInventories(String? username) async {
     final Database db = await database;
+    List<Map<String, dynamic>> tableInfos = [];
 
     try {
       // Replace 'username' with the actual value you want to query
@@ -216,7 +217,22 @@ class YourDatabaseHelper {
         List<String> tableNames =
             result.map((row) => row['name'].toString()).toList();
         print(tableNames);
-        return tableNames;
+
+        await Future.wait(tableNames.map((tableName) async {
+          String rowCountQuery = "SELECT COUNT(*) FROM $tableName";
+          print(rowCountQuery);
+          int? rowCount =
+              Sqflite.firstIntValue(await db.rawQuery(rowCountQuery));
+          print(rowCount);
+          tableInfos.add({
+            "table_name": tableName,
+            "row_count": rowCount,
+            "update_time": '',
+          });
+        }));
+        print("from invvvvvv----------------");
+        print(tableInfos);
+        return tableInfos;
       } else {
         return [];
       }
@@ -639,7 +655,7 @@ class YourDataSync {
     }
   }
 
-  Future<bool> uploadData(String username) async {
+  Future<bool> uploadData(String username, String inventory) async {
     final Database db = await YourDatabaseHelper().database;
 
     if (await isConnected()) {
@@ -651,7 +667,7 @@ class YourDataSync {
         // Get all table names starting with "dc_user_"
         List<String> tableNames = await db
             .rawQuery(
-              "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'dc_${username}%'",
+              "SELECT name FROM sqlite_master WHERE type='table' AND name = '$inventory'",
             )
             .then((value) => value
                 .map((Map<String, dynamic> map) => map['name'].toString())
