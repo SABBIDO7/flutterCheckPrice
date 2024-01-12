@@ -77,7 +77,7 @@ class YourDatabaseHelper {
     try {
       final databasesPath = await getDatabasesPath();
       final dbDirectory = Directory(databasesPath);
-      final dbFiles = await dbDirectory.list();
+      final dbFiles = dbDirectory.list();
 
       await for (var file in dbFiles) {
         if (file is File && file.path.endsWith('.db')) {
@@ -253,12 +253,12 @@ class YourDatabaseHelper {
     String formattedDatetime =
         DateFormat("yyyyMMdd_HHmmss").format(currentDateTime);
 
-    formattedDatetime = "${abbreviatedDay}${formattedDatetime}";
+    formattedDatetime = "$abbreviatedDay$formattedDatetime";
     print("foramted date only :$formattedDatetime");
     try {
       // Check if the table already exists
       String checkQuery =
-          "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'DC_${username}_${inventory}%'";
+          "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'DC_${username}_$inventory%'";
 
       final List<Map<String, dynamic>> result = await db.rawQuery(checkQuery);
 
@@ -295,7 +295,7 @@ class YourDatabaseHelper {
 
       // Check if the table was successfully created
       String checkAfterQuery =
-          "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'DC_${username}_${inventory}%'";
+          "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'DC_${username}_$inventory%'";
 
       final List<Map<String, dynamic>> checkResult =
           await db.rawQuery(checkAfterQuery);

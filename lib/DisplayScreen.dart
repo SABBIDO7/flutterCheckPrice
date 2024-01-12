@@ -18,7 +18,7 @@ class DisplayScreen extends StatefulWidget {
   final String? username;
   bool isOnline;
   DisplayScreen(
-      {required this.data,
+      {super.key, required this.data,
       required this.inventory,
       required this.username,
       required this.isOnline});
@@ -28,7 +28,7 @@ class DisplayScreen extends StatefulWidget {
 }
 
 class _DisplayScreenState extends State<DisplayScreen> {
-  TextEditingController _inputController = TextEditingController(text: '1');
+  final TextEditingController _inputController = TextEditingController(text: '1');
 
   Future<void> scanRetreiveData(String inventory) async {
     String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
@@ -72,8 +72,8 @@ class _DisplayScreenState extends State<DisplayScreen> {
               context: context,
               barrierDismissible: false,
               builder: (context) => AlertDialog(
-                title: Text('Data Not Found'),
-                content: Text('The scanned item barcode was not found.'),
+                title: const Text('Data Not Found'),
+                content: const Text('The scanned item barcode was not found.'),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -82,7 +82,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                       scanRetreiveData(inventory);
                       //blaaaaaaaaaaaaaaaaaaaa
                     },
-                    child: Text('Scan Again'),
+                    child: const Text('Scan Again'),
                   ),
                   // TextButton(
                   //   onPressed: () {
@@ -106,14 +106,14 @@ class _DisplayScreenState extends State<DisplayScreen> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Data Not Found'),
-            content: Text('Request error.\nCheck your WIFI.'),
+            title: const Text('Data Not Found'),
+            content: const Text('Request error.\nCheck your WIFI.'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           ),
@@ -168,8 +168,8 @@ class _DisplayScreenState extends State<DisplayScreen> {
               context: context,
               barrierDismissible: false,
               builder: (context) => AlertDialog(
-                title: Text('Data Not Found'),
-                content: Text('The scanned item barcode was not found.'),
+                title: const Text('Data Not Found'),
+                content: const Text('The scanned item barcode was not found.'),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -177,7 +177,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                       scanAnotherTimeFail(inventory);
                       //blaaaaaaaaaaaaaaaaaaaa
                     },
-                    child: Text('Scan Again'),
+                    child: const Text('Scan Again'),
                   ),
                   TextButton(
                     onPressed: () {
@@ -189,7 +189,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                       );
                       //blaaaaaaaaaaaaaaaaaaaa
                     },
-                    child: Text('Exit'),
+                    child: const Text('Exit'),
                   ),
                 ],
               ),
@@ -201,14 +201,14 @@ class _DisplayScreenState extends State<DisplayScreen> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Data Not Found'),
-            content: Text('Request error.\nCheck your WIFI.'),
+            title: const Text('Data Not Found'),
+            content: const Text('Request error.\nCheck your WIFI.'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           ),
@@ -257,14 +257,14 @@ class _DisplayScreenState extends State<DisplayScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Data Not Found'),
-          content: Text('Request error.\nCheck your WIFI.'),
+          title: const Text('Data Not Found'),
+          content: const Text('Request error.\nCheck your WIFI.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         ),
@@ -279,7 +279,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
   }
 
   // Declare a GlobalKey<FormState> in your _DisplayScreenState class
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 // ...
 
@@ -377,7 +377,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                               base64Decode(widget.data['item']['image']),
                               errorBuilder: (context, error, stackTrace) {
                                 // Handle the image loading error here
-                                return Icon(Icons
+                                return const Icon(Icons
                                     .error); // Display an error icon or placeholder
                               },
                               width: screenWidth *
@@ -395,7 +395,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                               widget.data['item']['sp'] != null
                           ? Row(
                               children: [
-                                Text(
+                                const Text(
                                   "TTC :",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -403,7 +403,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                 ),
                                 Text(
                                   widget.data['item']['sp'].toString(),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16),
                                 )
@@ -412,14 +412,14 @@ class _DisplayScreenState extends State<DisplayScreen> {
                           : Container(),
                       Row(
                         children: [
-                          Text(
+                          const Text(
                             "VAT :",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                           widget.data['item']['sp'] == "" ||
                                   widget.data['item']['sp'] == null
-                              ? Text(
+                              ? const Text(
                                   "-",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -427,7 +427,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                 )
                               : Text(
                                   widget.data['item']['vat'].toString(),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16),
                                 )
@@ -441,7 +441,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                     child: DataTable(
                       dataRowMaxHeight: screenHeight * 0.12,
                       //dataRowMinHeight: screenHeight * 0.08,
-                      columns: [
+                      columns: const [
                         DataColumn(label: Text('')),
                         DataColumn(label: Text('')),
                       ],
@@ -449,7 +449,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                         DataRow(
                           cells: [
                             DataCell(
-                              Container(
+                              SizedBox(
                                 width: screenWidth * 0.45,
                                 child: SingleChildScrollView(
                                   scrollDirection: Axis.vertical,
@@ -459,7 +459,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      Text(
+                                      const Text(
                                         "Item Name",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
@@ -467,7 +467,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                       ),
                                       Text(
                                         widget.data['item']['itemNumber'],
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                       ),
@@ -477,7 +477,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                                     ['itemNumber']
                                             ? ""
                                             : widget.data['item']['GOID'],
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                       )
@@ -496,7 +496,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
 
                                   child: Text(
                                     widget.data['item']['itemName'].toString(),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16),
                                     //
@@ -556,7 +556,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                               SingleChildScrollView(
                                 scrollDirection: Axis.vertical,
                                 child: Column(children: [
-                                  Container(
+                                  SizedBox(
                                     height: screenHeight * 0.04,
                                     child: Row(
                                       children: [
@@ -656,7 +656,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
-                                        Container(
+                                        SizedBox(
                                           height: screenHeight * 0.04,
                                           child: Row(
                                             mainAxisAlignment:
@@ -758,7 +758,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                       ],
                                     ),
                                   ),
-                                  Container(
+                                  SizedBox(
                                     height: screenHeight * 0.04,
                                     child: Row(
                                       crossAxisAlignment:
@@ -867,7 +867,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                             widget.data['item']['Disc3'] > 0
                                         ? Column(
                                             children: [
-                                              Container(
+                                              SizedBox(
                                                 height: screenHeight * 0.04,
                                                 child: Row(
                                                   children: [
@@ -966,7 +966,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.start,
                                                   children: [
-                                                    Container(
+                                                    SizedBox(
                                                       height:
                                                           screenHeight * 0.04,
                                                       child: Row(
@@ -1066,7 +1066,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                                   ],
                                                 ),
                                               ),
-                                              Container(
+                                              SizedBox(
                                                 height: screenHeight * 0.04,
                                                 child: Row(
                                                   crossAxisAlignment:
@@ -1164,7 +1164,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                               ),
                                             ],
                                           )
-                                        : Column(),
+                                        : const Column(),
                               ),
                             ),
                           ],
@@ -1503,7 +1503,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
-                                        Text(
+                                        const Text(
                                           "Qty In Stock :",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
@@ -1515,7 +1515,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                         Text(
                                           widget.data['item']['quantity']
                                               .toString(),
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 20),
                                         ),
@@ -1525,7 +1525,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
-                                        Text(
+                                        const Text(
                                           "Branch :",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
@@ -1536,7 +1536,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                         ),
                                         Text(
                                           widget.data['item']['Branch'],
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 20),
                                         ),
@@ -1554,7 +1554,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Text(
+                                      const Text(
                                         "Qty Collected:",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
@@ -1570,7 +1570,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                             : widget.data['item']
                                                     ['handQuantity']
                                                 .toStringAsFixed(2),
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 20),
                                       ),
@@ -1579,7 +1579,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Text(
+                                      const Text(
                                         "QUnit:",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
@@ -1593,7 +1593,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                             ? "-"
                                             : widget.data['item']['Qunit']
                                                 .toStringAsFixed(2),
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 20),
                                       ),

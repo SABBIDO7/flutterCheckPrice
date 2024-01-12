@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CustomTable extends StatelessWidget {
+  const CustomTable({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -9,8 +11,8 @@ class CustomTable extends StatelessWidget {
       child: Table(
           border: TableBorder.all(),
           defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-          children: [
-            const TableRow(
+          children: const [
+            TableRow(
               children: [
                 TableCell(
                   verticalAlignment: TableCellVerticalAlignment.middle,
@@ -26,13 +28,13 @@ class CustomTable extends StatelessWidget {
 class CustomTableRow extends StatelessWidget {
   final int index;
 
-  CustomTableRow({required this.index});
+  const CustomTableRow({super.key, required this.index});
 
   @override
   Widget build(BuildContext context) {
     if (index == 3) {
       // Special row with multiple cells
-      return TableRowWithMultipleCells(
+      return const TableRowWithMultipleCells(
         cell1: 'Cell 4',
         cell2: 'Cell 5',
         cell3: 'Cell 6',
@@ -47,7 +49,7 @@ class CustomTableRow extends StatelessWidget {
 class TableRowWithSingleCell extends StatelessWidget {
   final String cellContent;
 
-  const TableRowWithSingleCell({required this.cellContent});
+  const TableRowWithSingleCell({super.key, required this.cellContent});
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +70,7 @@ class TableRowWithMultipleCells extends StatelessWidget {
   final String cell2;
   final String cell3;
 
-  const TableRowWithMultipleCells({
+  const TableRowWithMultipleCells({super.key, 
     required this.cell1,
     required this.cell2,
     required this.cell3,
@@ -95,7 +97,7 @@ class TableRowWithMultipleCells extends StatelessWidget {
 class CustomCell extends StatelessWidget {
   final String content;
 
-  const CustomCell({
+  const CustomCell({super.key, 
     required this.content,
   });
 
@@ -111,20 +113,20 @@ class CustomCell extends StatelessWidget {
 class RowWithDivider extends StatelessWidget {
   final Widget child;
 
-  RowWithDivider({required this.child});
+  const RowWithDivider({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(
+        const Expanded(
           child: Divider(),
         ),
         Expanded(
           flex: 4,
           child: child,
         ),
-        Expanded(
+        const Expanded(
           child: Divider(),
         ),
       ],

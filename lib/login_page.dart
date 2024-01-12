@@ -9,7 +9,7 @@ import 'components/my_textfield.dart';
 import 'package:checkprice/options.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key? key}) : super(key: key);
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -69,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
         headers: {
           'Content-Type': 'application/json',
         },
-      ).timeout(Duration(seconds: 5));
+      ).timeout(const Duration(seconds: 5));
       print(response);
 
       if (response.statusCode == 201) {
@@ -82,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
           // Successful login, navigate to the HomeScreen
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => Option(),
+              builder: (context) => const Option(),
             ),
           );
           return true;
@@ -206,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
                               // ),
 
                               Container(
-                                child: ClipOval(
+                                child: const ClipOval(
                                   child: Image(
                                     image: AssetImage('assets/paradoxlogo.jpg'),
                                     height: 90,
@@ -319,7 +319,7 @@ class _LoginPageState extends State<LoginPage> {
 
                               Text(
                                 errorMessage,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.red,
                                   fontSize: 14,
                                 ),
@@ -353,7 +353,7 @@ class _LoginPageState extends State<LoginPage> {
                 );
               });
         } else {
-          return Scaffold(
+          return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
             ),

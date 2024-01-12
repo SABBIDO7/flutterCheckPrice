@@ -158,7 +158,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         },
@@ -166,17 +166,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
       // Sync data
       Color backgroundColor = const Color.fromRGBO(103, 58, 183, 1);
-      Widget content = Text("");
+      Widget content = const Text("");
       if (await YourDataSync().syncData() == false) {
         backgroundColor = Colors.red;
-        content = Text("Error in syncing Data");
+        content = const Text("Error in syncing Data");
       } else {
         backgroundColor = Colors.deepPurple;
-        content = Text("Data Synced Successfully");
+        content = const Text("Data Synced Successfully");
       }
       final snackBar = SnackBar(
         content: content,
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
         backgroundColor: backgroundColor,
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -233,7 +233,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: isOnlineFlag == true ? Text('Settings') : Text("Settings-OFF"),
+        title: isOnlineFlag == true ? const Text('Settings') : const Text("Settings-OFF"),
         backgroundColor: isOnlineFlag == true ? Colors.deepPurple : Colors.grey,
       ),
       body: SafeArea(
@@ -275,7 +275,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),*/
                   Text(
                     errorMessage,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.red,
                       fontSize: 14,
                     ),
@@ -297,7 +297,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       if (isOnlineFlag == true) {
                         logout(context);
                       } else {
-                        final snackBar = SnackBar(
+                        const snackBar = SnackBar(
                           content: Text(
                             'Cannot Logout in Offline Mode.',
                             style: TextStyle(
@@ -320,7 +320,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 25),
-                        child: Text(
+                        child: const Text(
                           "Switch Mode :",
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
@@ -341,7 +341,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 25),
-                        child: Text(
+                        child: const Text(
                           "Sync Data :",
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
@@ -359,7 +359,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: Row(
+                                  title: const Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
@@ -369,7 +369,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                           color: Colors.red), // Alert icon
                                     ],
                                   ),
-                                  content: Text(
+                                  content: const Text(
                                     'Are you sure you want to sync data?\nSyncing Data will Download the latest items and remove the Offline Data in this DEVICE',
                                     style: TextStyle(fontSize: 16),
                                   ),
@@ -379,14 +379,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         Navigator.of(context)
                                             .pop(false); // Cancel
                                       },
-                                      child: Text('Cancel'),
+                                      child: const Text('Cancel'),
                                     ),
                                     TextButton(
                                       onPressed: () {
                                         Navigator.of(context)
                                             .pop(true); // Confirm
                                       },
-                                      child: Text('Sync'),
+                                      child: const Text('Sync'),
                                     ),
                                   ],
                                 );
@@ -398,7 +398,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               SyncData();
                             }
                           } else {
-                            final snackBar = SnackBar(
+                            const snackBar = SnackBar(
                               content: Text(
                                 'Cannot Sync Data without WIFI.',
                                 style: TextStyle(

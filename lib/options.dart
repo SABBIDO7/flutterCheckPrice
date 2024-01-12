@@ -29,7 +29,7 @@ class _OptionState extends State<Option> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         },
@@ -37,22 +37,22 @@ class _OptionState extends State<Option> {
       );
       // Sync data
       Color backgroundColor = const Color.fromRGBO(103, 58, 183, 1);
-      Widget content = Text("");
+      Widget content = const Text("");
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? username = prefs.getString('username');
       bool finalres;
       if (await YourDataSync().uploadData(username ?? "", inventory) == false) {
         backgroundColor = Colors.red;
-        content = Text("Error in Uploading Data");
+        content = const Text("Error in Uploading Data");
         finalres = false;
       } else {
         backgroundColor = Colors.deepPurple;
-        content = Text("Data Uploaded Successfully");
+        content = const Text("Data Uploaded Successfully");
         finalres = true;
       }
       final snackBar = SnackBar(
         content: content,
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
         backgroundColor: backgroundColor,
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -115,10 +115,10 @@ class _OptionState extends State<Option> {
 
   showCartDialogCreateItem(String barcodeCode, String inventory, String? dbName,
       String? branch) async {
-    TextEditingController _inputController = TextEditingController(text: '1');
+    TextEditingController inputController = TextEditingController(text: '1');
     final barcodeController = TextEditingController(text: barcodeCode);
     final itemNameController = TextEditingController();
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     String errorMessage = '';
     showDialog(
       context: context,
@@ -133,10 +133,10 @@ class _OptionState extends State<Option> {
           backgroundColor: Colors.grey[200],
           content: Container(
             width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.all(2),
+            padding: const EdgeInsets.all(2),
             child: SingleChildScrollView(
               child: Form(
-                key: _formKey,
+                key: formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -153,7 +153,7 @@ class _OptionState extends State<Option> {
                         readOnly: true),
                     Text(
                       errorMessage,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.red,
                         fontSize: 12,
                       ),
@@ -175,13 +175,13 @@ class _OptionState extends State<Option> {
                     ),
                     Text(
                       errorMessage,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.red,
                         fontSize: 12,
                       ),
                     ),
                     MyTextField(
-                        controller: _inputController,
+                        controller: inputController,
                         hintText: 'Hand Quantity Collected',
                         obscureText: false,
                         validator: (value) {
@@ -195,7 +195,7 @@ class _OptionState extends State<Option> {
                         flag: 1),
                     Text(
                       errorMessage,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.red,
                         fontSize: 12,
                       ),
@@ -209,7 +209,7 @@ class _OptionState extends State<Option> {
                           child: Container(
                             child: MyButton(
                               onTap: () async {
-                                if (_formKey.currentState!.validate()) {
+                                if (formKey.currentState!.validate()) {
                                   // scanAndRetrieveData(
                                   //       context,
                                   //       inventory,
@@ -221,7 +221,7 @@ class _OptionState extends State<Option> {
                                           inventory,
                                           dbName,
                                           branch,
-                                          _inputController.text) ==
+                                          inputController.text) ==
                                       "True") {
                                     // Validation passed, make the update call
 
@@ -231,16 +231,15 @@ class _OptionState extends State<Option> {
                                     showDialog(
                                       context: context,
                                       builder: (context) => AlertDialog(
-                                        title: Text('Insertion Failed'),
-                                        content: Text('Server Request Error.\n' +
-                                            'Please Check your WIFI connection'),
+                                        title: const Text('Insertion Failed'),
+                                        content: const Text('Server Request Error.\n' 'Please Check your WIFI connection'),
                                         actions: [
                                           TextButton(
                                             onPressed: () {
                                               Navigator.of(context)
                                                   .pop(); // Close the AlertDialog
                                             },
-                                            child: Text('OK'),
+                                            child: const Text('OK'),
                                           ),
                                         ],
                                       ),
@@ -271,7 +270,7 @@ class _OptionState extends State<Option> {
     final barcodeController = barcodeVariable == ""
         ? TextEditingController()
         : TextEditingController(text: barcodeVariable);
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
     String errorMessage = '';
     List<dynamic> inventories = [];
@@ -345,10 +344,10 @@ class _OptionState extends State<Option> {
             ),
             content: Container(
               width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.all(2),
+              padding: const EdgeInsets.all(2),
               child: SingleChildScrollView(
                 child: Form(
-                  key: _formKey,
+                  key: formKey,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -452,7 +451,7 @@ class _OptionState extends State<Option> {
                       ),
                       Text(
                         errorMessage,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.red,
                           fontSize: 14,
                         ),
@@ -465,7 +464,7 @@ class _OptionState extends State<Option> {
                       ),
                       Text(
                         errorMessage,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.red,
                           fontSize: 14,
                         ),
@@ -493,14 +492,14 @@ class _OptionState extends State<Option> {
                             child: Container(
                               child: MyButton(
                                 onTap: () async {
-                                  if (_formKey.currentState!.validate()) {
+                                  if (formKey.currentState!.validate()) {
                                     if (isOnlineFlag == true) {
                                       bool deleteConfirm = await showDialog(
                                         context: context,
                                         barrierDismissible: false,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
-                                            title: Row(
+                                            title: const Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
                                                       .spaceBetween,
@@ -512,7 +511,7 @@ class _OptionState extends State<Option> {
                                                         .red), // Alert icon
                                               ],
                                             ),
-                                            content: Text(
+                                            content: const Text(
                                                 'Are you sure you want to delete?'),
                                             actions: <Widget>[
                                               TextButton(
@@ -520,7 +519,7 @@ class _OptionState extends State<Option> {
                                                   Navigator.of(context)
                                                       .pop(); // Close the dialog
                                                 },
-                                                child: Text('Cancel'),
+                                                child: const Text('Cancel'),
                                               ),
                                               TextButton(
                                                 onPressed: () async {
@@ -547,7 +546,7 @@ class _OptionState extends State<Option> {
                                                         .pop(false);
                                                   }
                                                 },
-                                                child: Text('Delete'),
+                                                child: const Text('Delete'),
                                               ),
                                             ],
                                           );
@@ -555,7 +554,7 @@ class _OptionState extends State<Option> {
                                       );
                                       if (deleteConfirm == true) {
                                         Navigator.of(context).pop();
-                                        final snackBar = SnackBar(
+                                        const snackBar = SnackBar(
                                           content: Text(
                                             'Table Deleted Successfully.',
                                             style: TextStyle(
@@ -570,7 +569,7 @@ class _OptionState extends State<Option> {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(snackBar);
                                       } else if (deleteConfirm == false) {
-                                        final snackBar = SnackBar(
+                                        const snackBar = SnackBar(
                                           content: Text(
                                             'Error while Deleting the Table.',
                                             style: TextStyle(
@@ -586,7 +585,7 @@ class _OptionState extends State<Option> {
                                             .showSnackBar(snackBar);
                                       }
                                     } else {
-                                      final snackBar = SnackBar(
+                                      const snackBar = SnackBar(
                                         content: Text(
                                           'Cannot Delete Table in Offline Mode.',
                                           style: TextStyle(
@@ -619,7 +618,7 @@ class _OptionState extends State<Option> {
                           onTap: () async {
                             print("shoubek");
                             print(inventoryController.text);
-                            if (_formKey.currentState!.validate()) {
+                            if (formKey.currentState!.validate()) {
                               SharedPreferences prefs =
                                   await SharedPreferences.getInstance();
 
@@ -644,7 +643,7 @@ class _OptionState extends State<Option> {
                           ? MyButton(
                               onTap: () async {
                                 //bool isOnline = await isOnlineStatus();
-                                if (_formKey.currentState!.validate()) {
+                                if (formKey.currentState!.validate()) {
                                   bool isConnected =
                                       await YourDataSync().isConnected();
 
@@ -654,7 +653,7 @@ class _OptionState extends State<Option> {
                                       context: context,
                                       builder: (BuildContext context) {
                                         return AlertDialog(
-                                          title: Row(
+                                          title: const Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
@@ -665,7 +664,7 @@ class _OptionState extends State<Option> {
                                                       Colors.red), // Alert icon
                                             ],
                                           ),
-                                          content: Text(
+                                          content: const Text(
                                             'Are you sure you want to upload data?',
                                             style: TextStyle(fontSize: 16),
                                           ),
@@ -675,14 +674,14 @@ class _OptionState extends State<Option> {
                                                 Navigator.of(context)
                                                     .pop(false); // Cancel
                                               },
-                                              child: Text('Cancel'),
+                                              child: const Text('Cancel'),
                                             ),
                                             TextButton(
                                               onPressed: () {
                                                 Navigator.of(context)
                                                     .pop(true); // Confirm
                                               },
-                                              child: Text('Upload'),
+                                              child: const Text('Upload'),
                                             ),
                                           ],
                                         );
@@ -699,7 +698,7 @@ class _OptionState extends State<Option> {
                                           context: context,
                                           builder: (BuildContext context) {
                                             return AlertDialog(
-                                              title: Row(
+                                              title: const Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
                                                         .spaceBetween,
@@ -711,7 +710,7 @@ class _OptionState extends State<Option> {
                                                           .red), // Alert icon
                                                 ],
                                               ),
-                                              content: Text(
+                                              content: const Text(
                                                 'Are you sure you want to DELETE OFFLNE DATA in this DEVICE?',
                                                 style: TextStyle(fontSize: 16),
                                               ),
@@ -721,14 +720,14 @@ class _OptionState extends State<Option> {
                                                     Navigator.of(context)
                                                         .pop(false); // Cancel
                                                   },
-                                                  child: Text('Cancel'),
+                                                  child: const Text('Cancel'),
                                                 ),
                                                 TextButton(
                                                   onPressed: () {
                                                     Navigator.of(context)
                                                         .pop(true); // Confirm
                                                   },
-                                                  child: Text('Delete'),
+                                                  child: const Text('Delete'),
                                                 ),
                                               ],
                                             );
@@ -742,7 +741,7 @@ class _OptionState extends State<Option> {
                                       }
                                     }
                                   } else {
-                                    final snackBar = SnackBar(
+                                    const snackBar = SnackBar(
                                       content: Text(
                                         'Cannot Upload Data without WIFI.',
                                         style: TextStyle(
@@ -807,14 +806,14 @@ class _OptionState extends State<Option> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Data Not Found'),
-          content: Text('Request error.\nCheck your WIFI.'),
+          title: const Text('Data Not Found'),
+          content: const Text('Request error.\nCheck your WIFI.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         ),
@@ -858,14 +857,14 @@ class _OptionState extends State<Option> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Data Not Found'),
-          content: Text('Request error.\nCheck your WIFI.'),
+          title: const Text('Data Not Found'),
+          content: const Text('Request error.\nCheck your WIFI.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         ),
@@ -908,14 +907,14 @@ class _OptionState extends State<Option> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Inventory Not Deleted'),
-            content: Text('Request error.\nCheck your WIFI.'),
+            title: const Text('Inventory Not Deleted'),
+            content: const Text('Request error.\nCheck your WIFI.'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           ),
@@ -929,7 +928,7 @@ class _OptionState extends State<Option> {
   void showcartCreate(
       BuildContext context, String username, String db, String ip) async {
     final nameController = TextEditingController();
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     String errorMessage = '';
 
     showDialog(
@@ -941,7 +940,7 @@ class _OptionState extends State<Option> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
+              const Row(
                 children: [
                   Text(
                     "Create New Inventory",
@@ -969,10 +968,10 @@ class _OptionState extends State<Option> {
           ),
           content: Container(
             width: (MediaQuery.of(context).size.width),
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child: SingleChildScrollView(
               child: Form(
-                key: _formKey,
+                key: formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -999,7 +998,7 @@ class _OptionState extends State<Option> {
                     ),
                     Text(
                       errorMessage,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.red,
                         fontSize: 14,
                       ),
@@ -1012,20 +1011,20 @@ class _OptionState extends State<Option> {
                           child: Container(
                             child: MyButton(
                               onTap: () async {
-                                if (_formKey.currentState!.validate()) {
+                                if (formKey.currentState!.validate()) {
                                   SharedPreferences prefs =
                                       await SharedPreferences.getInstance();
                                   bool? isOnline = prefs.getBool('isOnline');
                                   if (isOnline == true) {
-                                    String inventory_name = await saveDb(
+                                    String inventoryName = await saveDb(
                                         username, db, nameController.text, ip);
-                                    if (inventory_name != "False") {
+                                    if (inventoryName != "False") {
                                       /* scanAndRetrieveData(
                                         context, inventory_name, 1, "");*/
                                       Navigator.of(context).pop();
 
                                       prefs.setString(
-                                          'inventory', inventory_name);
+                                          'inventory', inventoryName);
                                       String? savedInventory =
                                           prefs.getString('inventory');
                                       showCartDialog(savedInventory, "");
@@ -1034,17 +1033,16 @@ class _OptionState extends State<Option> {
                                         context: context,
                                         builder: (context) => AlertDialog(
                                           title:
-                                              Text('Inventory Already Exsist'),
-                                          content: Text(
-                                              'The name of the Inventory already exists.\n' +
-                                                  'Please Choose another Name'),
+                                              const Text('Inventory Already Exsist'),
+                                          content: const Text(
+                                              'The name of the Inventory already exists.\n' 'Please Choose another Name'),
                                           actions: [
                                             TextButton(
                                               onPressed: () {
                                                 Navigator.of(context)
                                                     .pop(); // Close the AlertDialog
                                               },
-                                              child: Text('OK'),
+                                              child: const Text('OK'),
                                             ),
                                           ],
                                         ),
@@ -1052,17 +1050,17 @@ class _OptionState extends State<Option> {
                                     }
                                   }
                                   if (isOnline == false) {
-                                    String inventory_name = await YourDataSync()
+                                    String inventoryName = await YourDataSync()
                                         .databaseHelper
                                         .createInventoryTable(
                                             username, db, nameController.text);
-                                    if (inventory_name != "False") {
+                                    if (inventoryName != "False") {
                                       /* scanAndRetrieveData(
                                         context, inventory_name, 1, "");*/
                                       Navigator.of(context).pop();
 
                                       prefs.setString(
-                                          'inventory', inventory_name);
+                                          'inventory', inventoryName);
                                       String? savedInventory =
                                           prefs.getString('inventory');
                                       print("===============$savedInventory");
@@ -1072,17 +1070,16 @@ class _OptionState extends State<Option> {
                                         context: context,
                                         builder: (context) => AlertDialog(
                                           title:
-                                              Text('Inventory Already Exsist'),
-                                          content: Text(
-                                              'The name of the Inventory already exists.\n' +
-                                                  'Please Choose another Name'),
+                                              const Text('Inventory Already Exsist'),
+                                          content: const Text(
+                                              'The name of the Inventory already exists.\n' 'Please Choose another Name'),
                                           actions: [
                                             TextButton(
                                               onPressed: () {
                                                 Navigator.of(context)
                                                     .pop(); // Close the AlertDialog
                                               },
-                                              child: Text('OK'),
+                                              child: const Text('OK'),
                                             ),
                                           ],
                                         ),
@@ -1111,7 +1108,7 @@ class _OptionState extends State<Option> {
 
   void showCartDialogCheckPrice() async {
     final barcodeController = TextEditingController();
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
     String errorMessage = '';
 
@@ -1159,7 +1156,7 @@ class _OptionState extends State<Option> {
             padding: const EdgeInsets.all(2),
             child: SingleChildScrollView(
               child: Form(
-                key: _formKey,
+                key: formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1250,7 +1247,7 @@ class _OptionState extends State<Option> {
                     ),
                     Text(
                       errorMessage,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.red,
                         fontSize: 14,
                       ),
@@ -1405,7 +1402,7 @@ class _OptionState extends State<Option> {
                 context: context,
                 barrierDismissible: false,
                 builder: (context) => AlertDialog(
-                  title: Text('Data Not Found'),
+                  title: const Text('Data Not Found'),
                   content: Text(
                       'The scanned item barcode was not found.\nThe scanned Item Number: $barcodeScanRes'),
                   actions: [
@@ -1417,7 +1414,7 @@ class _OptionState extends State<Option> {
                         showCartDialog(inventory, "");
                         //blaaaaaaaaaaaaaaaaaaaa
                       },
-                      child: Text('Scan Again'),
+                      child: const Text('Scan Again'),
                     ),
                     TextButton(
                       onPressed: () {
@@ -1426,7 +1423,7 @@ class _OptionState extends State<Option> {
                             barcodeScanRes, inventory, dbName, branch);
                         //blaaaaaaaaaaaaaaaaaaaa
                       },
-                      child: Text('Create Item'),
+                      child: const Text('Create Item'),
                     ),
                   ],
                 ),
@@ -1474,7 +1471,7 @@ class _OptionState extends State<Option> {
               context: context,
               barrierDismissible: false,
               builder: (context) => AlertDialog(
-                title: Text('Data Not Found'),
+                title: const Text('Data Not Found'),
                 content: Text(
                     'The scanned item barcode was not found.\nThe scanned Item Number: $barcodeScanRes'),
                 actions: [
@@ -1486,7 +1483,7 @@ class _OptionState extends State<Option> {
                       showCartDialog(inventory, "");
                       //blaaaaaaaaaaaaaaaaaaaa
                     },
-                    child: Text('Scan Again'),
+                    child: const Text('Scan Again'),
                   ),
                   TextButton(
                     onPressed: () {
@@ -1495,7 +1492,7 @@ class _OptionState extends State<Option> {
                           barcodeScanRes, inventory, dbName, branch);
                       //blaaaaaaaaaaaaaaaaaaaa
                     },
-                    child: Text('Create Item'),
+                    child: const Text('Create Item'),
                   ),
                 ],
               ),
@@ -1507,14 +1504,14 @@ class _OptionState extends State<Option> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Data Not Found'),
-            content: Text('Request error.'),
+            title: const Text('Data Not Found'),
+            content: const Text('Request error.'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           ),
@@ -1597,8 +1594,8 @@ class _OptionState extends State<Option> {
                 context: context,
                 barrierDismissible: false,
                 builder: (context) => AlertDialog(
-                  title: Text('Data Not Found'),
-                  content: Text('The scanned item barcode was not found.'),
+                  title: const Text('Data Not Found'),
+                  content: const Text('The scanned item barcode was not found.'),
                   actions: [
                     TextButton(
                       onPressed: () {
@@ -1607,7 +1604,7 @@ class _OptionState extends State<Option> {
                         showCartDialogCheckPrice();
                         //blaaaaaaaaaaaaaaaaaaaa
                       },
-                      child: Text('Scan Again'),
+                      child: const Text('Scan Again'),
                     ),
                   ],
                 ),
@@ -1654,8 +1651,8 @@ class _OptionState extends State<Option> {
               context: context,
               barrierDismissible: false,
               builder: (context) => AlertDialog(
-                title: Text('Data Not Found'),
-                content: Text('The scanned item barcode was not found.'),
+                title: const Text('Data Not Found'),
+                content: const Text('The scanned item barcode was not found.'),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -1664,7 +1661,7 @@ class _OptionState extends State<Option> {
                       showCartDialogCheckPrice();
                       //blaaaaaaaaaaaaaaaaaaaa
                     },
-                    child: Text('Scan Again'),
+                    child: const Text('Scan Again'),
                   ),
                 ],
               ),
@@ -1676,14 +1673,14 @@ class _OptionState extends State<Option> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Data Not Found'),
-            content: Text('Request error.\nCheck your WIFI.'),
+            title: const Text('Data Not Found'),
+            content: const Text('Request error.\nCheck your WIFI.'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           ),
@@ -1754,12 +1751,12 @@ class _OptionState extends State<Option> {
 
     return Scaffold(
       appBar: AppBar(
-        title: isOnlineFlag == true ? Text('Options') : Text("Options-OFF"),
+        title: isOnlineFlag == true ? const Text('Options') : const Text("Options-OFF"),
         backgroundColor: isOnlineFlag == true ? Colors.deepPurple : Colors.grey,
         actions: [
           // Add the settings icon to the AppBar
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
             onPressed: () async {
               // Call the function to navigate to the settings page
               SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -1775,7 +1772,7 @@ class _OptionState extends State<Option> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              child: Image(
+              child: const Image(
                 image: AssetImage('assets/paradoxlogo.jpg'),
                 height: 350,
                 width: 350,

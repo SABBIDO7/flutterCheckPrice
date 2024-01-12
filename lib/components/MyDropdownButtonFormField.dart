@@ -67,7 +67,7 @@ class MyDropdownButtonFormField extends StatelessWidget {
                 color: Colors.grey.withOpacity(0.5),
                 spreadRadius: 1,
                 blurRadius: 4,
-                offset: Offset(0, 3),
+                offset: const Offset(0, 3),
               ),
             ],
           ),
@@ -82,7 +82,7 @@ class MyDropdownButtonFormField extends StatelessWidget {
               value: value,
               hint: Text(
                 hintText,
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
               ),
               items: items.map((dynamic branch) {
                 var displayedText;
@@ -154,7 +154,7 @@ class MyDropdownButtonFormField extends StatelessWidget {
               }).toList(),
               onChanged: onChanged,
               validator: validator,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(horizontal: 10),
                 errorStyle: TextStyle(fontSize: 16),

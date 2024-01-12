@@ -40,7 +40,7 @@ class _SwitchExampleState extends State<SwitchExample> {
                 // Show an alert or snackbar indicating no internet connection
                 // You can customize this based on your UI/UX preferences
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
+                  const SnackBar(
                     content: Text(
                       'No internet connection. Please check your connection.',
                       style:
@@ -67,11 +67,11 @@ class _SwitchExampleState extends State<SwitchExample> {
                 final snackBar = SnackBar(
                   content: Text(
                     'You Switched to ${(state) ? 'Online Mode' : 'Offline Mode'}',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
-                  duration: Duration(seconds: 2),
+                  duration: const Duration(seconds: 2),
                   backgroundColor: backgroundColor,
-                  padding: EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.all(20.0),
                 );
 
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -88,11 +88,11 @@ class _SwitchExampleState extends State<SwitchExample> {
                 final snackBar = SnackBar(
                   content: Text(
                     'You Switched to ${(state) ? 'Online Mode' : 'Offline Mode'}',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
-                  duration: Duration(seconds: 2),
+                  duration: const Duration(seconds: 2),
                   backgroundColor: backgroundColor,
-                  padding: EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.all(20.0),
                 );
 
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);

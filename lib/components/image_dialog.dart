@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class ImageDialog extends StatelessWidget {
   final String imageUrl;
 
-  ImageDialog({required this.imageUrl});
+  const ImageDialog({super.key, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class ImageDialog extends StatelessWidget {
             backgroundColor: Colors.transparent,
             elevation: 0,
             leading: IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.arrow_back,
                 color: Colors.black,
               ),
@@ -29,7 +29,7 @@ class ImageDialog extends StatelessWidget {
                 Navigator.pop(context); // Close the dialog
               },
             ),
-            actions: [], // Clear any actions from the AppBar
+            actions: const [], // Clear any actions from the AppBar
           ),
           Center(
             child: Image.memory(

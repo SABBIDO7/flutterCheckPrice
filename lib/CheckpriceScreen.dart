@@ -13,7 +13,7 @@ class CheckpriceScreen extends StatefulWidget {
   Map<String, dynamic> data;
   bool isOnline;
 
-  CheckpriceScreen({required this.data, required this.isOnline});
+  CheckpriceScreen({super.key, required this.data, required this.isOnline});
 
   @override
   _CheckpriceScreenState createState() => _CheckpriceScreenState();
@@ -61,14 +61,14 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
-                title: Text('Data Not Found'),
-                content: Text('The scanned item barcode was not found.'),
+                title: const Text('Data Not Found'),
+                content: const Text('The scanned item barcode was not found.'),
                 actions: [
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: Text('OK'),
+                    child: const Text('OK'),
                   ),
                 ],
               ),
@@ -80,14 +80,14 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Data Not Found'),
-            content: Text('Request error.'),
+            title: const Text('Data Not Found'),
+            content: const Text('Request error.'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           ),
@@ -128,7 +128,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Check Price'),
+        title: const Text('Check Price'),
         backgroundColor:
             widget.isOnline == true ? Colors.deepPurple : Colors.grey,
       ),
@@ -146,14 +146,14 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                     Expanded(
                       child: Column(
                         children: [
-                          Text(
+                          const Text(
                             "Total Branches :",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                           Text(
                             widget.data['branches_number'].toString(),
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20),
                           ),
                         ],
@@ -177,7 +177,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                       'image']), // Replace with the actual URL from your database
                                   errorBuilder: (context, error, stackTrace) {
                                     // Handle the image loading error here
-                                    return Icon(Icons
+                                    return const Icon(Icons
                                         .error); // Display an error icon or placeholder
                                   },
                                   width: screenWidth *
@@ -189,18 +189,18 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                               ),
                             ),
                           )
-                        : Expanded(child: Center()),
+                        : const Expanded(child: Center()),
                     Expanded(
                       child: Column(
                         children: [
-                          Text(
+                          const Text(
                             "Total Qty :",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                           Text(
                             widget.data['totalQuantity'].toString(),
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20),
                           ),
                         ],
@@ -222,7 +222,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                               // ),
                               Text(
                                 widget.data['item']['sp'].toString(),
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 16),
                               )
                             ],
@@ -230,21 +230,21 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                         : Container(),
                     Row(
                       children: [
-                        Text(
+                        const Text(
                           "VAT :",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                         widget.data['item']['sp'] == "" ||
                                 widget.data['item']['sp'] == null
-                            ? Text(
+                            ? const Text(
                                 "-",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 16),
                               )
                             : Text(
                                 widget.data['item']['vat'].toString(),
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 16),
                               )
                       ],
@@ -252,7 +252,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "QUnit:",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 16),
@@ -264,7 +264,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                           widget.data['item']['Qunit'] == null
                               ? "-"
                               : widget.data['item']['Qunit'].toStringAsFixed(2),
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20),
                         ),
                       ],
@@ -273,7 +273,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                 ),
                 // Display the data in a DataTable
 
-                Container(
+                SizedBox(
                   height: screenHeight * 0.625,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
@@ -281,7 +281,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                       children: [
                         DataTable(
                           dataRowMaxHeight: screenHeight * 0.12,
-                          columns: [
+                          columns: const [
                             DataColumn(label: Text('')),
                             DataColumn(label: Text('')),
                           ],
@@ -289,7 +289,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                             DataRow(
                               cells: [
                                 DataCell(
-                                  Container(
+                                  SizedBox(
                                     width: screenWidth * 0.45,
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.vertical,
@@ -299,7 +299,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          Text(
+                                          const Text(
                                             "Item Name",
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
@@ -307,7 +307,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                           ),
                                           Text(
                                             widget.data['item']['itemNumber'],
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 16),
                                           ),
@@ -317,7 +317,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                                         ['itemNumber']
                                                 ? ""
                                                 : widget.data['item']['GOID'],
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 16),
                                           )
@@ -335,7 +335,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                       child: Text(
                                         widget.data['item']['itemName']
                                             .toString(),
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                         //
@@ -397,12 +397,12 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                     child: Row(
                                       children: [
                                         Column(children: [
-                                          Container(
+                                          SizedBox(
                                             height: screenHeight * 0.04,
                                             child: Row(
                                               children: [
                                                 Container(
-                                                  child: Text(
+                                                  child: const Text(
                                                     "1-",
                                                     style: TextStyle(
                                                         fontWeight:
@@ -417,7 +417,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                                   child: Text(
                                                     widget.data['item']['S1']
                                                         .toString(),
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         fontSize: 20),
@@ -431,7 +431,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                               mainAxisAlignment:
                                                   MainAxisAlignment.start,
                                               children: [
-                                                Container(
+                                                SizedBox(
                                                   height: screenHeight * 0.04,
                                                   child: Row(
                                                     mainAxisAlignment:
@@ -456,7 +456,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                                           widget.data['item']
                                                                   ['S2']
                                                               .toString(),
-                                                          style: TextStyle(
+                                                          style: const TextStyle(
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
@@ -469,14 +469,14 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                               ],
                                             ),
                                           ),
-                                          Container(
+                                          SizedBox(
                                             height: screenHeight * 0.04,
                                             child: Row(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: [
                                                 Container(
-                                                  child: Text(
+                                                  child: const Text(
                                                     "3-",
                                                     style: TextStyle(
                                                         fontWeight:
@@ -491,7 +491,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                                   child: Text(
                                                     widget.data['item']['S3']
                                                         .toString(),
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         fontSize: 20),
@@ -515,7 +515,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                                 widget.data['item']['Disc3'] > 0
                                             ? Column(
                                                 children: [
-                                                  Container(
+                                                  SizedBox(
                                                     height: screenHeight * 0.04,
                                                     child: Row(
                                                       children: [
@@ -611,7 +611,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                                           MainAxisAlignment
                                                               .start,
                                                       children: [
-                                                        Container(
+                                                        SizedBox(
                                                           height: screenHeight *
                                                               0.04,
                                                           child: Row(
@@ -707,7 +707,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                                       ],
                                                     ),
                                                   ),
-                                                  Container(
+                                                  SizedBox(
                                                     height: screenHeight * 0.04,
                                                     child: Row(
                                                       crossAxisAlignment:
@@ -802,7 +802,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                                   ),
                                                 ],
                                               )
-                                            : Column(),
+                                            : const Column(),
                                   ),
                                 ),
                               ],
@@ -817,7 +817,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
-                                        Text(
+                                        const Text(
                                           "Branch :",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
@@ -828,7 +828,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                         ),
                                         Text(
                                           item['branch'],
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 20),
                                         ),
@@ -842,7 +842,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
-                                        Text(
+                                        const Text(
                                           "Qty In Stock :",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
@@ -853,7 +853,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                         ),
                                         Text(
                                           item['quantity'].toString(),
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 20),
                                         ),

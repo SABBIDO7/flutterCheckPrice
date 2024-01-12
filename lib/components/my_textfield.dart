@@ -44,8 +44,8 @@ class MyTextField extends StatelessWidget {
                       // Handle the "-" button tap
                       // You may want to decrement the value in the controller here
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
                       child: Icon(
                         Icons.remove,
                         size: 30,
@@ -60,7 +60,7 @@ class MyTextField extends StatelessWidget {
                       child: TextFormField(
                         readOnly: readOnly == true ? true : false,
                         // Use TextFormField instead of TextField
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
 
                         textAlign:
@@ -71,10 +71,10 @@ class MyTextField extends StatelessWidget {
                           border: InputBorder.none,
                           hintText: hintText,
                           hintStyle: TextStyle(color: Colors.grey[500]),
-                          errorStyle: TextStyle(fontSize: 16),
+                          errorStyle: const TextStyle(fontSize: 16),
                           // Set the font size for the error message
                           suffixIcon: IconButton(
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.clear,
                               color: Colors.deepPurple,
                             ),
@@ -91,7 +91,7 @@ class MyTextField extends StatelessWidget {
                       child: TextFormField(
                         readOnly: readOnly == true ? true : false,
                         // Use TextFormField instead of TextField
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
 
                         textAlign:
@@ -102,7 +102,7 @@ class MyTextField extends StatelessWidget {
                           border: InputBorder.none,
                           hintText: hintText,
                           hintStyle: TextStyle(color: Colors.grey[500]),
-                          errorStyle: TextStyle(fontSize: 16),
+                          errorStyle: const TextStyle(fontSize: 16),
                           // Set the font size for the error message
                         ),
                         validator: validator, // Attach the validator function
@@ -122,8 +122,8 @@ class MyTextField extends StatelessWidget {
                       // Handle the "+" button tap
                       // You may want to increment the value in the controller here
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
                       child: Icon(
                         Icons.add,
                         size: 30,

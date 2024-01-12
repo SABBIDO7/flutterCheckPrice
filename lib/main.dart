@@ -17,16 +17,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      locale: Locale('ar', 'EN'),
+      locale: const Locale('ar', 'EN'),
       theme: ThemeData(
         textTheme: GoogleFonts.notoSansArabicTextTheme(),
       ),
       debugShowCheckedModeBanner: false,
       routes: {
-        '/login': (context) => LoginPage(),
-        '/options': (context) => Option(),
+        '/login': (context) => const LoginPage(),
+        '/options': (context) => const Option(),
       },
-      home: LoginPage(),
+      home: const LoginPage(),
     );
   }
 }
