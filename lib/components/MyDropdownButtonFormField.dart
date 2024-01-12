@@ -120,18 +120,24 @@ class MyDropdownButtonFormField extends StatelessWidget {
                             child: Text(
                               '$displayedText',
                               style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).textScaleFactor > 1
+                                  fontSize: MediaQuery.of(context)
+                                              .textScaleFactor >
+                                          1
+                                      ? MediaQuery.of(context)
+                                                  .textScaleFactor >=
+                                              1.5
                                           ? MediaQuery.of(context)
-                                                      .textScaleFactor >
-                                                  1.75
-                                              ? MediaQuery.of(context)
-                                                          .textScaleFactor >
-                                                      2.25
-                                                  ? 7
-                                                  : 8
-                                              : 17 //kenit 10
-                                          : 17,
+                                                      .textScaleFactor >=
+                                                  2.25
+                                              ? 7
+                                              : MediaQuery.of(context)
+                                                          .textScaleFactor >=
+                                                      1.75
+                                                  ? 10 //1.75 2
+                                                  : 12 //1.5
+
+                                          : 15 //kenit 12 //1.25
+                                      : 17, //1
                                   fontWeight: FontWeight.bold),
                               softWrap: true,
                               textAlign: TextAlign.center,

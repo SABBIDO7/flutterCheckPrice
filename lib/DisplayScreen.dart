@@ -18,7 +18,8 @@ class DisplayScreen extends StatefulWidget {
   final String? username;
   bool isOnline;
   DisplayScreen(
-      {super.key, required this.data,
+      {super.key,
+      required this.data,
       required this.inventory,
       required this.username,
       required this.isOnline});
@@ -28,7 +29,8 @@ class DisplayScreen extends StatefulWidget {
 }
 
 class _DisplayScreenState extends State<DisplayScreen> {
-  final TextEditingController _inputController = TextEditingController(text: '1');
+  final TextEditingController _inputController =
+      TextEditingController(text: '1');
 
   Future<void> scanRetreiveData(String inventory) async {
     String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
@@ -334,6 +336,11 @@ class _DisplayScreenState extends State<DisplayScreen> {
     final displayedText =
         widget.inventory.toString().replaceFirst('dc_${usernameLower}_', '');
     print(screenHeight);
+    double fontSizePricesDiscounts =
+        MediaQuery.of(context).textScaleFactor >= 1.5 ||
+                MediaQuery.of(context).size.height < 700
+            ? 14
+            : 18;
 
     return WillPopScope(
       onWillPop: () async {
@@ -360,7 +367,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                 //mainAxisAlignment: MainAxisAlignment.center,
                 //crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  widget.data['item']['image'] == ''
+                  widget.isOnline == false || widget.data['item']['image'] == ''
                       ? Container()
                       : InkWell(
                           onTap: () {
@@ -395,18 +402,12 @@ class _DisplayScreenState extends State<DisplayScreen> {
                               widget.data['item']['sp'] != null
                           ? Row(
                               children: [
-                                const Text(
-                                  "TTC :",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
                                 Text(
                                   widget.data['item']['sp'].toString(),
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16),
-                                )
+                                ),
                               ],
                             )
                           : Container(),
@@ -439,7 +440,10 @@ class _DisplayScreenState extends State<DisplayScreen> {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
-                      dataRowMaxHeight: screenHeight * 0.12,
+                      dataRowMaxHeight: screenHeight > 700 ||
+                              MediaQuery.of(context).textScaleFactor >= 1.5
+                          ? screenHeight * 0.12
+                          : screenHeight * 0.15,
                       //dataRowMinHeight: screenHeight * 0.08,
                       columns: const [
                         DataColumn(label: Text('')),
@@ -508,56 +512,17 @@ class _DisplayScreenState extends State<DisplayScreen> {
                         ),
                         DataRow(
                           cells: [
-                            // widget.data['item']['sp'] == 'None'
-                            //     ? widget.data['item']['vat'] == 0
-                            //         ? DataCell(
-                            //             Center(
-                            //               child: Text(
-                            //                 "Sale Price",
-                            //                 textAlign: TextAlign.center,
-                            //                 style: TextStyle(
-                            //                     fontWeight: FontWeight.bold,
-                            //                     fontSize: 16),
-                            //               ),
-                            //             ),
-                            //           )
-                            //         : DataCell(Center(
-                            //             child: Text(
-                            //               "Sale Price *",
-                            //               style: TextStyle(
-                            //                   fontWeight: FontWeight.bold,
-                            //                   fontSize: 16),
-                            //             ),
-                            //           ))
-                            //     : widget.data['item']['vat'] == 0
-                            //         ? DataCell(Center(
-                            //             child: Text(
-                            //               "Sale Price" +
-                            //                   '\n' +
-                            //                   widget.data['item']['sp']
-                            //                       .toString(),
-                            //               style: TextStyle(
-                            //                   fontWeight: FontWeight.bold,
-                            //                   fontSize: 16),
-                            //             ),
-                            //           ))
-                            //         : DataCell(Center(
-                            //             child: Text(
-                            //               "Sale Price *" +
-                            //                   '\n' +
-                            //                   widget.data['item']['sp']
-                            //                       .toString(),
-                            //               style: TextStyle(
-                            //                   fontWeight: FontWeight.bold,
-                            //                   fontSize: 16),
-                            //             ),
-                            //           )),
                             DataCell(
                               SingleChildScrollView(
                                 scrollDirection: Axis.vertical,
                                 child: Column(children: [
                                   SizedBox(
-                                    height: screenHeight * 0.04,
+                                    height: screenHeight > 700 ||
+                                            MediaQuery.of(context)
+                                                    .textScaleFactor >=
+                                                1.5
+                                        ? screenHeight * 0.04
+                                        : screenHeight * 0.05,
                                     child: Row(
                                       children: [
                                         Container(
@@ -585,69 +550,10 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                                 .toString(),
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: MediaQuery.of(context)
-                                                                .textScaleFactor >
-                                                            1.75 ||
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height <
-                                                            650
-                                                    ? 14
-                                                    : 18),
+                                                fontSize:
+                                                    fontSizePricesDiscounts),
                                           ),
                                         ),
-                                        // widget.data['item']['Disc1'] > 0
-                                        //     ? Row(
-                                        //         mainAxisAlignment:
-                                        //             MainAxisAlignment.center,
-                                        //         children: [
-                                        //           SizedBox(
-                                        //             width: screenWidth * 0.0125,
-                                        //           ),
-                                        //           Text(
-                                        //             '|',
-                                        //             style: TextStyle(
-                                        //                 fontWeight:
-                                        //                     FontWeight.bold,
-                                        //                 fontSize: MediaQuery.of(
-                                        //                                     context)
-                                        //                                 .textScaleFactor >
-                                        //                             1.75 ||
-                                        //                         MediaQuery.of(
-                                        //                                     context)
-                                        //                                 .size
-                                        //                                 .height <
-                                        //                             650
-                                        //                     ? 14
-                                        //                     : 18),
-                                        //             textAlign: TextAlign.center,
-                                        //           ),
-                                        //           SizedBox(
-                                        //             width: screenWidth * 0.0125,
-                                        //           ),
-                                        //           Container(
-                                        //             child: Text(
-                                        //               "${widget.data['item']['Disc1']}%"
-                                        //                   .toString(),
-                                        //               style: TextStyle(
-                                        //                   fontWeight:
-                                        //                       FontWeight.bold,
-                                        //                   fontSize: MediaQuery.of(
-                                        //                                       context)
-                                        //                                   .textScaleFactor >
-                                        //                               1.75 ||
-                                        //                           MediaQuery.of(
-                                        //                                       context)
-                                        //                                   .size
-                                        //                                   .height <
-                                        //                               650
-                                        //                       ? 14
-                                        //                       : 18),
-                                        //             ),
-                                        //           ),
-                                        //         ],
-                                        //       )
-                                        //     : Container(),
                                       ],
                                     ),
                                   ),
@@ -657,7 +563,9 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                           MainAxisAlignment.start,
                                       children: [
                                         SizedBox(
-                                          height: screenHeight * 0.04,
+                                          height: screenHeight > 700
+                                              ? screenHeight * 0.04
+                                              : screenHeight * 0.05,
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
@@ -667,17 +575,8 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        fontSize: MediaQuery.of(
-                                                                            context)
-                                                                        .textScaleFactor >
-                                                                    1.75 ||
-                                                                MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .height <
-                                                                    650
-                                                            ? 14
-                                                            : 18)),
+                                                        fontSize:
+                                                            fontSizePricesDiscounts)),
                                               ),
                                               SizedBox(
                                                 width: screenWidth * 0.025,
@@ -689,69 +588,9 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        fontSize: MediaQuery.of(
-                                                                            context)
-                                                                        .textScaleFactor >
-                                                                    1.75 ||
-                                                                MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .height <
-                                                                    650
-                                                            ? 14
-                                                            : 18)),
+                                                        fontSize:
+                                                            fontSizePricesDiscounts)),
                                               ),
-                                              // widget.data['item']['Disc2'] > 0
-                                              //     ? Row(
-                                              //         mainAxisAlignment:
-                                              //             MainAxisAlignment
-                                              //                 .center,
-                                              //         children: [
-                                              //           SizedBox(
-                                              //             width: screenWidth *
-                                              //                 0.0125,
-                                              //           ),
-                                              //           Text(
-                                              //             '|',
-                                              //             style: TextStyle(
-                                              //                 fontWeight:
-                                              //                     FontWeight
-                                              //                         .bold,
-                                              //                 fontSize: MediaQuery.of(context)
-                                              //                                 .textScaleFactor >
-                                              //                             1.75 ||
-                                              //                         MediaQuery.of(context)
-                                              //                                 .size
-                                              //                                 .height <
-                                              //                             650
-                                              //                     ? 14
-                                              //                     : 18),
-                                              //             textAlign:
-                                              //                 TextAlign.center,
-                                              //           ),
-                                              //           SizedBox(
-                                              //             width: screenWidth *
-                                              //                 0.0125,
-                                              //           ),
-                                              //           Container(
-                                              //             child: Text(
-                                              //               "${widget.data['item']['Disc2']}%"
-                                              //                   .toString(),
-                                              //               style: TextStyle(
-                                              //                   fontWeight:
-                                              //                       FontWeight
-                                              //                           .bold,
-                                              //                   fontSize: MediaQuery.of(context).textScaleFactor >
-                                              //                               1.75 ||
-                                              //                           MediaQuery.of(context).size.height <
-                                              //                               650
-                                              //                       ? 14
-                                              //                       : 18),
-                                              //             ),
-                                              //           ),
-                                              //         ],
-                                              //       )
-                                              //     : Container(),
                                             ],
                                           ),
                                         ),
@@ -759,7 +598,9 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                     ),
                                   ),
                                   SizedBox(
-                                    height: screenHeight * 0.04,
+                                    height: screenHeight > 700
+                                        ? screenHeight * 0.04
+                                        : screenHeight * 0.05,
                                     child: Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
@@ -769,15 +610,8 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                             "3-",
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: MediaQuery.of(context)
-                                                                .textScaleFactor >
-                                                            1.75 ||
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height <
-                                                            650
-                                                    ? 14
-                                                    : 18),
+                                                fontSize:
+                                                    fontSizePricesDiscounts),
                                           ),
                                         ),
                                         SizedBox(
@@ -789,69 +623,10 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                                 .toString(),
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: MediaQuery.of(context)
-                                                                .textScaleFactor >
-                                                            1.75 ||
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height <
-                                                            650
-                                                    ? 14
-                                                    : 18),
+                                                fontSize:
+                                                    fontSizePricesDiscounts),
                                           ),
                                         ),
-                                        // widget.data['item']['Disc3'] > 0
-                                        //     ? Row(
-                                        //         mainAxisAlignment:
-                                        //             MainAxisAlignment.center,
-                                        //         children: [
-                                        //           SizedBox(
-                                        //             width: screenWidth * 0.0125,
-                                        //           ),
-                                        //           Text(
-                                        //             '|',
-                                        //             style: TextStyle(
-                                        //                 fontWeight:
-                                        //                     FontWeight.bold,
-                                        //                 fontSize: MediaQuery.of(
-                                        //                                     context)
-                                        //                                 .textScaleFactor >
-                                        //                             1.75 ||
-                                        //                         MediaQuery.of(
-                                        //                                     context)
-                                        //                                 .size
-                                        //                                 .height <
-                                        //                             650
-                                        //                     ? 14
-                                        //                     : 18),
-                                        //             textAlign: TextAlign.center,
-                                        //           ),
-                                        //           SizedBox(
-                                        //             width: screenWidth * 0.0125,
-                                        //           ),
-                                        //           Container(
-                                        //             child: Text(
-                                        //               "${widget.data['item']['Disc3']}%"
-                                        //                   .toString(),
-                                        //               style: TextStyle(
-                                        //                   fontWeight:
-                                        //                       FontWeight.bold,
-                                        //                   fontSize: MediaQuery.of(
-                                        //                                       context)
-                                        //                                   .textScaleFactor >
-                                        //                               1.75 ||
-                                        //                           MediaQuery.of(
-                                        //                                       context)
-                                        //                                   .size
-                                        //                                   .height <
-                                        //                               650
-                                        //                       ? 14
-                                        //                       : 18),
-                                        //             ),
-                                        //           ),
-                                        //         ],
-                                        //       )
-                                        //     : Container(),
                                       ],
                                     ),
                                   ),
@@ -861,637 +636,161 @@ class _DisplayScreenState extends State<DisplayScreen> {
                             DataCell(
                               SingleChildScrollView(
                                 scrollDirection: Axis.vertical,
-                                child:
-                                    widget.data['item']['Disc1'] > 0 ||
-                                            widget.data['item']['Disc2'] > 0 ||
-                                            widget.data['item']['Disc3'] > 0
-                                        ? Column(
-                                            children: [
-                                              SizedBox(
-                                                height: screenHeight * 0.04,
-                                                child: Row(
-                                                  children: [
-                                                    Container(
-                                                      child: Text(
-                                                        "1-",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: MediaQuery.of(context)
-                                                                            .textScaleFactor >
-                                                                        1.75 ||
-                                                                    MediaQuery.of(context)
-                                                                            .size
-                                                                            .height <
-                                                                        650
-                                                                ? 14
-                                                                : 18),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width:
-                                                          screenWidth * 0.025,
-                                                    ),
-                                                    // Container(
-                                                    //   child: Text(
-                                                    //     widget.data['item']['S1']
-                                                    //         .toString(),
-                                                    //     style: TextStyle(
-                                                    //         fontWeight: FontWeight.bold,
-                                                    //         fontSize: MediaQuery.of(context)
-                                                    //                         .textScaleFactor >
-                                                    //                     1.75 ||
-                                                    //                 MediaQuery.of(context)
-                                                    //                         .size
-                                                    //                         .height <
-                                                    //                     650
-                                                    //             ? 14
-                                                    //             : 18),
-                                                    //   ),
-                                                    // ),
-                                                    widget.data['item']
-                                                                ['Disc1'] >
-                                                            0
-                                                        ? Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              // SizedBox(
-                                                              //   width: screenWidth * 0.0125,
-                                                              // ),
-                                                              // Text(
-                                                              //   '|',
-                                                              //   style: TextStyle(
-                                                              //       fontWeight:
-                                                              //           FontWeight.bold,
-                                                              //       fontSize: MediaQuery.of(
-                                                              //                           context)
-                                                              //                       .textScaleFactor >
-                                                              //                   1.75 ||
-                                                              //               MediaQuery.of(
-                                                              //                           context)
-                                                              //                       .size
-                                                              //                       .height <
-                                                              //                   650
-                                                              //           ? 14
-                                                              //           : 18),
-                                                              //   textAlign: TextAlign.center,
-                                                              // ),
-                                                              // SizedBox(
-                                                              //   width: screenWidth * 0.0125,
-                                                              // ),
-                                                              Container(
-                                                                child: Text(
-                                                                  "${widget.data['item']['Disc1']} %"
-                                                                      .toString(),
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      fontSize: MediaQuery.of(context).textScaleFactor > 1.75 ||
-                                                                              MediaQuery.of(context).size.height < 650
-                                                                          ? 14
-                                                                          : 18),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          )
-                                                        : Container(),
-                                                  ],
+                                child: widget.data['item']['Disc1'] > 0 ||
+                                        widget.data['item']['Disc2'] > 0 ||
+                                        widget.data['item']['Disc3'] > 0
+                                    ? Column(
+                                        children: [
+                                          SizedBox(
+                                            height: screenHeight > 700
+                                                ? screenHeight * 0.04
+                                                : screenHeight * 0.05,
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  child: Text(
+                                                    "1-",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize:
+                                                            fontSizePricesDiscounts),
+                                                  ),
                                                 ),
-                                              ),
-                                              Container(
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: [
-                                                    SizedBox(
-                                                      height:
-                                                          screenHeight * 0.04,
-                                                      child: Row(
+                                                SizedBox(
+                                                  width: screenWidth * 0.025,
+                                                ),
+                                                widget.data['item']['Disc1'] > 0
+                                                    ? Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
-                                                                .start,
+                                                                .center,
                                                         children: [
                                                           Container(
-                                                            child: Text("2-",
-                                                                style: TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize: MediaQuery.of(context).textScaleFactor >
-                                                                                1.75 ||
-                                                                            MediaQuery.of(context).size.height <
-                                                                                650
-                                                                        ? 14
-                                                                        : 18)),
+                                                            child: Text(
+                                                              "${widget.data['item']['Disc1']} %"
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize:
+                                                                      fontSizePricesDiscounts),
+                                                            ),
                                                           ),
-                                                          SizedBox(
-                                                            width: screenWidth *
-                                                                0.025,
-                                                          ),
-                                                          // Container(
-                                                          //   child: Text(
-                                                          //       widget.data['item']['S2']
-                                                          //           .toString(),
-                                                          //       style: TextStyle(
-                                                          //           fontWeight:
-                                                          //               FontWeight.bold,
-                                                          //           fontSize: MediaQuery.of(
-                                                          //                               context)
-                                                          //                           .textScaleFactor >
-                                                          //                       1.75 ||
-                                                          //                   MediaQuery.of(
-                                                          //                               context)
-                                                          //                           .size
-                                                          //                           .height <
-                                                          //                       650
-                                                          //               ? 14
-                                                          //               : 18)),
-                                                          // ),
-                                                          widget.data['item'][
-                                                                      'Disc2'] >
-                                                                  0
-                                                              ? Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    // SizedBox(
-                                                                    //   width: screenWidth *
-                                                                    //       0.0125,
-                                                                    // ),
-                                                                    // Text(
-                                                                    //   '|',
-                                                                    //   style: TextStyle(
-                                                                    //       fontWeight:
-                                                                    //           FontWeight
-                                                                    //               .bold,
-                                                                    //       fontSize: MediaQuery.of(context)
-                                                                    //                       .textScaleFactor >
-                                                                    //                   1.75 ||
-                                                                    //               MediaQuery.of(context)
-                                                                    //                       .size
-                                                                    //                       .height <
-                                                                    //                   650
-                                                                    //           ? 14
-                                                                    //           : 18),
-                                                                    //   textAlign:
-                                                                    //       TextAlign.center,
-                                                                    // ),
-                                                                    // SizedBox(
-                                                                    //   width: screenWidth *
-                                                                    //       0.0125,
-                                                                    // ),
-                                                                    Container(
-                                                                      child:
-                                                                          Text(
-                                                                        "${widget.data['item']['Disc2']} %"
-                                                                            .toString(),
-                                                                        style: TextStyle(
-                                                                            fontWeight: FontWeight
-                                                                                .bold,
-                                                                            fontSize: MediaQuery.of(context).textScaleFactor > 1.75 || MediaQuery.of(context).size.height < 650
-                                                                                ? 14
-                                                                                : 18),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                )
-                                                              : Container(),
                                                         ],
+                                                      )
+                                                    : Container(),
+                                              ],
+                                            ),
+                                          ),
+                                          Container(
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                SizedBox(
+                                                  height: screenHeight > 700
+                                                      ? screenHeight * 0.04
+                                                      : screenHeight * 0.05,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Container(
+                                                        child: Text("2-",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize:
+                                                                    fontSizePricesDiscounts)),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: screenHeight * 0.04,
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Container(
-                                                      child: Text(
-                                                        "3-",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: MediaQuery.of(context)
-                                                                            .textScaleFactor >
-                                                                        1.75 ||
-                                                                    MediaQuery.of(context)
-                                                                            .size
-                                                                            .height <
-                                                                        650
-                                                                ? 14
-                                                                : 18),
+                                                      SizedBox(
+                                                        width:
+                                                            screenWidth * 0.025,
                                                       ),
-                                                    ),
-                                                    SizedBox(
-                                                      width:
-                                                          screenWidth * 0.025,
-                                                    ),
-                                                    // Container(
-                                                    //   child: Text(
-                                                    //     widget.data['item']['S3']
-                                                    //         .toString(),
-                                                    //     style: TextStyle(
-                                                    //         fontWeight: FontWeight.bold,
-                                                    //         fontSize: MediaQuery.of(context)
-                                                    //                         .textScaleFactor >
-                                                    //                     1.75 ||
-                                                    //                 MediaQuery.of(context)
-                                                    //                         .size
-                                                    //                         .height <
-                                                    //                     650
-                                                    //             ? 14
-                                                    //             : 18),
-                                                    //   ),
-                                                    // ),
-                                                    widget.data['item']
-                                                                ['Disc3'] >
-                                                            0
-                                                        ? Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              // SizedBox(
-                                                              //   width: screenWidth * 0.0125,
-                                                              // ),
-                                                              // Text(
-                                                              //   '|',
-                                                              //   style: TextStyle(
-                                                              //       fontWeight:
-                                                              //           FontWeight.bold,
-                                                              //       fontSize: MediaQuery.of(
-                                                              //                           context)
-                                                              //                       .textScaleFactor >
-                                                              //                   1.75 ||
-                                                              //               MediaQuery.of(
-                                                              //                           context)
-                                                              //                       .size
-                                                              //                       .height <
-                                                              //                   650
-                                                              //           ? 14
-                                                              //           : 18),
-                                                              //   textAlign: TextAlign.center,
-                                                              // ),
-                                                              // SizedBox(
-                                                              //   width: screenWidth * 0.0125,
-                                                              // ),
-                                                              Container(
-                                                                child: Text(
-                                                                  "${widget.data['item']['Disc3']} %"
-                                                                      .toString(),
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      fontSize: MediaQuery.of(context).textScaleFactor > 1.75 ||
-                                                                              MediaQuery.of(context).size.height < 650
-                                                                          ? 14
-                                                                          : 18),
+                                                      widget.data['item']
+                                                                  ['Disc2'] >
+                                                              0
+                                                          ? Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Container(
+                                                                  child: Text(
+                                                                    "${widget.data['item']['Disc2']} %"
+                                                                        .toString(),
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontSize:
+                                                                            fontSizePricesDiscounts),
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                            ],
-                                                          )
-                                                        : Container(),
-                                                  ],
+                                                              ],
+                                                            )
+                                                          : Container(),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          )
-                                        : const Column(),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: screenHeight > 700
+                                                ? screenHeight * 0.04
+                                                : screenHeight * 0.05,
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                  child: Text(
+                                                    "3-",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize:
+                                                            fontSizePricesDiscounts),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: screenWidth * 0.025,
+                                                ),
+                                                widget.data['item']['Disc3'] > 0
+                                                    ? Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Container(
+                                                            child: Text(
+                                                              "${widget.data['item']['Disc3']} %"
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize:
+                                                                      fontSizePricesDiscounts),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      )
+                                                    : Container(),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : const Column(),
                               ),
                             ),
                           ],
                         ),
-                        // DataRow(
-                        //   cells: [
-                        //     DataCell(
-                        //       Center(
-                        //         child: Text(
-                        //           "Discount %",
-                        //           style: TextStyle(
-                        //               fontWeight: FontWeight.bold,
-                        //               fontSize: 16),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //     DataCell(
-                        //       SingleChildScrollView(
-                        //         scrollDirection: Axis.vertical,
-                        //         child:
-                        //             widget.data['item']['Disc1'] > 0 ||
-                        //                     widget.data['item']['Disc2'] > 0 ||
-                        //                     widget.data['item']['Disc3'] > 0
-                        //                 ? Column(
-                        //                     children: [
-                        //                       Container(
-                        //                         height: screenHeight * 0.04,
-                        //                         child: Row(
-                        //                           children: [
-                        //                             Container(
-                        //                               child: Text(
-                        //                                 "1-",
-                        //                                 style: TextStyle(
-                        //                                     fontWeight:
-                        //                                         FontWeight.bold,
-                        //                                     fontSize: MediaQuery.of(context)
-                        //                                                     .textScaleFactor >
-                        //                                                 1.75 ||
-                        //                                             MediaQuery.of(context)
-                        //                                                     .size
-                        //                                                     .height <
-                        //                                                 650
-                        //                                         ? 14
-                        //                                         : 18),
-                        //                               ),
-                        //                             ),
-                        //                             SizedBox(
-                        //                               width:
-                        //                                   screenWidth * 0.025,
-                        //                             ),
-                        //                             // Container(
-                        //                             //   child: Text(
-                        //                             //     widget.data['item']['S1']
-                        //                             //         .toString(),
-                        //                             //     style: TextStyle(
-                        //                             //         fontWeight: FontWeight.bold,
-                        //                             //         fontSize: MediaQuery.of(context)
-                        //                             //                         .textScaleFactor >
-                        //                             //                     1.75 ||
-                        //                             //                 MediaQuery.of(context)
-                        //                             //                         .size
-                        //                             //                         .height <
-                        //                             //                     650
-                        //                             //             ? 14
-                        //                             //             : 18),
-                        //                             //   ),
-                        //                             // ),
-                        //                             widget.data['item']
-                        //                                         ['Disc1'] >
-                        //                                     0
-                        //                                 ? Row(
-                        //                                     mainAxisAlignment:
-                        //                                         MainAxisAlignment
-                        //                                             .center,
-                        //                                     children: [
-                        //                                       // SizedBox(
-                        //                                       //   width: screenWidth * 0.0125,
-                        //                                       // ),
-                        //                                       // Text(
-                        //                                       //   '|',
-                        //                                       //   style: TextStyle(
-                        //                                       //       fontWeight:
-                        //                                       //           FontWeight.bold,
-                        //                                       //       fontSize: MediaQuery.of(
-                        //                                       //                           context)
-                        //                                       //                       .textScaleFactor >
-                        //                                       //                   1.75 ||
-                        //                                       //               MediaQuery.of(
-                        //                                       //                           context)
-                        //                                       //                       .size
-                        //                                       //                       .height <
-                        //                                       //                   650
-                        //                                       //           ? 14
-                        //                                       //           : 18),
-                        //                                       //   textAlign: TextAlign.center,
-                        //                                       // ),
-                        //                                       // SizedBox(
-                        //                                       //   width: screenWidth * 0.0125,
-                        //                                       // ),
-                        //                                       Container(
-                        //                                         child: Text(
-                        //                                           "${widget.data['item']['Disc1']}"
-                        //                                               .toString(),
-                        //                                           style: TextStyle(
-                        //                                               fontWeight:
-                        //                                                   FontWeight
-                        //                                                       .bold,
-                        //                                               fontSize: MediaQuery.of(context).textScaleFactor > 1.75 ||
-                        //                                                       MediaQuery.of(context).size.height < 650
-                        //                                                   ? 14
-                        //                                                   : 18),
-                        //                                         ),
-                        //                                       ),
-                        //                                     ],
-                        //                                   )
-                        //                                 : Container(),
-                        //                           ],
-                        //                         ),
-                        //                       ),
-                        //                       Container(
-                        //                         child: Row(
-                        //                           mainAxisAlignment:
-                        //                               MainAxisAlignment.start,
-                        //                           children: [
-                        //                             Container(
-                        //                               height:
-                        //                                   screenHeight * 0.04,
-                        //                               child: Row(
-                        //                                 mainAxisAlignment:
-                        //                                     MainAxisAlignment
-                        //                                         .start,
-                        //                                 children: [
-                        //                                   Container(
-                        //                                     child: Text("2-",
-                        //                                         style: TextStyle(
-                        //                                             fontWeight:
-                        //                                                 FontWeight
-                        //                                                     .bold,
-                        //                                             fontSize: MediaQuery.of(context).textScaleFactor >
-                        //                                                         1.75 ||
-                        //                                                     MediaQuery.of(context).size.height <
-                        //                                                         650
-                        //                                                 ? 14
-                        //                                                 : 18)),
-                        //                                   ),
-                        //                                   SizedBox(
-                        //                                     width: screenWidth *
-                        //                                         0.025,
-                        //                                   ),
-                        //                                   // Container(
-                        //                                   //   child: Text(
-                        //                                   //       widget.data['item']['S2']
-                        //                                   //           .toString(),
-                        //                                   //       style: TextStyle(
-                        //                                   //           fontWeight:
-                        //                                   //               FontWeight.bold,
-                        //                                   //           fontSize: MediaQuery.of(
-                        //                                   //                               context)
-                        //                                   //                           .textScaleFactor >
-                        //                                   //                       1.75 ||
-                        //                                   //                   MediaQuery.of(
-                        //                                   //                               context)
-                        //                                   //                           .size
-                        //                                   //                           .height <
-                        //                                   //                       650
-                        //                                   //               ? 14
-                        //                                   //               : 18)),
-                        //                                   // ),
-                        //                                   widget.data['item'][
-                        //                                               'Disc2'] >
-                        //                                           0
-                        //                                       ? Row(
-                        //                                           mainAxisAlignment:
-                        //                                               MainAxisAlignment
-                        //                                                   .center,
-                        //                                           children: [
-                        //                                             // SizedBox(
-                        //                                             //   width: screenWidth *
-                        //                                             //       0.0125,
-                        //                                             // ),
-                        //                                             // Text(
-                        //                                             //   '|',
-                        //                                             //   style: TextStyle(
-                        //                                             //       fontWeight:
-                        //                                             //           FontWeight
-                        //                                             //               .bold,
-                        //                                             //       fontSize: MediaQuery.of(context)
-                        //                                             //                       .textScaleFactor >
-                        //                                             //                   1.75 ||
-                        //                                             //               MediaQuery.of(context)
-                        //                                             //                       .size
-                        //                                             //                       .height <
-                        //                                             //                   650
-                        //                                             //           ? 14
-                        //                                             //           : 18),
-                        //                                             //   textAlign:
-                        //                                             //       TextAlign.center,
-                        //                                             // ),
-                        //                                             // SizedBox(
-                        //                                             //   width: screenWidth *
-                        //                                             //       0.0125,
-                        //                                             // ),
-                        //                                             Container(
-                        //                                               child:
-                        //                                                   Text(
-                        //                                                 "${widget.data['item']['Disc2']}"
-                        //                                                     .toString(),
-                        //                                                 style: TextStyle(
-                        //                                                     fontWeight: FontWeight
-                        //                                                         .bold,
-                        //                                                     fontSize: MediaQuery.of(context).textScaleFactor > 1.75 || MediaQuery.of(context).size.height < 650
-                        //                                                         ? 14
-                        //                                                         : 18),
-                        //                                               ),
-                        //                                             ),
-                        //                                           ],
-                        //                                         )
-                        //                                       : Container(),
-                        //                                 ],
-                        //                               ),
-                        //                             ),
-                        //                           ],
-                        //                         ),
-                        //                       ),
-                        //                       Container(
-                        //                         height: screenHeight * 0.04,
-                        //                         child: Row(
-                        //                           crossAxisAlignment:
-                        //                               CrossAxisAlignment.center,
-                        //                           children: [
-                        //                             Container(
-                        //                               child: Text(
-                        //                                 "3-",
-                        //                                 style: TextStyle(
-                        //                                     fontWeight:
-                        //                                         FontWeight.bold,
-                        //                                     fontSize: MediaQuery.of(context)
-                        //                                                     .textScaleFactor >
-                        //                                                 1.75 ||
-                        //                                             MediaQuery.of(context)
-                        //                                                     .size
-                        //                                                     .height <
-                        //                                                 650
-                        //                                         ? 14
-                        //                                         : 18),
-                        //                               ),
-                        //                             ),
-                        //                             SizedBox(
-                        //                               width:
-                        //                                   screenWidth * 0.025,
-                        //                             ),
-                        //                             // Container(
-                        //                             //   child: Text(
-                        //                             //     widget.data['item']['S3']
-                        //                             //         .toString(),
-                        //                             //     style: TextStyle(
-                        //                             //         fontWeight: FontWeight.bold,
-                        //                             //         fontSize: MediaQuery.of(context)
-                        //                             //                         .textScaleFactor >
-                        //                             //                     1.75 ||
-                        //                             //                 MediaQuery.of(context)
-                        //                             //                         .size
-                        //                             //                         .height <
-                        //                             //                     650
-                        //                             //             ? 14
-                        //                             //             : 18),
-                        //                             //   ),
-                        //                             // ),
-                        //                             widget.data['item']
-                        //                                         ['Disc3'] >
-                        //                                     0
-                        //                                 ? Row(
-                        //                                     mainAxisAlignment:
-                        //                                         MainAxisAlignment
-                        //                                             .center,
-                        //                                     children: [
-                        //                                       // SizedBox(
-                        //                                       //   width: screenWidth * 0.0125,
-                        //                                       // ),
-                        //                                       // Text(
-                        //                                       //   '|',
-                        //                                       //   style: TextStyle(
-                        //                                       //       fontWeight:
-                        //                                       //           FontWeight.bold,
-                        //                                       //       fontSize: MediaQuery.of(
-                        //                                       //                           context)
-                        //                                       //                       .textScaleFactor >
-                        //                                       //                   1.75 ||
-                        //                                       //               MediaQuery.of(
-                        //                                       //                           context)
-                        //                                       //                       .size
-                        //                                       //                       .height <
-                        //                                       //                   650
-                        //                                       //           ? 14
-                        //                                       //           : 18),
-                        //                                       //   textAlign: TextAlign.center,
-                        //                                       // ),
-                        //                                       // SizedBox(
-                        //                                       //   width: screenWidth * 0.0125,
-                        //                                       // ),
-                        //                                       Container(
-                        //                                         child: Text(
-                        //                                           "${widget.data['item']['Disc3']}"
-                        //                                               .toString(),
-                        //                                           style: TextStyle(
-                        //                                               fontWeight:
-                        //                                                   FontWeight
-                        //                                                       .bold,
-                        //                                               fontSize: MediaQuery.of(context).textScaleFactor > 1.75 ||
-                        //                                                       MediaQuery.of(context).size.height < 650
-                        //                                                   ? 14
-                        //                                                   : 18),
-                        //                                         ),
-                        //                                       ),
-                        //                                     ],
-                        //                                   )
-                        //                                 : Container(),
-                        //                           ],
-                        //                         ),
-                        //                       ),
-                        //                     ],
-                        //                   )
-                        //                 : Column(),
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
                         DataRow(
                           cells: [
                             DataCell(
@@ -1547,59 +846,64 @@ class _DisplayScreenState extends State<DisplayScreen> {
                               ),
                             ),
                             DataCell(
-                              Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "Qty Collected:",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                      SizedBox(
-                                        width: screenWidth * 0.025,
-                                      ),
-                                      Text(
-                                        widget.data['item']['handQuantity'] ==
-                                                null
-                                            ? "-"
-                                            : widget.data['item']
-                                                    ['handQuantity']
-                                                .toStringAsFixed(2),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "QUnit:",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                      SizedBox(
-                                        width: screenWidth * 0.025,
-                                      ),
-                                      Text(
-                                        widget.data['item']['Qunit'] == null
-                                            ? "-"
-                                            : widget.data['item']['Qunit']
-                                                .toStringAsFixed(2),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
-                                      ),
-                                    ],
-                                  )
-                                ],
+                              SingleChildScrollView(
+                                scrollDirection: Axis.vertical,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          "Qty Collected:",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16),
+                                        ),
+                                        SizedBox(
+                                          width: screenWidth * 0.025,
+                                        ),
+                                        Text(
+                                          widget.data['item']['handQuantity'] ==
+                                                  null
+                                              ? "-"
+                                              : widget.data['item']
+                                                      ['handQuantity']
+                                                  .toStringAsFixed(2),
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          "QUnit:",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16),
+                                        ),
+                                        SizedBox(
+                                          width: screenWidth * 0.025,
+                                        ),
+                                        Text(
+                                          widget.data['item']['Qunit'] == null
+                                              ? "-"
+                                              : widget.data['item']['Qunit']
+                                                  .toStringAsFixed(2),
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ],
@@ -1622,7 +926,12 @@ class _DisplayScreenState extends State<DisplayScreen> {
                         return null;
                       },
                       flag: 1),
-                  SizedBox(height: screenHeight * 0.05),
+
+                  SizedBox(
+                      height: screenHeight < 700 ||
+                              MediaQuery.of(context).textScaleFactor >= 1.5
+                          ? screenHeight * 0.01
+                          : screenHeight * 0.05),
 
                   // Sign in button
                   MyButton(

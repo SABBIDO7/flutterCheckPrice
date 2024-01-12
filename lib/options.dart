@@ -1787,53 +1787,58 @@ class _OptionState extends State<Option> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
+      body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              child: const Image(
-                image: AssetImage('assets/paradoxlogo.jpg'),
-                height: 350,
-                width: 350,
+              child: Image(
+                image: const AssetImage('assets/paradoxlogo.jpg'),
+
+                width: MediaQuery.of(context).size.width * 0.8,
                 // Adjust the width as needed
               ),
             ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min, // Set mainAxisSize to min
+            SizedBox(
+              height: screenHeight * 0.1,
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min, // Set mainAxisSize to min
 
-                children: [
-                  MyButton(
-                    onTap: () {
-                      //here i want to add a cart that opens contains a comboBox getting data from api and two buttons
-                      showCartDialog(null, "");
-                    },
-                    buttonName: "Quantity To Collect",
-                    isOnline: isOnlineFlag,
-                    padding: 20,
-                  ),
-                  SizedBox(height: screenHeight * 0.05),
-                  MyButton(
-                    onTap: () {
-                      showCartDialogCheckPrice();
-                    },
-                    buttonName: "Check Price",
-                    isOnline: isOnlineFlag,
-                    padding: 20,
-                  ),
-                  SizedBox(height: screenHeight * 0.05),
-                  MyButton(
-                    onTap: () {
-                      navigateToSettings(context, isOnlineFlag);
-                    },
-                    buttonName: "Settings",
-                    isOnline: isOnlineFlag,
-                    padding: 20,
-                  ),
-                ],
+                  children: [
+                    MyButton(
+                      onTap: () {
+                        //here i want to add a cart that opens contains a comboBox getting data from api and two buttons
+                        showCartDialog(null, "");
+                      },
+                      buttonName: "Quantity To Collect",
+                      isOnline: isOnlineFlag,
+                      padding: 20,
+                    ),
+                    SizedBox(height: screenHeight * 0.05),
+                    MyButton(
+                      onTap: () {
+                        showCartDialogCheckPrice();
+                      },
+                      buttonName: "Check Price",
+                      isOnline: isOnlineFlag,
+                      padding: 20,
+                    ),
+                    SizedBox(height: screenHeight * 0.05),
+                    MyButton(
+                      onTap: () {
+                        navigateToSettings(context, isOnlineFlag);
+                      },
+                      buttonName: "Settings",
+                      isOnline: isOnlineFlag,
+                      padding: 20,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

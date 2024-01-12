@@ -233,7 +233,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: isOnlineFlag == true ? const Text('Settings') : const Text("Settings-OFF"),
+        title: isOnlineFlag == true
+            ? const Text('Settings')
+            : const Text("Settings-OFF"),
         backgroundColor: isOnlineFlag == true ? Colors.deepPurple : Colors.grey,
       ),
       body: SafeArea(
@@ -364,13 +366,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       // Add some spacing between icon and text
-                                      Text('Sync Data'),
+                                      Text('Download Data'),
                                       Icon(Icons.warning,
                                           color: Colors.red), // Alert icon
                                     ],
                                   ),
                                   content: const Text(
-                                    'Are you sure you want to sync data?\nSyncing Data will Download the latest items and remove the Offline Data in this DEVICE',
+                                    'Are you sure you want to Download Items data?\Downloading Data will Download the latest items and remove the Offline Data Items in this DEVICE',
                                     style: TextStyle(fontSize: 16),
                                   ),
                                   actions: <Widget>[
@@ -386,7 +388,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         Navigator.of(context)
                                             .pop(true); // Confirm
                                       },
-                                      child: const Text('Sync'),
+                                      child: const Text('Download'),
                                     ),
                                   ],
                                 );
@@ -413,7 +415,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 .showSnackBar(snackBar);
                           }
                         },
-                        buttonName: "Download items file",
+                        buttonName: screenHeight < 700 ||
+                                MediaQuery.of(context).textScaleFactor > 1
+                            ? "Download\nitems file"
+                            : "Download\nitems file",
                         isOnline: isOnlineFlag,
                         padding: 20,
                       ),
