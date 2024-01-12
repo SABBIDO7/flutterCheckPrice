@@ -454,14 +454,35 @@ class YourDatabaseHelper {
     }
   }
 
-  Future<void> deleteTablesStartingWith(String dbName, String prefix) async {
+  // Future<void> deleteTablesStartingWith(String dbName, String prefix) async {
+  //   String path = join(await getDatabasesPath(), '$dbName.db');
+  //   Database database = await openDatabase(path);
+
+  //   // Get all table names starting with the specified prefix
+  //   List<String> tableNames = await database
+  //       .rawQuery(
+  //         "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE '$prefix%'",
+  //       )
+  //       .then((value) => value
+  //           .map((Map<String, dynamic> map) => map['name'].toString())
+  //           .toList());
+
+  //   // Delete each table
+  //   for (String tableName in tableNames) {
+  //     await database.execute('DROP TABLE IF EXISTS $tableName');
+  //     print("drop");
+  //   }
+
+  //   await database.close();
+  // }
+  Future<void> deleteTable(String dbName, String inventory) async {
     String path = join(await getDatabasesPath(), '$dbName.db');
     Database database = await openDatabase(path);
 
     // Get all table names starting with the specified prefix
     List<String> tableNames = await database
         .rawQuery(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE '$prefix%'",
+          "SELECT name FROM sqlite_master WHERE type='table' AND name = '$inventory'",
         )
         .then((value) => value
             .map((Map<String, dynamic> map) => map['name'].toString())

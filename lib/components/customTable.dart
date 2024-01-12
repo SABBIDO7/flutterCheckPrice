@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 
 class CustomTable extends StatelessWidget {
@@ -70,7 +71,8 @@ class TableRowWithMultipleCells extends StatelessWidget {
   final String cell2;
   final String cell3;
 
-  const TableRowWithMultipleCells({super.key, 
+  const TableRowWithMultipleCells({
+    super.key,
     required this.cell1,
     required this.cell2,
     required this.cell3,
@@ -97,7 +99,8 @@ class TableRowWithMultipleCells extends StatelessWidget {
 class CustomCell extends StatelessWidget {
   final String content;
 
-  const CustomCell({super.key, 
+  const CustomCell({
+    super.key,
     required this.content,
   });
 

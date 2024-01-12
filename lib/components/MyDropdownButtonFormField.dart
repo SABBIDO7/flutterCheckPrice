@@ -37,9 +37,6 @@ class MyDropdownButtonFormField extends StatelessWidget {
 
       input = result.substring(0, result.length - 2);
 
-      print(result);
-      print("displayedddd");
-      print(input);
       if (flagContainsOff == true) {
         input += "_off";
       }
@@ -82,73 +79,67 @@ class MyDropdownButtonFormField extends StatelessWidget {
               value: value,
               hint: Text(
                 hintText,
-                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
               ),
               items: items.map((dynamic branch) {
+                // ignore: prefer_typing_uninitialized_variables
                 var displayedText;
-                print("invvvvv-------------------------$branch");
                 if (flag == 1 && username != '') {
-                  print("hougaAAAAAAA");
                   String? usernameLower = username?.toLowerCase();
-                  print(usernameLower);
                   displayedText = branch['table_name']
                       .toString()
                       .replaceFirst('dc_${usernameLower}_', '');
-                  print(displayedText);
-                  print(username);
                   displayedText = replaceAfterUnderscore(displayedText, 3, 4);
                   /*displayedText = displayedText.replaceRange(
                       2, 7, ''); */ // Replace at the 3rd position
 
-                  displayedText +=
-                      ' (${branch['row_count']}) ${branch['update_time']}';
+                  displayedText += ' (${branch['row_count']})';
+                  if (branch['update_time'] != null) {
+                    displayedText += ' ${branch['update_time']}';
+                  }
 
-                  print(
-                      "displayeddddddd"); //replace from the 3rd and 7th character
-                  print(displayedText);
+                  //replace from the 3rd and 7th character
                 } else {
                   displayedText = branch;
                 }
 
                 return DropdownMenuItem<dynamic>(
                   value: flag == 1 ? branch['table_name'] : branch,
-                  child: Container(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.62,
-                          //height: MediaQuery.of(context).size.height * 0.5,
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.62,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Text(
-                                '$displayedText',
-                                style: TextStyle(
-                                    fontSize:
-                                        MediaQuery.of(context).textScaleFactor >
-                                                1
-                                            ? MediaQuery.of(context)
-                                                        .textScaleFactor >
-                                                    1.75
-                                                ? MediaQuery.of(context)
-                                                            .textScaleFactor >
-                                                        2.25
-                                                    ? 7
-                                                    : 8
-                                                : 17 //kenit 10
-                                            : 17,
-                                    fontWeight: FontWeight.bold),
-                                softWrap: true,
-                                textAlign: TextAlign.center,
-                              ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        //height: MediaQuery.of(context).size.height * 0.5,
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Text(
+                              '$displayedText',
+                              style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).textScaleFactor > 1
+                                          ? MediaQuery.of(context)
+                                                      .textScaleFactor >
+                                                  1.75
+                                              ? MediaQuery.of(context)
+                                                          .textScaleFactor >
+                                                      2.25
+                                                  ? 7
+                                                  : 8
+                                              : 17 //kenit 10
+                                          : 17,
+                                  fontWeight: FontWeight.bold),
+                              softWrap: true,
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 );
               }).toList(),

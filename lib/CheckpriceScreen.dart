@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+// ignore: depend_on_referenced_packages
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -16,6 +17,7 @@ class CheckpriceScreen extends StatefulWidget {
   CheckpriceScreen({super.key, required this.data, required this.isOnline});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CheckpriceScreenState createState() => _CheckpriceScreenState();
 }
 
@@ -24,6 +26,7 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
 
 // ...
 
+  // ignore: non_constant_identifier_names
   Future<void> ScanAgain() async {
     String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
       '#ff6666', // Scanner overlay color
@@ -456,11 +459,12 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                                           widget.data['item']
                                                                   ['S2']
                                                               .toString(),
-                                                          style: const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 20),
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 20),
                                                         ),
                                                       ),
                                                     ],
