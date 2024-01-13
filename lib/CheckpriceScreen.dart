@@ -239,30 +239,30 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                   fontSize: fontSizeVat),
                             )
                           : Container(),
-                      Row(
-                        children: [
-                          Text(
-                            "VAT :",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: fontSizeVat),
-                          ),
-                          widget.data['item']['sp'] == "" ||
-                                  widget.data['item']['sp'] == null
-                              ? Text(
-                                  "-",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: fontSizeVat),
-                                )
-                              : Text(
-                                  widget.data['item']['vat'].toString(),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: fontSizeVat),
-                                )
-                        ],
-                      ),
+                      // Row(
+                      //   children: [
+                      //     Text(
+                      //       "VAT :",
+                      //       style: TextStyle(
+                      //           fontWeight: FontWeight.bold,
+                      //           fontSize: fontSizeVat),
+                      //     ),
+                      //     widget.data['item']['sp'] == "" ||
+                      //             widget.data['item']['sp'] == null
+                      //         ? Text(
+                      //             "-",
+                      //             style: TextStyle(
+                      //                 fontWeight: FontWeight.bold,
+                      //                 fontSize: fontSizeVat),
+                      //           )
+                      //         : Text(
+                      //             widget.data['item']['vat'].toString(),
+                      //             style: TextStyle(
+                      //                 fontWeight: FontWeight.bold,
+                      //                 fontSize: fontSizeVat),
+                      //           )
+                      //   ],
+                      // ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [

@@ -411,29 +411,29 @@ class _DisplayScreenState extends State<DisplayScreen> {
                               ],
                             )
                           : Container(),
-                      Row(
-                        children: [
-                          const Text(
-                            "VAT :",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          widget.data['item']['sp'] == "" ||
-                                  widget.data['item']['sp'] == null
-                              ? const Text(
-                                  "-",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                )
-                              : Text(
-                                  widget.data['item']['vat'].toString(),
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                )
-                        ],
-                      ),
+                      // Row(
+                      //   children: [
+                      //     const Text(
+                      //       "VAT :",
+                      //       style: TextStyle(
+                      //           fontWeight: FontWeight.bold, fontSize: 16),
+                      //     ),
+                      //     widget.data['item']['sp'] == "" ||
+                      //             widget.data['item']['sp'] == null
+                      //         ? const Text(
+                      //             "-",
+                      //             style: TextStyle(
+                      //                 fontWeight: FontWeight.bold,
+                      //                 fontSize: 16),
+                      //           )
+                      //         : Text(
+                      //             widget.data['item']['vat'].toString(),
+                      //             style: const TextStyle(
+                      //                 fontWeight: FontWeight.bold,
+                      //                 fontSize: 16),
+                      //           ),
+                      //   ],
+                      // ),
                     ],
                   ),
                   // Display the data in a DataTable

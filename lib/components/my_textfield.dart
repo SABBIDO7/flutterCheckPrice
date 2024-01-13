@@ -54,7 +54,7 @@ class MyTextField extends StatelessWidget {
                   )
                 : Container(),
             Expanded(
-              child: readOnly != true
+              child: readOnly != true && flag != 1
                   ? Padding(
                       padding: const EdgeInsets.only(left: 15),
                       child: TextFormField(
@@ -63,8 +63,7 @@ class MyTextField extends StatelessWidget {
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
 
-                        textAlign:
-                            flag == 1 ? TextAlign.center : TextAlign.start,
+                        textAlign: TextAlign.start,
                         controller: controller,
                         obscureText: obscureText,
                         decoration: InputDecoration(
