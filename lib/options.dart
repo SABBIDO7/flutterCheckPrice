@@ -514,8 +514,8 @@ class _OptionState extends State<Option> {
                                                         .red), // Alert icon
                                               ],
                                             ),
-                                            content: const Text(
-                                                'Are you sure you want to delete?'),
+                                            content: Text(
+                                                'Are you sure you want to delete?\nTable:${inventoryController.text}'),
                                             actions: <Widget>[
                                               TextButton(
                                                 onPressed: () {

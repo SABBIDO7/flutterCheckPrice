@@ -70,7 +70,7 @@ class YourDatabaseHelper {
   }
 
   Future<void> insertData(List<YourDataModel> data) async {
-    await deleteDatabaseFile();
+    await delete_dc_items();
     print("lek");
     List<String> databaseList = [];
 
@@ -106,19 +106,33 @@ class YourDatabaseHelper {
     print("data deleted");
   }
 
-  Future<void> deleteDatabaseFile() async {
-    // Ensure the file exists before attempting to delete
-    final databasesPath = await getDatabasesPath();
+  // Future<void> deleteDatabaseFile() async {
+  //   // Ensure the file exists before attempting to delete
+  //   final databasesPath = await getDatabasesPath();
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? dbName = prefs.getString('dbName');
+  //   final path = join(databasesPath, '$dbName.db');
+  //   //bool fileExists = await databaseExists(path);
+  //   if (await databaseExists(path)) {
+  //     print("lek waynooo");
+  //     await deleteDatabase(path);
+  //     print('Database file deleted');
+  //   } else {
+  //     print('Database file not found');
+  //   }
+  // }
+
+  Future<void> delete_dc_items() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? dbName = prefs.getString('dbName');
-    final path = join(databasesPath, '$dbName.db');
-    //bool fileExists = await databaseExists(path);
+
+    String path = join(await getDatabasesPath(), '$dbName.db');
     if (await databaseExists(path)) {
-      print("lek waynooo");
-      await deleteDatabase(path);
-      print('Database file deleted');
-    } else {
-      print('Database file not found');
+      Database database = await openDatabase(path);
+
+      await database.execute('DROP TABLE IF EXISTS dc_items');
+
+      await database.close();
     }
   }
 
