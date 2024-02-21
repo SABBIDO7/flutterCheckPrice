@@ -60,6 +60,7 @@ class _LoginPageState extends State<LoginPage> {
   // sign user in method
   Future<bool> signUserIn(String username, /*String password,*/ String branch,
       int flag, String dB, String ip, BuildContext context) async {
+    print("lklkl");
     final url = Uri.parse(
         'http://$ip/Checkuser/?username=$username&branch=$branch&dbName=$dB');
 
@@ -91,11 +92,12 @@ class _LoginPageState extends State<LoginPage> {
           // Handle login failure (e.g., incorrect credentials)
           // Set error message here
           if (flag == 1) {
-            errorMessage =
-                'Your credentials have been changed. Enter the new ones.';
+            errorMessage = data["message"];
+            //'Your credentials have been changed. Enter the new ones.';
           } else {
             setState(() {
-              errorMessage = 'Invalid credentials. Please try again.';
+              // errorMessage = 'Invalid credentials. Please try again.';
+              errorMessage = data["message"];
             });
           }
           print("Failure");
