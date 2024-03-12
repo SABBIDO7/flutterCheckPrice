@@ -263,6 +263,8 @@ class _OptionState extends State<Option> {
               ),
             ),
           ),
+                        insetPadding: const EdgeInsets.all(10),
+
         );
       },
     );
@@ -552,6 +554,8 @@ class _OptionState extends State<Option> {
                                                 child: const Text('Delete'),
                                               ),
                                             ],
+                                                          insetPadding: const EdgeInsets.all(10),
+
                                           );
                                         },
                                       );
@@ -665,6 +669,8 @@ class _OptionState extends State<Option> {
                                                   child: const Text('Upload'),
                                                 ),
                                               ],
+                                                            insetPadding: const EdgeInsets.all(10),
+
                                             );
                                           },
                                         );
@@ -717,6 +723,8 @@ class _OptionState extends State<Option> {
                                                           const Text('Delete'),
                                                     ),
                                                   ],
+                                                                insetPadding: const EdgeInsets.all(10),
+
                                                 );
                                               },
                                             );
@@ -814,6 +822,7 @@ class _OptionState extends State<Option> {
                 ),
               ),
             ),
+              insetPadding: const EdgeInsets.all(10),
           );
         },
       );
@@ -832,6 +841,8 @@ class _OptionState extends State<Option> {
               child: const Text('OK'),
             ),
           ],
+                        insetPadding: const EdgeInsets.all(10),
+
         ),
       );
     }
@@ -883,6 +894,8 @@ class _OptionState extends State<Option> {
               child: const Text('OK'),
             ),
           ],
+                        insetPadding: const EdgeInsets.all(10),
+
         ),
       );
       return "False";
@@ -933,6 +946,8 @@ class _OptionState extends State<Option> {
                 child: const Text('OK'),
               ),
             ],
+                          insetPadding: const EdgeInsets.all(10),
+
           ),
         );
         return "False";
@@ -1119,6 +1134,8 @@ class _OptionState extends State<Option> {
               ),
             ),
           ),
+                        insetPadding: const EdgeInsets.all(10),
+
         );
       },
     );
@@ -1324,6 +1341,8 @@ class _OptionState extends State<Option> {
               ),
             ),
           ),
+                        insetPadding: const EdgeInsets.all(10),
+
         );
       },
     );
@@ -1444,6 +1463,8 @@ class _OptionState extends State<Option> {
                       child: const Text('Create Item'),
                     ),
                   ],
+                                insetPadding: const EdgeInsets.all(10),
+
                 ),
               );
             }
@@ -1513,6 +1534,8 @@ class _OptionState extends State<Option> {
                     child: const Text('Create Item'),
                   ),
                 ],
+                              insetPadding: const EdgeInsets.all(10),
+
               ),
             );
           }
@@ -1532,6 +1555,8 @@ class _OptionState extends State<Option> {
                 child: const Text('OK'),
               ),
             ],
+                          insetPadding: const EdgeInsets.all(10),
+
           ),
         );
       }
@@ -1626,6 +1651,8 @@ class _OptionState extends State<Option> {
                       child: const Text('Scan Again'),
                     ),
                   ],
+                                insetPadding: const EdgeInsets.all(10),
+
                 ),
               );
             }
@@ -1683,6 +1710,8 @@ class _OptionState extends State<Option> {
                     child: const Text('Scan Again'),
                   ),
                 ],
+                              insetPadding: const EdgeInsets.all(10),
+
               ),
             );
           }
@@ -1702,6 +1731,8 @@ class _OptionState extends State<Option> {
                 child: const Text('OK'),
               ),
             ],
+                          insetPadding: const EdgeInsets.all(10),
+
           ),
         );
       }

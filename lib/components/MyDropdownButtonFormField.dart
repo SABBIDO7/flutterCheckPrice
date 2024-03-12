@@ -56,6 +56,7 @@ class MyDropdownButtonFormField extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         child: Container(
           width: MediaQuery.of(context).size.width,
+          //height: 70,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(15),
@@ -114,6 +115,7 @@ class MyDropdownButtonFormField extends StatelessWidget {
                         width: MediaQuery.of(context).size.width * 0.8,
                         //height: MediaQuery.of(context).size.height * 0.5,
                         child: SizedBox(
+                          height: 20,
                           width: MediaQuery.of(context).size.width * 0.8,
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
