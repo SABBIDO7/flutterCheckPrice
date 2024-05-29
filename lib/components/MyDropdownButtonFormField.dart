@@ -115,7 +115,7 @@ class MyDropdownButtonFormField extends StatelessWidget {
                         width: MediaQuery.of(context).size.width * 0.8,
                         //height: MediaQuery.of(context).size.height * 0.5,
                         child: SizedBox(
-                          height: 20,
+                          //height: 20, kenit hek ll ioss
                           width: MediaQuery.of(context).size.width * 0.8,
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,

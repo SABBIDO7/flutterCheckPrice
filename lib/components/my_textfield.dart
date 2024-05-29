@@ -7,16 +7,20 @@ class MyTextField extends StatelessWidget {
   final String? Function(String?)? validator; // Validator function
   final int flag;
   final bool? readOnly;
+  final bool? focusVar;
+  final VoidCallback? onFieldSubmitted; // Callback for field submission
 
-  const MyTextField({
-    Key? key,
-    required this.controller,
-    required this.hintText,
-    required this.obscureText,
-    this.validator,
-    required this.flag, // Add validator parameter
-    this.readOnly,
-  }) : super(key: key);
+  const MyTextField(
+      {Key? key,
+      required this.controller,
+      required this.hintText,
+      required this.obscureText,
+      this.validator,
+      required this.flag, // Add validator parameter
+      this.readOnly,
+      this.focusVar,
+      this.onFieldSubmitted})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +62,7 @@ class MyTextField extends StatelessWidget {
                   ? Padding(
                       padding: const EdgeInsets.only(left: 15),
                       child: TextFormField(
+                        autofocus: focusVar == true ? true : false,
                         readOnly: readOnly == true ? true : false,
                         // Use TextFormField instead of TextField
                         style: const TextStyle(
@@ -83,11 +88,14 @@ class MyTextField extends StatelessWidget {
                           ),
                         ),
                         validator: validator, // Attach the validator function
+                        onFieldSubmitted: (_) => onFieldSubmitted?.call(),
                       ),
                     )
                   : Padding(
                       padding: const EdgeInsets.only(left: 15),
                       child: TextFormField(
+                        autofocus: focusVar == true ? true : false,
+
                         readOnly: readOnly == true ? true : false,
                         // Use TextFormField instead of TextField
                         style: const TextStyle(
@@ -105,6 +113,7 @@ class MyTextField extends StatelessWidget {
                           // Set the font size for the error message
                         ),
                         validator: validator, // Attach the validator function
+                        onFieldSubmitted: (_) => onFieldSubmitted?.call(),
                       ),
                     ),
             ),

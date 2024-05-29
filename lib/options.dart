@@ -263,8 +263,7 @@ class _OptionState extends State<Option> {
               ),
             ),
           ),
-                        insetPadding: const EdgeInsets.all(10),
-
+          insetPadding: const EdgeInsets.all(10),
         );
       },
     );
@@ -466,6 +465,21 @@ class _OptionState extends State<Option> {
                         hintText: 'Barcode Number',
                         obscureText: false,
                         flag: 0,
+                        focusVar: true,
+                        onFieldSubmitted: () async {
+                          if (formKey.currentState!.validate()) {
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+
+                            prefs.setString(
+                                'inventory', inventoryController.text);
+                            scanAndRetrieveData(
+                                context,
+                                inventoryController.text,
+                                0,
+                                barcodeController.text);
+                          }
+                        },
                       ),
                       Text(
                         errorMessage,
@@ -474,7 +488,32 @@ class _OptionState extends State<Option> {
                           fontSize: 14,
                         ),
                       ),
+                      Container(
+                        child: MyButton(
+                          onTap: () async {
+                            print("shoubek");
+                            print(inventoryController.text);
+                            if (formKey.currentState!.validate()) {
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
 
+                              prefs.setString(
+                                  'inventory', inventoryController.text);
+                              scanAndRetrieveData(
+                                  context,
+                                  inventoryController.text,
+                                  0,
+                                  barcodeController.text);
+                            }
+                          },
+                          buttonName: "Scan",
+                          isOnline: isOnlineFlag,
+                          padding: 30,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
                       // Example buttons
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -554,8 +593,8 @@ class _OptionState extends State<Option> {
                                                 child: const Text('Delete'),
                                               ),
                                             ],
-                                                          insetPadding: const EdgeInsets.all(10),
-
+                                            insetPadding:
+                                                const EdgeInsets.all(10),
                                           );
                                         },
                                       );
@@ -618,7 +657,7 @@ class _OptionState extends State<Option> {
                         ],
                       ),
                       const SizedBox(
-                        height: 15,
+                        height: 5,
                       ),
 
                       isOnlineFlag == false
@@ -669,8 +708,8 @@ class _OptionState extends State<Option> {
                                                   child: const Text('Upload'),
                                                 ),
                                               ],
-                                                            insetPadding: const EdgeInsets.all(10),
-
+                                              insetPadding:
+                                                  const EdgeInsets.all(10),
                                             );
                                           },
                                         );
@@ -723,8 +762,8 @@ class _OptionState extends State<Option> {
                                                           const Text('Delete'),
                                                     ),
                                                   ],
-                                                                insetPadding: const EdgeInsets.all(10),
-
+                                                  insetPadding:
+                                                      const EdgeInsets.all(10),
                                                 );
                                               },
                                             );
@@ -764,29 +803,6 @@ class _OptionState extends State<Option> {
                               ],
                             )
                           : Container(),
-                      Container(
-                        child: MyButton(
-                          onTap: () async {
-                            print("shoubek");
-                            print(inventoryController.text);
-                            if (formKey.currentState!.validate()) {
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-
-                              prefs.setString(
-                                  'inventory', inventoryController.text);
-                              scanAndRetrieveData(
-                                  context,
-                                  inventoryController.text,
-                                  0,
-                                  barcodeController.text);
-                            }
-                          },
-                          buttonName: "Scan",
-                          isOnline: isOnlineFlag,
-                          padding: 30,
-                        ),
-                      ),
 
                       // SizedBox(
                       //   height: MediaQuery.of(context).size.height * 0.01,
@@ -822,7 +838,7 @@ class _OptionState extends State<Option> {
                 ),
               ),
             ),
-              insetPadding: const EdgeInsets.all(10),
+            insetPadding: const EdgeInsets.all(10),
           );
         },
       );
@@ -841,8 +857,7 @@ class _OptionState extends State<Option> {
               child: const Text('OK'),
             ),
           ],
-                        insetPadding: const EdgeInsets.all(10),
-
+          insetPadding: const EdgeInsets.all(10),
         ),
       );
     }
@@ -894,8 +909,7 @@ class _OptionState extends State<Option> {
               child: const Text('OK'),
             ),
           ],
-                        insetPadding: const EdgeInsets.all(10),
-
+          insetPadding: const EdgeInsets.all(10),
         ),
       );
       return "False";
@@ -946,8 +960,7 @@ class _OptionState extends State<Option> {
                 child: const Text('OK'),
               ),
             ],
-                          insetPadding: const EdgeInsets.all(10),
-
+            insetPadding: const EdgeInsets.all(10),
           ),
         );
         return "False";
@@ -1134,8 +1147,7 @@ class _OptionState extends State<Option> {
               ),
             ),
           ),
-                        insetPadding: const EdgeInsets.all(10),
-
+          insetPadding: const EdgeInsets.all(10),
         );
       },
     );
@@ -1341,8 +1353,7 @@ class _OptionState extends State<Option> {
               ),
             ),
           ),
-                        insetPadding: const EdgeInsets.all(10),
-
+          insetPadding: const EdgeInsets.all(10),
         );
       },
     );
@@ -1463,8 +1474,7 @@ class _OptionState extends State<Option> {
                       child: const Text('Create Item'),
                     ),
                   ],
-                                insetPadding: const EdgeInsets.all(10),
-
+                  insetPadding: const EdgeInsets.all(10),
                 ),
               );
             }
@@ -1534,8 +1544,7 @@ class _OptionState extends State<Option> {
                     child: const Text('Create Item'),
                   ),
                 ],
-                              insetPadding: const EdgeInsets.all(10),
-
+                insetPadding: const EdgeInsets.all(10),
               ),
             );
           }
@@ -1555,8 +1564,7 @@ class _OptionState extends State<Option> {
                 child: const Text('OK'),
               ),
             ],
-                          insetPadding: const EdgeInsets.all(10),
-
+            insetPadding: const EdgeInsets.all(10),
           ),
         );
       }
@@ -1651,8 +1659,7 @@ class _OptionState extends State<Option> {
                       child: const Text('Scan Again'),
                     ),
                   ],
-                                insetPadding: const EdgeInsets.all(10),
-
+                  insetPadding: const EdgeInsets.all(10),
                 ),
               );
             }
@@ -1710,8 +1717,7 @@ class _OptionState extends State<Option> {
                     child: const Text('Scan Again'),
                   ),
                 ],
-                              insetPadding: const EdgeInsets.all(10),
-
+                insetPadding: const EdgeInsets.all(10),
               ),
             );
           }
@@ -1731,8 +1737,7 @@ class _OptionState extends State<Option> {
                 child: const Text('OK'),
               ),
             ],
-                          insetPadding: const EdgeInsets.all(10),
-
+            insetPadding: const EdgeInsets.all(10),
           ),
         );
       }

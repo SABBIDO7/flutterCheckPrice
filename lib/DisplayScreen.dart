@@ -475,16 +475,24 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                       ),
-                                      Text(
-                                        widget.data['item']['GOID'] ==
-                                                widget.data['item']
-                                                    ['itemNumber']
-                                            ? ""
-                                            : widget.data['item']['GOID'],
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      )
+                                      widget.data['item']['GOID'] ==
+                                              widget.data['item']['itemNumber']
+                                          ? Container()
+                                          : Text(
+                                              widget.data['item']['GOID'],
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16),
+                                            ),
+                                      widget.data['item']['costPrice'] > 0
+                                          ? Text(
+                                              widget.data['item']['costPrice']
+                                                  .toString(),
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16),
+                                            )
+                                          : Container(),
                                     ],
                                   ),
                                 ),
@@ -946,7 +954,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                             widget.data['item']['handQuantity']);
                       }
                     },
-                    buttonName: "Update",
+                    buttonName: "ADD Qty",
                     isOnline: widget.isOnline,
                     padding: 20,
                   ),
