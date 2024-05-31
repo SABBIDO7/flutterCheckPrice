@@ -45,7 +45,8 @@ class _LoginPageState extends State<LoginPage> {
       String branch,
       String ip,
       String dbName,
-      int flag) async {
+      int flag,
+      dynamic permissions) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     prefs.setString('username', username.toLowerCase());
@@ -55,6 +56,12 @@ class _LoginPageState extends State<LoginPage> {
     prefs.setString('ip', ip);
     prefs.setInt('flag', 1);
     prefs.setBool('isOnline', true);
+    prefs.setString('qtyToColPage', permissions["qtyToColPage"]);
+    prefs.setString('checkPricePage', permissions["checkPricePage"]);
+
+    prefs.setString('costPrice', permissions["checkPricePage"]);
+
+    prefs.setString('deleteInv', permissions["checkPricePage"]);
   }
 
   // sign user in method
@@ -78,7 +85,8 @@ class _LoginPageState extends State<LoginPage> {
         if (data['status'] == true) {
           // Successful login, handle the response as needed
           if (flag == -1) {
-            saveUserCredentials(username, /* password,*/ branch, ip, dB, 1);
+            saveUserCredentials(username, /* password,*/ branch, ip, dB, 1,
+                data['Permissions']);
           }
           // Successful login, navigate to the HomeScreen
           Navigator.of(context).pushReplacement(

@@ -18,6 +18,7 @@ import 'offline/sqllite.dart';
 
 class Option extends StatefulWidget {
   final String? param;
+
   const Option({super.key, this.param});
   @override
   State<Option> createState() => _OptionState();
@@ -25,6 +26,9 @@ class Option extends StatefulWidget {
 
 class _OptionState extends State<Option> {
   late bool isOnlineFlag = false;
+  String? checkPricePage;
+  String? qtyToColPage;
+  String? deleteInv;
   Future<bool> UploadData(String inventory) async {
     try {
       showDialog(
@@ -536,88 +540,106 @@ class _OptionState extends State<Option> {
                             child: Container(
                               child: MyButton(
                                 onTap: () async {
-                                  if (formKey.currentState!.validate()) {
-                                    if (isOnlineFlag == true) {
-                                      bool deleteConfirm = await showDialog(
-                                        context: context,
-                                        barrierDismissible: false,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: const Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                // Add some spacing between icon and text
-                                                Text('Delete Table'),
-                                                Icon(Icons.warning,
-                                                    color: Colors
-                                                        .red), // Alert icon
-                                              ],
-                                            ),
-                                            content: Text(
-                                                'Are you sure you want to delete?\nTable:${inventoryController.text}'),
-                                            actions: <Widget>[
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context)
-                                                      .pop(); // Close the dialog
-                                                },
-                                                child: const Text('Cancel'),
+                                  if (deleteInv == "Y") {
+                                    if (formKey.currentState!.validate()) {
+                                      if (isOnlineFlag == true) {
+                                        bool deleteConfirm = await showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  // Add some spacing between icon and text
+                                                  Text('Delete Table'),
+                                                  Icon(Icons.warning,
+                                                      color: Colors
+                                                          .red), // Alert icon
+                                                ],
                                               ),
-                                              TextButton(
-                                                onPressed: () async {
-                                                  // Call the delete function
-                                                  if (await deleteInventory(
-                                                          inventoryController
-                                                              .text) ==
-                                                      "True") {
-                                                    SharedPreferences prefs =
-                                                        await SharedPreferences
-                                                            .getInstance();
-                                                    String? inventory = prefs
-                                                        .getString("inventory");
-                                                    if (inventoryController
-                                                            .text ==
-                                                        inventory) {
-                                                      prefs.setString(
-                                                          'inventory', "");
-                                                    }
-                                                    Navigator.of(context).pop(
-                                                        true); // Close the dialog
-                                                  } else {
+                                              content: Text(
+                                                  'Are you sure you want to delete?\nTable:${inventoryController.text}'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () {
                                                     Navigator.of(context)
-                                                        .pop(false);
-                                                  }
-                                                },
-                                                child: const Text('Delete'),
-                                              ),
-                                            ],
-                                            insetPadding:
-                                                const EdgeInsets.all(10),
-                                          );
-                                        },
-                                      );
-                                      if (deleteConfirm == true) {
-                                        Navigator.of(context).pop();
-                                        const snackBar = SnackBar(
-                                          content: Text(
-                                            'Table Deleted Successfully.',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14),
-                                          ),
-                                          duration: Duration(seconds: 2),
-                                          backgroundColor: Colors.deepPurple,
-                                          padding: EdgeInsets.all(20),
+                                                        .pop(); // Close the dialog
+                                                  },
+                                                  child: const Text('Cancel'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () async {
+                                                    // Call the delete function
+                                                    if (await deleteInventory(
+                                                            inventoryController
+                                                                .text) ==
+                                                        "True") {
+                                                      SharedPreferences prefs =
+                                                          await SharedPreferences
+                                                              .getInstance();
+                                                      String? inventory =
+                                                          prefs.getString(
+                                                              "inventory");
+                                                      if (inventoryController
+                                                              .text ==
+                                                          inventory) {
+                                                        prefs.setString(
+                                                            'inventory', "");
+                                                      }
+                                                      Navigator.of(context).pop(
+                                                          true); // Close the dialog
+                                                    } else {
+                                                      Navigator.of(context)
+                                                          .pop(false);
+                                                    }
+                                                  },
+                                                  child: const Text('Delete'),
+                                                ),
+                                              ],
+                                              insetPadding:
+                                                  const EdgeInsets.all(10),
+                                            );
+                                          },
                                         );
+                                        if (deleteConfirm == true) {
+                                          Navigator.of(context).pop();
+                                          const snackBar = SnackBar(
+                                            content: Text(
+                                              'Table Deleted Successfully.',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14),
+                                            ),
+                                            duration: Duration(seconds: 2),
+                                            backgroundColor: Colors.deepPurple,
+                                            padding: EdgeInsets.all(20),
+                                          );
 
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(snackBar);
-                                      } else if (deleteConfirm == false) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(snackBar);
+                                        } else if (deleteConfirm == false) {
+                                          const snackBar = SnackBar(
+                                            content: Text(
+                                              'Error while Deleting the Table.',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14),
+                                            ),
+                                            duration: Duration(seconds: 2),
+                                            backgroundColor: Colors.red,
+                                            padding: EdgeInsets.all(20),
+                                          );
+
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(snackBar);
+                                        }
+                                      } else {
                                         const snackBar = SnackBar(
                                           content: Text(
-                                            'Error while Deleting the Table.',
+                                            'Cannot Delete Table in Offline Mode.',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 14),
@@ -630,23 +652,8 @@ class _OptionState extends State<Option> {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(snackBar);
                                       }
-                                    } else {
-                                      const snackBar = SnackBar(
-                                        content: Text(
-                                          'Cannot Delete Table in Offline Mode.',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14),
-                                        ),
-                                        duration: Duration(seconds: 2),
-                                        backgroundColor: Colors.red,
-                                        padding: EdgeInsets.all(20),
-                                      );
-
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(snackBar);
                                     }
-                                  }
+                                  } else {}
                                 },
                                 buttonName: "Delete",
                                 isOnline: isOnlineFlag,
@@ -1287,11 +1294,15 @@ class _OptionState extends State<Option> {
                     ),
 
                     MyTextField(
-                      controller: barcodeController,
-                      hintText: 'Barcode Number',
-                      obscureText: false,
-                      flag: 0,
-                    ),
+                        controller: barcodeController,
+                        hintText: 'Barcode Number',
+                        obscureText: false,
+                        flag: 0,
+                        focusVar: true,
+                        onFieldSubmitted: () async {
+                          scanAndRetrieveDataPrice(
+                              context, 1, barcodeController.text);
+                        }),
                     Text(
                       errorMessage,
                       style: const TextStyle(
@@ -1772,12 +1783,16 @@ class _OptionState extends State<Option> {
       print("thissssss");
       print(arguments);
       print("shish");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      checkPricePage = prefs.getString('checkPricePage');
+      qtyToColPage = prefs.getString('qtyToColPage');
+      deleteInv = prefs.getString('deleteInv');
       // Check if arguments are not null and of the expected type
       if (arguments == 2) {
         print("dddddddd");
         // Call your function with the passed value
-        SharedPreferences prefs = await SharedPreferences.getInstance();
         String? savedInventory = prefs.getString('inventory');
+
         print("------------------------------");
         print(savedInventory);
         showCartDialog(savedInventory, "");
@@ -1850,8 +1865,13 @@ class _OptionState extends State<Option> {
                     children: [
                       MyButton(
                         onTap: () {
-                          //here i want to add a cart that opens contains a comboBox getting data from api and two buttons
-                          showCartDialog(null, "");
+                          if (qtyToColPage == "Y") {
+                            //here i want to add a cart that opens contains a comboBox getting data from api and two buttons
+                            showCartDialog(null, "");
+                          } else {
+                            print(qtyToColPage);
+                            print("lll");
+                          }
                         },
                         buttonName: "Quantity To Collect",
                         isOnline: isOnlineFlag,
@@ -1860,7 +1880,9 @@ class _OptionState extends State<Option> {
                       SizedBox(height: screenHeight * 0.05),
                       MyButton(
                         onTap: () {
-                          showCartDialogCheckPrice();
+                          if (checkPricePage == "Y") {
+                            showCartDialogCheckPrice();
+                          }
                         },
                         buttonName: "Check Price",
                         isOnline: isOnlineFlag,
