@@ -1,0 +1,4 @@
+#Tue Jun 04 11:55:20 EEST 2024
+base.0=D\:\\PARADOXProjects\\flutterProjects\\checkprice\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+renamed.0=classes.dex
+path.0=classes.dex
