@@ -13,8 +13,13 @@ import 'components/my_button.dart';
 class CheckpriceScreen extends StatefulWidget {
   Map<String, dynamic> data;
   bool isOnline;
+  String? costPricePermission;
 
-  CheckpriceScreen({super.key, required this.data, required this.isOnline});
+  CheckpriceScreen(
+      {super.key,
+      required this.data,
+      required this.isOnline,
+      required this.costPricePermission});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -336,17 +341,22 @@ class _CheckpriceScreenState extends State<CheckpriceScreen> {
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16),
                                             ),
-                                            Text(
-                                              widget.data['item']['GOID'] ==
-                                                      widget.data['item']
-                                                          ['itemNumber']
-                                                  ? ""
-                                                  : widget.data['item']['GOID'],
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16),
-                                            ),
-                                            widget.data['item']['costPrice'] > 0
+                                            widget.data['item']['GOID'] ==
+                                                    widget.data['item']
+                                                        ['itemNumber']
+                                                ? Container()
+                                                : Text(
+                                                    widget.data['item']['GOID'],
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16),
+                                                  ),
+                                            double.parse(widget.data['item']
+                                                            ['costPrice']) >
+                                                        0 &&
+                                                    widget.costPricePermission ==
+                                                        "Y"
                                                 ? Text(
                                                     widget.data['item']
                                                             ['costPrice']

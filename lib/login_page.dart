@@ -56,12 +56,13 @@ class _LoginPageState extends State<LoginPage> {
     prefs.setString('ip', ip);
     prefs.setInt('flag', 1);
     prefs.setBool('isOnline', true);
+
     prefs.setString('qtyToColPage', permissions["qtyToColPage"]);
     prefs.setString('checkPricePage', permissions["checkPricePage"]);
 
-    prefs.setString('costPrice', permissions["checkPricePage"]);
+    prefs.setString('costPrice', permissions["costPrice"]);
 
-    prefs.setString('deleteInv', permissions["checkPricePage"]);
+    prefs.setString('deleteInv', permissions["deleteInv"]);
   }
 
   // sign user in method
@@ -84,10 +85,15 @@ class _LoginPageState extends State<LoginPage> {
         final data = jsonDecode(response.body);
         if (data['status'] == true) {
           // Successful login, handle the response as needed
-          if (flag == -1) {
-            saveUserCredentials(username, /* password,*/ branch, ip, dB, 1,
-                data['Permissions']);
-          }
+          print('adim1');
+          print(data['Permissions']);
+          // if (flag == -1) {
+          //   print("flag -1");
+          //   saveUserCredentials(username, /* password,*/ branch, ip, dB, 1,
+          //       data['Permissions']);
+          // }
+          saveUserCredentials(
+              username, /* password,*/ branch, ip, dB, 1, data['Permissions']);
           // Successful login, navigate to the HomeScreen
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(

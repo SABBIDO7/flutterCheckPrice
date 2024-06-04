@@ -17,12 +17,14 @@ class DisplayScreen extends StatefulWidget {
   final String inventory;
   final String? username;
   bool isOnline;
+  String? costPricePermission;
   DisplayScreen(
       {super.key,
       required this.data,
       required this.inventory,
       required this.username,
-      required this.isOnline});
+      required this.isOnline,
+      required this.costPricePermission});
 
   @override
   _DisplayScreenState createState() => _DisplayScreenState();
@@ -484,7 +486,8 @@ class _DisplayScreenState extends State<DisplayScreen> {
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16),
                                             ),
-                                      widget.data['item']['costPrice'] > 0
+                                      widget.data['item']['costPrice'] > 0 &&
+                                              widget.costPricePermission == "Y"
                                           ? Text(
                                               widget.data['item']['costPrice']
                                                   .toString(),

@@ -29,6 +29,7 @@ class _OptionState extends State<Option> {
   String? checkPricePage;
   String? qtyToColPage;
   String? deleteInv;
+  String? costPrice;
   Future<bool> UploadData(String inventory) async {
     try {
       showDialog(
@@ -653,7 +654,22 @@ class _OptionState extends State<Option> {
                                             .showSnackBar(snackBar);
                                       }
                                     }
-                                  } else {}
+                                  } else {
+                                    const snackBar = SnackBar(
+                                      content: Text(
+                                        'You Are Not Authorized.',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14),
+                                      ),
+                                      duration: Duration(seconds: 2),
+                                      backgroundColor: Colors.red,
+                                      padding: EdgeInsets.all(20),
+                                    );
+
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+                                  }
                                 },
                                 buttonName: "Delete",
                                 isOnline: isOnlineFlag,
@@ -1436,11 +1452,11 @@ class _OptionState extends State<Option> {
               Navigator.of(context)
                   .push(MaterialPageRoute(
                 builder: (context) => DisplayScreen(
-                  data: data,
-                  inventory: inventory,
-                  username: username,
-                  isOnline: isOnlineFlag,
-                ),
+                    data: data,
+                    inventory: inventory,
+                    username: username,
+                    isOnline: isOnlineFlag,
+                    costPricePermission: costPrice),
                 //CustomTable(),
               ))
                   .then((value) async {
@@ -1506,11 +1522,11 @@ class _OptionState extends State<Option> {
             Navigator.of(context)
                 .push(MaterialPageRoute(
               builder: (context) => DisplayScreen(
-                data: data,
-                inventory: inventory,
-                username: username,
-                isOnline: isOnlineFlag,
-              ),
+                  data: data,
+                  inventory: inventory,
+                  username: username,
+                  isOnline: isOnlineFlag,
+                  costPricePermission: costPrice),
               //CustomTable(),
             ))
                 .then((value) async {
@@ -1635,8 +1651,10 @@ class _OptionState extends State<Option> {
 
               Navigator.of(context)
                   .push(MaterialPageRoute(
-                builder: (context) =>
-                    CheckpriceScreen(data: data, isOnline: isOnlineFlag),
+                builder: (context) => CheckpriceScreen(
+                    data: data,
+                    isOnline: isOnlineFlag,
+                    costPricePermission: costPrice),
                 //CustomTable(),
               ))
                   .then((value) async {
@@ -1693,9 +1711,9 @@ class _OptionState extends State<Option> {
             Navigator.of(context)
                 .push(MaterialPageRoute(
               builder: (context) => CheckpriceScreen(
-                data: result,
-                isOnline: isOnlineFlag,
-              ),
+                  data: result,
+                  isOnline: isOnlineFlag,
+                  costPricePermission: costPrice),
               //CustomTable(),
             ))
                 .then((value) async {
@@ -1787,6 +1805,7 @@ class _OptionState extends State<Option> {
       checkPricePage = prefs.getString('checkPricePage');
       qtyToColPage = prefs.getString('qtyToColPage');
       deleteInv = prefs.getString('deleteInv');
+      costPrice = prefs.getString('costPrice');
       // Check if arguments are not null and of the expected type
       if (arguments == 2) {
         print("dddddddd");
@@ -1869,8 +1888,19 @@ class _OptionState extends State<Option> {
                             //here i want to add a cart that opens contains a comboBox getting data from api and two buttons
                             showCartDialog(null, "");
                           } else {
-                            print(qtyToColPage);
-                            print("lll");
+                            const snackBar = SnackBar(
+                              content: Text(
+                                'You Are Not Authorized',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 14),
+                              ),
+                              duration: Duration(seconds: 2),
+                              backgroundColor: Colors.red,
+                              padding: EdgeInsets.all(20),
+                            );
+
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
                           }
                         },
                         buttonName: "Quantity To Collect",
@@ -1882,6 +1912,20 @@ class _OptionState extends State<Option> {
                         onTap: () {
                           if (checkPricePage == "Y") {
                             showCartDialogCheckPrice();
+                          } else {
+                            const snackBar = SnackBar(
+                              content: Text(
+                                'You Are Not Authorized',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 14),
+                              ),
+                              duration: Duration(seconds: 2),
+                              backgroundColor: Colors.red,
+                              padding: EdgeInsets.all(20),
+                            );
+
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
                           }
                         },
                         buttonName: "Check Price",
